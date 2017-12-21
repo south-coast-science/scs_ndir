@@ -22,5 +22,8 @@ try:
 
     ndir.power_on()
 
+    ndir.sample()
+
+
 finally:
     I2C.close()

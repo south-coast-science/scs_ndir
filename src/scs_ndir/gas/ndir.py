@@ -29,6 +29,8 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    __SPI_BUS =                         1
+    __SPI_DEVICE =                      0
     __SPI_CLOCK =                       488000
     __SPI_MODE =                        1
 
@@ -70,7 +72,7 @@ class NDIR(object):
         Constructor
         """
         self.__io = IO()
-        self.__spi = HostSPI(1, NDIR.__SPI_MODE, NDIR.__SPI_CLOCK)
+        self.__spi = HostSPI(NDIR.__SPI_BUS, NDIR.__SPI_DEVICE, NDIR.__SPI_MODE, NDIR.__SPI_CLOCK)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -89,6 +91,9 @@ class NDIR(object):
         try:
             self.obtain_lock()
             self.__spi.open()
+
+            self.__spi.xfer([0x12, 0x34])
+            print("xfer done")
 
         finally:
             self.__spi.close()
