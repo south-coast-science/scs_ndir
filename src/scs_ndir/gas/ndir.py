@@ -35,8 +35,8 @@ class NDIR(object):
     __SPI_CLOCK =                       488000
     __SPI_MODE =                        1
 
-    __BOOT_DELAY =                      0.500
-    __CMD_DELAY =                       0.002
+    __BOOT_DELAY =                      0.500           # seconds
+    __CMD_DELAY =                       0.002           # seconds
 
     __RESPONSE_ACK =                    0x01
 
