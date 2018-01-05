@@ -23,7 +23,7 @@ start_time = time.time()
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_device())
+    ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir)
     print("-")
 
