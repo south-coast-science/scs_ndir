@@ -32,8 +32,6 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    __SPI_BUS =                         1               # TODO: replace with SPI host values
-    __SPI_DEVICE =                      0
     __SPI_CLOCK =                       488000
     __SPI_MODE =                        1
 
@@ -92,12 +90,12 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self):
+    def __init__(self, spi_bus, spi_device):
         """
         Constructor
         """
         self.__io = IO()
-        self.__spi = HostSPI(NDIR.__SPI_BUS, NDIR.__SPI_DEVICE, NDIR.__SPI_MODE, NDIR.__SPI_CLOCK)
+        self.__spi = HostSPI(spi_bus, spi_device, NDIR.__SPI_MODE, NDIR.__SPI_CLOCK)
 
 
     # ----------------------------------------------------------------------------------------------------------------
