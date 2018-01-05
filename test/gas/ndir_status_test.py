@@ -24,7 +24,7 @@ from scs_ndir.gas.ndir_status import NDIRStatus
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = NDIR()
+    ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_device())
     print(ndir)
     print("-")
 
