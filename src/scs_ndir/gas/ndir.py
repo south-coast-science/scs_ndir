@@ -10,8 +10,8 @@ import time
 
 from scs_dfe.board.io import IO
 
+from scs_host.bus.spi import SPI
 from scs_host.lock.lock import Lock
-from scs_host.sys.host_spi import HostSPI
 
 from scs_ndir.gas.ndir_status import NDIRStatus
 from scs_ndir.gas.ndir_uptime import NDIRUptime
@@ -27,10 +27,12 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    __LOCK_TIMEOUT =                    1.0
+    RESET_QUARANTINE =                  8.0             # time between reset and stable readings
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    __LOCK_TIMEOUT =                    1.0
 
     __SPI_CLOCK =                       488000
     __SPI_MODE =                        1
@@ -39,6 +41,7 @@ class NDIR(object):
     __CMD_DELAY =                       0.002           # seconds
 
     __RESPONSE_ACK =                    0x01
+    __RESPONSE_NACK =                   0x00
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -95,7 +98,7 @@ class NDIR(object):
         Constructor
         """
         self.__io = IO()
-        self.__spi = HostSPI(spi_bus, spi_device, NDIR.__SPI_MODE, NDIR.__SPI_CLOCK)
+        self.__spi = SPI(spi_bus, spi_device, NDIR.__SPI_MODE, NDIR.__SPI_CLOCK)
 
 
     # ----------------------------------------------------------------------------------------------------------------
