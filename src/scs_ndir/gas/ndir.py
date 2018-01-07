@@ -8,6 +8,9 @@ import math
 import struct
 import time
 
+from scs_core.gas.co2_datum import CO2Datum
+from scs_core.gas.ndir_datum import NDIRDatum
+
 from scs_dfe.board.io import IO
 
 from scs_host.bus.spi import SPI
@@ -114,6 +117,25 @@ class NDIR(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # sampling...
+
+    def sample(self):
+        return NDIRDatum(None, None, None, None)        # TODO: implement sample
+
+
+    def sample_co2(self, ideal_gas_law):                # TODO: implement sample_co2
+        return CO2Datum(None)
+
+
+    def sample_temp(self):                              # TODO: implement sample_temp
+        return None
+
+
+    def sample_dc(self):                                # TODO: implement sample_dc
+        return None
+
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     def cmd_echo(self, byte_values):
         try:
@@ -188,11 +210,13 @@ class NDIR(object):
             self._command('wr', 0)
             time.sleep(NDIR.__RESET_DELAY + NDIR.__BOOT_DELAY)
 
-            self._command('wc', 0)      # clear watchdog flag - because reset was commanded
+            self._command('wc', 0)      # clear watchdog flag because reset was commanded
 
         finally:
             self.release_lock()
 
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     def cmd_eeprom_read_unsigned_long(self, addr):
         try:
@@ -207,8 +231,6 @@ class NDIR(object):
         return value
 
 
-    # ----------------------------------------------------------------------------------------------------------------
-
     def cmd_eeprom_write_unsigned_long(self, addr, value):
         try:
             self.obtain_lock()
@@ -219,6 +241,8 @@ class NDIR(object):
         finally:
             self.release_lock()
 
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     def cmd_lamp_set(self, level):
         try:
