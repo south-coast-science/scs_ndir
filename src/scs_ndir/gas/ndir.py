@@ -188,7 +188,7 @@ class NDIR(object):
             self._command('wr', 0)
             time.sleep(NDIR.__RESET_DELAY + NDIR.__BOOT_DELAY)
 
-            self._command('wc', 0)      # clear - because reset was commanded
+            self._command('wc', 0)      # clear watchdog flag - because reset was commanded
 
         finally:
             self.release_lock()
