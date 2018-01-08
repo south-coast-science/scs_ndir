@@ -59,7 +59,7 @@ class NDIRConf(PersistentJSONable):
         if not self.present:
             return None
 
-        return NDIR(host.ndir_spi_bus(), host.ndir_device())
+        return NDIR(host.ndir_spi_bus(), host.ndir_spi_device())
 
 
     # ----------------------------------------------------------------------------------------------------------------
