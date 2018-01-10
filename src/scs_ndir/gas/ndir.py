@@ -119,18 +119,22 @@ class NDIR(object):
     # ----------------------------------------------------------------------------------------------------------------
     # sampling...
 
+    # noinspection PyMethodMayBeStatic
     def sample(self):
         return NDIRDatum(None, None, None, None)        # TODO: implement sample
 
 
+    # noinspection PyMethodMayBeStatic
     def sample_co2(self, ideal_gas_law):                # TODO: implement sample_co2
         return CO2Datum(None)
 
 
+    # noinspection PyMethodMayBeStatic
     def sample_temp(self):                              # TODO: implement sample_temp
         return None
 
 
+    # noinspection PyMethodMayBeStatic
     def sample_dc(self):                                # TODO: implement sample_dc
         return None
 
