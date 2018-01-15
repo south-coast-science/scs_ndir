@@ -1,6 +1,8 @@
 # scs_ndir
 Environmental sampling abstractions for the South Coast Science NDIR board.
 
+_Contains command line utilities and library classes_
+
 **Required libraries:** 
 
 * SCS root: scs_core
