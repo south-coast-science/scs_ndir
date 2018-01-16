@@ -1,5 +1,7 @@
 # scs_ndir
-Environmental sampling abstractions for the South Coast Science NDIR board.
+Environmental sampling abstractions for the South Coast Science NDIR NDIR CO2 sensor SPI board.
+
+_Contains library classes only._
 
 **Required libraries:** 
 
