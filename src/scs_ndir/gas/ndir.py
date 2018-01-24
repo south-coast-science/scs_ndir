@@ -248,12 +248,38 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_lamp_set(self, level):
+    def cmd_lamp_level(self, level):
         try:
             self.obtain_lock()
 
             level_bytes = self.__unpack_int(level)
-            response = self._command('ls', 0, *level_bytes)
+            response = self._command('ll', 0, *level_bytes)
+
+        finally:
+            self.release_lock()
+
+        return response
+
+
+    def cmd_lamp_pwm(self, period):
+        try:
+            self.obtain_lock()
+
+            period_bytes = self.__unpack_int(period)
+            response = self._command('lp', 0, *period_bytes)
+
+        finally:
+            self.release_lock()
+
+        return response
+
+
+    def cmd_lamp_run(self, on):
+        try:
+            self.obtain_lock()
+
+            on_byte = 1 if on else 0
+            response = self._command('lr', 0, on_byte)
 
         finally:
             self.release_lock()
@@ -326,12 +352,16 @@ class NDIR(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def _command(self, cmd, return_size, *params):
+        print("cmd: %s retsize: %d params:%s len:%d" % (cmd, return_size, str(params), len(params)))
+
         try:
             self.__spi.open()
 
             # request...
             request = [ord(cmd[0]), ord(cmd[1])]
             request.extend(params)
+
+            print("request:%s" % str(request))
 
             self.__spi.xfer(request)
             time.sleep(self.__CMD_DELAY)

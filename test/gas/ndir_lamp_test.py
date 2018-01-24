@@ -29,12 +29,47 @@ try:
 
     ndir.power_on()
 
+
+    '''
     version = ndir.cmd_version()
     print("version: %s" % version)
     print("-")
+    '''
+
+    level = 0x0fff
+    ndir.cmd_lamp_level(level)
+    print("lamp level: %d ..." % level)
 
     # square wave...
+    period = 200
+    ndir.cmd_lamp_pwm(period)
+    print("lamp period: %d ..." % period)
 
+    ndir.cmd_lamp_run(True)
+
+    time.sleep(5.0)
+
+    period = 500
+    ndir.cmd_lamp_pwm(period)
+    print("lamp period: %d ..." % period)
+
+    ndir.cmd_lamp_run(True)
+
+    time.sleep(5.0)
+
+    period = 1000
+    ndir.cmd_lamp_pwm(period)
+    print("lamp period: %d ..." % period)
+
+    ndir.cmd_lamp_run(True)
+
+    time.sleep(5.0)
+
+    # stop...
+    ndir.cmd_lamp_run(False)
+
+
+    '''
     while True:
         if True:
             on = 0x0fff
@@ -70,20 +105,7 @@ try:
 
         if status.uptime.seconds > 100000:
             break
-
-
-    # sawtooth wave...
-
-    while False:
-        for level in range(4096):
-            ndir.cmd_lamp_set(level)
-            # print("lamp: %d ..." % level)
-
-            time.sleep(0.01)
-
-        status = ndir.cmd_status()
-        print("uptime: %s" % status.uptime.timedelta)
-        print("-")
+    '''
 
 
 except ValueError as ex:
@@ -94,7 +116,11 @@ except KeyboardInterrupt:
 
 finally:
     if ndir:
-        ndir.cmd_lamp_set(0)
+        pass
+        # ndir.cmd_lamp_level(0)
+
+        # time.sleep(10.0)
+        # ndir.power_off()
 
     elapsed_time = time.time() - start_time
     print("elapsed_time: %0.1f" % elapsed_time)
