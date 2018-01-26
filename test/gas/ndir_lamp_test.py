@@ -41,21 +41,21 @@ try:
     print("lamp level: %d ..." % level)
 
     # square wave...
-    period = 200
-    ndir.cmd_lamp_pwm(period)
-    print("lamp period: %d ..." % period)
+    # period = 200
+    # ndir.cmd_lamp_pwm(period)
+    # print("lamp period: %d ..." % period)
+    #
+    # ndir.cmd_lamp_run(True)
+    #
+    # time.sleep(5.0)
+    #
+    # period = 500
+    # ndir.cmd_lamp_pwm(period)
+    # print("lamp period: %d ..." % period)
+    #
+    # ndir.cmd_lamp_run(True)
 
-    ndir.cmd_lamp_run(True)
-
-    time.sleep(5.0)
-
-    period = 500
-    ndir.cmd_lamp_pwm(period)
-    print("lamp period: %d ..." % period)
-
-    ndir.cmd_lamp_run(True)
-
-    time.sleep(5.0)
+    # time.sleep(5.0)
 
     period = 1000
     ndir.cmd_lamp_pwm(period)
@@ -66,7 +66,7 @@ try:
     time.sleep(5.0)
 
     # stop...
-    ndir.cmd_lamp_run(False)
+    # ndir.cmd_lamp_run(False)
 
 
     '''
@@ -123,6 +123,6 @@ finally:
         # ndir.power_off()
 
     elapsed_time = time.time() - start_time
-    print("elapsed_time: %0.1f" % elapsed_time)
+    print("elapsed time: %0.1f" % elapsed_time)
 
     I2C.close()
