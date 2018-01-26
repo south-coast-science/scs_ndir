@@ -83,6 +83,13 @@ class NDIR(object):
         return unpacked
 
 
+    @staticmethod
+    def __unpack_float(value):
+        unpacked = struct.unpack('BBBB', struct.pack('f', value))
+
+        return unpacked
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
@@ -248,12 +255,12 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_lamp_level(self, level):
+    def cmd_lamp_level(self, voltage):
         try:
             self.obtain_lock()
 
-            level_bytes = self.__unpack_int(level)
-            response = self._command('ll', 0, *level_bytes)
+            voltage_bytes = self.__unpack_float(voltage)
+            response = self._command('ll', 0, *voltage_bytes)
 
         finally:
             self.release_lock()

@@ -36,9 +36,9 @@ try:
     print("-")
     '''
 
-    level = 0x0fff
-    ndir.cmd_lamp_level(level)
-    print("lamp level: %d ..." % level)
+    voltage = 3.3       # 4.65
+    ndir.cmd_lamp_level(voltage)
+    print("lamp voltage: %0.3f" % voltage)
 
     # square wave...
     # period = 200
@@ -59,11 +59,11 @@ try:
 
     period = 1000
     ndir.cmd_lamp_pwm(period)
-    print("lamp period: %d ..." % period)
+    print("lamp period: %d" % period)
 
     ndir.cmd_lamp_run(True)
 
-    time.sleep(5.0)
+    # time.sleep(5.0)
 
     # stop...
     # ndir.cmd_lamp_run(False)
