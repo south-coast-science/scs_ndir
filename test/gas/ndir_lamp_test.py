@@ -29,45 +29,20 @@ try:
 
     ndir.power_on()
 
-
-    '''
     version = ndir.cmd_version()
     print("version: %s" % version)
     print("-")
-    '''
 
     voltage = 3.3       # 4.65
     ndir.cmd_lamp_level(voltage)
     print("lamp voltage: %0.3f" % voltage)
 
-    # square wave...
-    # period = 200
-    # ndir.cmd_lamp_pwm(period)
-    # print("lamp period: %d ..." % period)
-    #
-    # ndir.cmd_lamp_run(True)
-    #
-    # time.sleep(5.0)
-    #
-    # period = 500
-    # ndir.cmd_lamp_pwm(period)
-    # print("lamp period: %d ..." % period)
-    #
-    # ndir.cmd_lamp_run(True)
-
-    # time.sleep(5.0)
-
     period = 1000
     ndir.cmd_lamp_pwm(period)
     print("lamp period: %d" % period)
+    print("-")
 
     ndir.cmd_lamp_run(True)
-
-    # time.sleep(5.0)
-
-    # stop...
-    # ndir.cmd_lamp_run(False)
-
 
     '''
     while True:
