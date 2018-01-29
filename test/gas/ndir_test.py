@@ -46,15 +46,6 @@ try:
     watchdog = ndir.cmd_watchdog_clear()
     print("-")
 
-    eeprom = ndir.cmd_eeprom_read_unsigned_long(eeprom_addr)
-    print("eeprom: %s" % eeprom)
-
-    ndir.cmd_eeprom_write_unsigned_long(eeprom_addr, status.uptime.seconds)
-
-    eeprom = ndir.cmd_eeprom_read_unsigned_long(eeprom_addr)
-    print("eeprom: %s" % eeprom)
-    print("-")
-
     v_in_value = ndir.cmd_monitor_raw()
 
     print("v_in_value: %d" % v_in_value)

@@ -35,6 +35,18 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    __INDEX_TIME_TO_SAMPLE =             0
+    __INDEX_TIME_AFTER_SAMPLE =          1
+    __INDEX_COEFF_B =                    2
+    __INDEX_COEFF_C =                    3
+    __INDEX_THERM_A =                    4
+    __INDEX_THERM_B =                    5
+    __INDEX_THERM_C =                    6
+    __INDEX_THERM_D =                    7
+    __INDEX_ALPHA =                      8
+    __INDEX_BETA_A =                     9
+    __INDEX_T_CAL =                     10
+
     __LOCK_TIMEOUT =                    3.0
 
     __SPI_CLOCK =                       488000
@@ -57,6 +69,12 @@ class NDIR(object):
 
 
     @staticmethod
+    def __pack_unsigned_int(byte_values):
+        packed = struct.unpack('H', struct.pack('BB', *byte_values))
+        return packed[0]
+
+
+    @staticmethod
     def __pack_unsigned_long(byte_values):
         packed = struct.unpack('L', struct.pack('BBBB', *byte_values))
         return packed[0]
@@ -72,6 +90,13 @@ class NDIR(object):
     @staticmethod
     def __unpack_int(value):
         unpacked = struct.unpack('BB', struct.pack('h', value))
+
+        return unpacked
+
+
+    @staticmethod
+    def __unpack_unsigned_int(value):
+        unpacked = struct.unpack('BB', struct.pack('H', value))
 
         return unpacked
 
@@ -229,28 +254,92 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_eeprom_read_unsigned_long(self, addr):
-        try:
-            self.obtain_lock()
-
-            response = self._command('er', 4, addr, 4)
-            value = self.__pack_unsigned_long(response)
-
-        finally:
-            self.release_lock()
-
-        return value
+    def cmd_eeprom_read_time_to_sample(self):
+        return self._cmd_eeprom_read_unsigned_int(self.__INDEX_TIME_TO_SAMPLE)
 
 
-    def cmd_eeprom_write_unsigned_long(self, addr, value):
-        try:
-            self.obtain_lock()
+    def cmd_eeprom_write_time_to_sample(self, time_to_sample):
+        self._cmd_eeprom_write_unsigned_int(self.__INDEX_TIME_TO_SAMPLE, time_to_sample)
 
-            value_bytes = self.__unpack_unsigned_long(value)
-            self._command('ew', 0, addr, 4, *value_bytes)
 
-        finally:
-            self.release_lock()
+    def cmd_eeprom_read_time_after_sample(self):
+        return self._cmd_eeprom_read_unsigned_int(self.__INDEX_TIME_AFTER_SAMPLE)
+
+
+    def cmd_eeprom_write_(self, time_after_sample):
+        self._cmd_eeprom_write_unsigned_int(self.__INDEX_TIME_AFTER_SAMPLE, time_after_sample)
+
+
+    def cmd_eeprom_read_coeff_b(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_COEFF_B)
+
+
+    def cmd_eeprom_write_coeff_b(self, coeff_b):
+        self._cmd_eeprom_write_float(self.__INDEX_COEFF_B, coeff_b)
+
+
+    def cmd_eeprom_read_coeff_c(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_COEFF_C)
+
+
+    def cmd_eeprom_write_coeff_c(self, coeff_c):
+        self._cmd_eeprom_write_float(self.__INDEX_COEFF_C, coeff_c)
+
+
+    def cmd_eeprom_read_therm_a(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_THERM_A)
+
+
+    def cmd_eeprom_write_therm_a(self, therm_a):
+        self._cmd_eeprom_write_float(self.__INDEX_THERM_A, therm_a)
+
+
+    def cmd_eeprom_read_therm_b(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_THERM_B)
+
+
+    def cmd_eeprom_write_therm_(self, therm_b):
+        self._cmd_eeprom_write_float(self.__INDEX_THERM_B, therm_b)
+
+
+    def cmd_eeprom_read_therm_c(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_THERM_C)
+
+
+    def cmd_eeprom_write_therm_c(self, therm_c):
+        self._cmd_eeprom_write_float(self.__INDEX_THERM_C, therm_c)
+
+
+    def cmd_eeprom_read_therm_d(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_THERM_D)
+
+
+    def cmd_eeprom_write_therm_d(self, therm_d):
+        self._cmd_eeprom_write_float(self.__INDEX_THERM_D, therm_d)
+
+
+    def cmd_eeprom_read_alpha(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_ALPHA)
+
+
+    def cmd_eeprom_write_alpha(self, alpha):
+        self._cmd_eeprom_write_float(self.__INDEX_ALPHA, alpha)
+
+
+    def cmd_eeprom_read_beta_a(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_BETA_A)
+
+
+    def cmd_eeprom_write_beta_a(self, beta_a):
+        self._cmd_eeprom_write_float(self.__INDEX_BETA_A, beta_a)
+
+
+    def cmd_eeprom_read_t_cal(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_T_CAL)
+
+
+    def cmd_eeprom_write_t_cal(self, t_cal):
+        self._cmd_eeprom_write_float(self.__INDEX_T_CAL, t_cal)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -358,8 +447,58 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def _cmd_eeprom_read_unsigned_int(self, index):
+        try:
+            self.obtain_lock()
+
+            response = self._command('er', 2, index)
+            value = self.__pack_unsigned_int(response)
+
+        finally:
+            self.release_lock()
+
+        return value
+
+
+    def _cmd_eeprom_write_unsigned_int(self, index, value):
+        try:
+            self.obtain_lock()
+
+            value_bytes = self.__unpack_unsigned_int(value)
+            self._command('ew', 0, index, *value_bytes)
+
+        finally:
+            self.release_lock()
+
+
+    def _cmd_eeprom_read_float(self, index):
+        try:
+            self.obtain_lock()
+
+            response = self._command('er', 4, index)
+            value = self.__pack_float(response)
+
+        finally:
+            self.release_lock()
+
+        return value
+
+
+    def _cmd_eeprom_write_float(self, index, value):
+        try:
+            self.obtain_lock()
+
+            value_bytes = self.__unpack_float(value)
+            self._command('ew', 0, index, *value_bytes)
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def _command(self, cmd, return_size, *params):
-        print("cmd: %s retsize: %d params:%s len:%d" % (cmd, return_size, str(params), len(params)))
+        print("cmd: %s return_size: %d params:%s len:%d" % (cmd, return_size, str(params), len(params)))
 
         try:
             self.__spi.open()
@@ -367,8 +506,6 @@ class NDIR(object):
             # request...
             request = [ord(cmd[0]), ord(cmd[1])]
             request.extend(params)
-
-            print("request:%s" % str(request))
 
             self.__spi.xfer(request)
             time.sleep(self.__CMD_DELAY)
