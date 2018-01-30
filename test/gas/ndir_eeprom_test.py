@@ -32,7 +32,7 @@ try:
     ndir.cmd_eeprom_write_coeff_b(0.123456)
     ndir.cmd_eeprom_write_coeff_c(-0.123456)
     ndir.cmd_eeprom_write_therm_a(1.234567)
-    ndir.cmd_eeprom_write_therm_(-1.234567)
+    ndir.cmd_eeprom_write_therm_b(-1.234567)
     ndir.cmd_eeprom_write_therm_c(12.345678)
     ndir.cmd_eeprom_write_therm_d(-12.345678)
     ndir.cmd_eeprom_write_alpha(123.456789)

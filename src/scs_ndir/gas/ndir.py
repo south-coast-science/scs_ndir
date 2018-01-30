@@ -298,7 +298,7 @@ class NDIR(object):
         return self._cmd_eeprom_read_float(self.__INDEX_THERM_B)
 
 
-    def cmd_eeprom_write_therm_(self, therm_b):
+    def cmd_eeprom_write_therm_b(self, therm_b):
         self._cmd_eeprom_write_float(self.__INDEX_THERM_B, therm_b)
 
 
