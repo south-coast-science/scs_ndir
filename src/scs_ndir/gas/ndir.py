@@ -266,7 +266,7 @@ class NDIR(object):
         return self._cmd_eeprom_read_unsigned_int(self.__INDEX_TIME_AFTER_SAMPLE)
 
 
-    def cmd_eeprom_write_(self, time_after_sample):
+    def cmd_eeprom_write_time_after_sample(self, time_after_sample):
         self._cmd_eeprom_write_unsigned_int(self.__INDEX_TIME_AFTER_SAMPLE, time_after_sample)
 
 

@@ -28,7 +28,7 @@ try:
     print("-")
 
     ndir.cmd_eeprom_write_time_to_sample(1234)
-    ndir.cmd_eeprom_write_(4321)
+    ndir.cmd_eeprom_write_time_after_sample(4321)
     ndir.cmd_eeprom_write_coeff_b(0.123456)
     ndir.cmd_eeprom_write_coeff_c(-0.123456)
     ndir.cmd_eeprom_write_therm_a(1.234567)
