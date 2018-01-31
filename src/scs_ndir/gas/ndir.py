@@ -30,6 +30,8 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    RECOVERY_TIME =                     3.0             # time between bad SPI interaction and MCU recovery
+
     RESET_QUARANTINE =                  8.0             # time between reset and stable readings
 
 
@@ -156,7 +158,7 @@ class NDIR(object):
         return NDIRDatum(None, None, None, None)        # TODO: implement sample
 
 
-    # noinspection PyMethodMayBeStatic
+    # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def sample_co2(self, ideal_gas_law):                # TODO: implement sample_co2
         return CO2Datum(None)
 
@@ -419,9 +421,9 @@ class NDIR(object):
 
             response = self._command('sr', 6)
 
-            pile_ref_value = self.__pack_int(response[0:2])
-            pile_act_value = self.__pack_int(response[2:4])
-            thermistor_value = self.__pack_int(response[4:6])
+            pile_ref_value = self.__pack_unsigned_int(response[0:2])
+            pile_act_value = self.__pack_unsigned_int(response[2:4])
+            thermistor_value = self.__pack_unsigned_int(response[4:6])
 
         finally:
             self.release_lock()
@@ -443,6 +445,28 @@ class NDIR(object):
             self.release_lock()
 
         return pile_ref_voltage, pile_act_voltage, thermistor_voltage
+
+
+    def cmd_run_recorder(self, count):
+        try:
+            self.obtain_lock()
+
+            count_bytes = self.__unpack_unsigned_int(count)
+            response = self._command('rr', count * 6, *count_bytes)
+
+            values = []
+
+            for i in range(0, count * 6, 6):
+                timestamp = self.__pack_unsigned_int(response[i:i + 2])
+                pile_ref_voltage = self.__pack_unsigned_int(response[i + 2:i + 4])
+                pile_act_voltage = self.__pack_unsigned_int(response[i + 4:i + 6])
+
+                values.append((timestamp, pile_ref_voltage, pile_act_voltage))
+
+        finally:
+            self.release_lock()
+
+        return values
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -497,6 +521,20 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def cmd_fail(self):
+        try:
+            self.obtain_lock()
+
+            self._command('mr', 0)          # should return two bytes - ignore these
+
+        finally:
+            self.release_lock()
+
+
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def _command(self, cmd, return_size, *params):
         print("cmd: %s return_size: %d params:%s len:%d" % (cmd, return_size, str(params), len(params)))
 
@@ -510,6 +548,9 @@ class NDIR(object):
             self.__spi.xfer(request)
             time.sleep(self.__CMD_DELAY)
 
+            if cmd == 'rr':
+                time.sleep(1.0)
+
             # ACK...
             response = self.__spi.read_bytes(1)
 
@@ -521,6 +562,8 @@ class NDIR(object):
                 return None
 
             response = self.__spi.read_bytes(return_size)
+
+            print("response: %s" % str(response))
 
             return response[0] if return_size == 1 else response
 
