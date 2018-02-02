@@ -10,6 +10,7 @@ import time
 
 from scs_core.gas.co2_datum import CO2Datum
 from scs_core.gas.ndir_datum import NDIRDatum
+from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
 
 from scs_dfe.board.io import IO
 
@@ -18,7 +19,6 @@ from scs_host.lock.lock import Lock
 
 from scs_ndir.gas.ndir_status import NDIRStatus
 from scs_ndir.gas.ndir_uptime import NDIRUptime
-from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    RECOVERY_TIME =                     3.0             # time between bad SPI interaction and MCU recovery
+    RECOVERY_TIME =                     1.0             # time between bad SPI interaction and MCU recovery
 
     RESET_QUARANTINE =                  8.0             # time between reset and stable readings
 
@@ -351,12 +351,10 @@ class NDIR(object):
             self.obtain_lock()
 
             voltage_bytes = self.__unpack_float(voltage)
-            response = self._command('ll', 0, *voltage_bytes)
+            self._command('ll', 0, *voltage_bytes)
 
         finally:
             self.release_lock()
-
-        return response
 
 
     def cmd_lamp_pwm(self, period):
@@ -364,12 +362,10 @@ class NDIR(object):
             self.obtain_lock()
 
             period_bytes = self.__unpack_int(period)
-            response = self._command('lp', 0, *period_bytes)
+            self._command('lp', 0, *period_bytes)
 
         finally:
             self.release_lock()
-
-        return response
 
 
     def cmd_lamp_run(self, on):
@@ -377,12 +373,10 @@ class NDIR(object):
             self.obtain_lock()
 
             on_byte = 1 if on else 0
-            response = self._command('lr', 0, on_byte)
+            self._command('lr', 0, on_byte)
 
         finally:
             self.release_lock()
-
-        return response
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -471,6 +465,18 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def cmd_fail(self):
+        try:
+            self.obtain_lock()
+
+            self._command('mr', 0)          # should return two bytes - ignore these to cause SPI fail
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def _cmd_eeprom_read_unsigned_int(self, index):
         try:
             self.obtain_lock()
@@ -521,22 +527,8 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_fail(self):
-        try:
-            self.obtain_lock()
-
-            self._command('mr', 0)          # should return two bytes - ignore these
-
-        finally:
-            self.release_lock()
-
-
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def _command(self, cmd, return_size, *params):
-        print("cmd: %s return_size: %d params:%s len:%d" % (cmd, return_size, str(params), len(params)))
+        # print("cmd: %s return_size: %d params:%s len:%d" % (cmd, return_size, str(params), len(params)))
 
         try:
             self.__spi.open()
@@ -563,7 +555,7 @@ class NDIR(object):
 
             response = self.__spi.read_bytes(return_size)
 
-            print("response: %s" % str(response))
+            # print("response: %s" % str(response))
 
             return response[0] if return_size == 1 else response
 
