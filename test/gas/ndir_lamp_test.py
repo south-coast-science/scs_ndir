@@ -33,8 +33,18 @@ try:
     print("version: %s" % version)
     print("-")
 
-    # square wave...
+    voltage = 3.3       # 4.65
+    ndir.cmd_lamp_level(voltage)
+    print("lamp voltage: %0.3f" % voltage)
 
+    period = 1000
+    ndir.cmd_lamp_pwm(period)
+    print("lamp period: %d" % period)
+    print("-")
+
+    ndir.cmd_lamp_run(True)
+
+    '''
     while True:
         if True:
             on = 0x0fff
@@ -70,20 +80,7 @@ try:
 
         if status.uptime.seconds > 100000:
             break
-
-
-    # sawtooth wave...
-
-    while False:
-        for level in range(4096):
-            ndir.cmd_lamp_set(level)
-            # print("lamp: %d ..." % level)
-
-            time.sleep(0.01)
-
-        status = ndir.cmd_status()
-        print("uptime: %s" % status.uptime.timedelta)
-        print("-")
+    '''
 
 
 except ValueError as ex:
@@ -94,9 +91,13 @@ except KeyboardInterrupt:
 
 finally:
     if ndir:
-        ndir.cmd_lamp_set(0)
+        pass
+        # ndir.cmd_lamp_level(0)
+
+        # time.sleep(10.0)
+        # ndir.power_off()
 
     elapsed_time = time.time() - start_time
-    print("elapsed_time: %0.1f" % elapsed_time)
+    print("elapsed time: %0.1f" % elapsed_time)
 
     I2C.close()

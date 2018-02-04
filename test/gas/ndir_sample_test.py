@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
 """
-Created on 11 Dec 2017
+Created on 2 Feb 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
+import time
+
 from scs_core.data.json import JSONify
+from scs_core.sync.interval_timer import IntervalTimer
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
@@ -15,8 +18,6 @@ from scs_ndir.gas.ndir import NDIR
 
 
 # --------------------------------------------------------------------------------------------------------------------
-
-eeprom_addr = 1
 
 try:
     I2C.open(Host.I2C_SENSORS)
@@ -43,31 +44,15 @@ try:
     print("status: %s" % jstr)
     print("-")
 
-    watchdog = ndir.cmd_watchdog_clear()
-    print("-")
+    start_time = time.time()
 
-    v_in_value = ndir.cmd_monitor_raw()
+    timer = IntervalTimer(0.1)
 
-    print("v_in_value: %d" % v_in_value)
+    while timer.true():
+        pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_sample_raw()
+        elapsed_time = time.time() - start_time
 
-    v_in_voltage = ndir.cmd_monitor()
-
-    print("v_in_voltage: %0.3f" % v_in_voltage)
-    print("-")
-
-    pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_sample_raw()
-
-    print("pile_ref_value: %d" % pile_ref_value)
-    print("pile_act_value: %d" % pile_act_value)
-    print("thermistor_value: %d" % thermistor_value)
-    print("-")
-
-    pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.cmd_sample()
-
-    print("pile_ref_voltage: %f" % pile_ref_voltage)
-    print("pile_act_voltage: %f" % pile_act_voltage)
-    print("thermistor_voltage: %f" % thermistor_voltage)
-    print("-")
+        print("%0.3f, %d, %d, %d" % (elapsed_time, pile_ref_value, pile_act_value, thermistor_value))
 
     # ndir.power_off()
 

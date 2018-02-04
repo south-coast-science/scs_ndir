@@ -10,6 +10,7 @@ import time
 
 from scs_core.gas.co2_datum import CO2Datum
 from scs_core.gas.ndir_datum import NDIRDatum
+from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
 
 from scs_dfe.board.io import IO
 
@@ -18,7 +19,6 @@ from scs_host.lock.lock import Lock
 
 from scs_ndir.gas.ndir_status import NDIRStatus
 from scs_ndir.gas.ndir_uptime import NDIRUptime
-from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -30,10 +30,24 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    RECOVERY_TIME =                     1.0             # time between bad SPI interaction and MCU recovery
+
     RESET_QUARANTINE =                  8.0             # time between reset and stable readings
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    __INDEX_TIME_TO_SAMPLE =             0
+    __INDEX_TIME_AFTER_SAMPLE =          1
+    __INDEX_COEFF_B =                    2
+    __INDEX_COEFF_C =                    3
+    __INDEX_THERM_A =                    4
+    __INDEX_THERM_B =                    5
+    __INDEX_THERM_C =                    6
+    __INDEX_THERM_D =                    7
+    __INDEX_ALPHA =                      8
+    __INDEX_BETA_A =                     9
+    __INDEX_T_CAL =                     10
 
     __LOCK_TIMEOUT =                    3.0
 
@@ -42,10 +56,10 @@ class NDIR(object):
 
     __RESET_DELAY =                     2.000           # seconds
     __BOOT_DELAY =                      0.500           # seconds
-    __CMD_DELAY =                       0.002           # seconds
+    __CMD_DELAY =                       0.001           # seconds
 
     __RESPONSE_ACK =                    0x01
-    __RESPONSE_NACK =                   0x00
+    __RESPONSE_NACK =                   0x02
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -53,6 +67,12 @@ class NDIR(object):
     @staticmethod
     def __pack_int(byte_values):
         packed = struct.unpack('h', struct.pack('BB', *byte_values))
+        return packed[0]
+
+
+    @staticmethod
+    def __pack_unsigned_int(byte_values):
+        packed = struct.unpack('H', struct.pack('BB', *byte_values))
         return packed[0]
 
 
@@ -70,6 +90,13 @@ class NDIR(object):
 
 
     @staticmethod
+    def __unpack_byte(value):
+        unpacked = struct.unpack('BB', struct.pack('H', value))
+
+        return unpacked[0]
+
+
+    @staticmethod
     def __unpack_int(value):
         unpacked = struct.unpack('BB', struct.pack('h', value))
 
@@ -77,8 +104,22 @@ class NDIR(object):
 
 
     @staticmethod
+    def __unpack_unsigned_int(value):
+        unpacked = struct.unpack('BB', struct.pack('H', value))
+
+        return unpacked
+
+
+    @staticmethod
     def __unpack_unsigned_long(value):
         unpacked = struct.unpack('BBBB', struct.pack('L', value))
+
+        return unpacked
+
+
+    @staticmethod
+    def __unpack_float(value):
+        unpacked = struct.unpack('BBBB', struct.pack('f', value))
 
         return unpacked
 
@@ -124,7 +165,7 @@ class NDIR(object):
         return NDIRDatum(None, None, None, None)        # TODO: implement sample
 
 
-    # noinspection PyMethodMayBeStatic
+    # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def sample_co2(self, ideal_gas_law):                # TODO: implement sample_co2
         return CO2Datum(None)
 
@@ -222,43 +263,127 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_eeprom_read_unsigned_long(self, addr):
-        try:
-            self.obtain_lock()
-
-            response = self._command('er', 4, addr, 4)
-            value = self.__pack_unsigned_long(response)
-
-        finally:
-            self.release_lock()
-
-        return value
+    def cmd_eeprom_read_time_to_sample(self):
+        return self._cmd_eeprom_read_unsigned_int(self.__INDEX_TIME_TO_SAMPLE)
 
 
-    def cmd_eeprom_write_unsigned_long(self, addr, value):
-        try:
-            self.obtain_lock()
+    def cmd_eeprom_write_time_to_sample(self, time_to_sample):
+        self._cmd_eeprom_write_unsigned_int(self.__INDEX_TIME_TO_SAMPLE, time_to_sample)
 
-            value_bytes = self.__unpack_unsigned_long(value)
-            self._command('ew', 0, addr, 4, *value_bytes)
 
-        finally:
-            self.release_lock()
+    def cmd_eeprom_read_time_after_sample(self):
+        return self._cmd_eeprom_read_unsigned_int(self.__INDEX_TIME_AFTER_SAMPLE)
+
+
+    def cmd_eeprom_write_time_after_sample(self, time_after_sample):
+        self._cmd_eeprom_write_unsigned_int(self.__INDEX_TIME_AFTER_SAMPLE, time_after_sample)
+
+
+    def cmd_eeprom_read_coeff_b(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_COEFF_B)
+
+
+    def cmd_eeprom_write_coeff_b(self, coeff_b):
+        self._cmd_eeprom_write_float(self.__INDEX_COEFF_B, coeff_b)
+
+
+    def cmd_eeprom_read_coeff_c(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_COEFF_C)
+
+
+    def cmd_eeprom_write_coeff_c(self, coeff_c):
+        self._cmd_eeprom_write_float(self.__INDEX_COEFF_C, coeff_c)
+
+
+    def cmd_eeprom_read_therm_a(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_THERM_A)
+
+
+    def cmd_eeprom_write_therm_a(self, therm_a):
+        self._cmd_eeprom_write_float(self.__INDEX_THERM_A, therm_a)
+
+
+    def cmd_eeprom_read_therm_b(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_THERM_B)
+
+
+    def cmd_eeprom_write_therm_b(self, therm_b):
+        self._cmd_eeprom_write_float(self.__INDEX_THERM_B, therm_b)
+
+
+    def cmd_eeprom_read_therm_c(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_THERM_C)
+
+
+    def cmd_eeprom_write_therm_c(self, therm_c):
+        self._cmd_eeprom_write_float(self.__INDEX_THERM_C, therm_c)
+
+
+    def cmd_eeprom_read_therm_d(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_THERM_D)
+
+
+    def cmd_eeprom_write_therm_d(self, therm_d):
+        self._cmd_eeprom_write_float(self.__INDEX_THERM_D, therm_d)
+
+
+    def cmd_eeprom_read_alpha(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_ALPHA)
+
+
+    def cmd_eeprom_write_alpha(self, alpha):
+        self._cmd_eeprom_write_float(self.__INDEX_ALPHA, alpha)
+
+
+    def cmd_eeprom_read_beta_a(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_BETA_A)
+
+
+    def cmd_eeprom_write_beta_a(self, beta_a):
+        self._cmd_eeprom_write_float(self.__INDEX_BETA_A, beta_a)
+
+
+    def cmd_eeprom_read_t_cal(self):
+        return self._cmd_eeprom_read_float(self.__INDEX_T_CAL)
+
+
+    def cmd_eeprom_write_t_cal(self, t_cal):
+        self._cmd_eeprom_write_float(self.__INDEX_T_CAL, t_cal)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_lamp_set(self, level):
+    def cmd_lamp_level(self, voltage):
         try:
             self.obtain_lock()
 
-            level_bytes = self.__unpack_int(level)
-            response = self._command('ls', 0, *level_bytes)
+            voltage_bytes = self.__unpack_float(voltage)
+            self._command('ll', 0, *voltage_bytes)
 
         finally:
             self.release_lock()
 
-        return response
+
+    def cmd_lamp_pwm(self, period):
+        try:
+            self.obtain_lock()
+
+            period_bytes = self.__unpack_int(period)
+            self._command('lp', 0, *period_bytes)
+
+        finally:
+            self.release_lock()
+
+
+    def cmd_lamp_run(self, on):
+        try:
+            self.obtain_lock()
+
+            on_byte = 1 if on else 0
+            self._command('lr', 0, on_byte)
+
+        finally:
+            self.release_lock()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -297,9 +422,9 @@ class NDIR(object):
 
             response = self._command('sr', 6)
 
-            pile_ref_value = self.__pack_int(response[0:2])
-            pile_act_value = self.__pack_int(response[2:4])
-            thermistor_value = self.__pack_int(response[4:6])
+            pile_ref_value = self.__pack_unsigned_int(response[0:2])
+            pile_act_value = self.__pack_unsigned_int(response[2:4])
+            thermistor_value = self.__pack_unsigned_int(response[4:6])
 
         finally:
             self.release_lock()
@@ -325,7 +450,110 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def cmd_record_raw(self, count):
+        try:
+            self.obtain_lock()
+
+            # start recording...
+            count_bytes = self.__unpack_unsigned_int(count)
+            self._command('rs', 0, *count_bytes)
+
+            # wait...
+            time.sleep(1.2)
+
+            # playback...
+            response = self._command('rp', count * 6)
+
+            values = []
+
+            for i in range(0, count * 6, 6):
+                timestamp = self.__pack_unsigned_int(response[i:i + 2])
+                pile_ref_voltage = self.__pack_unsigned_int(response[i + 2:i + 4])
+                pile_act_voltage = self.__pack_unsigned_int(response[i + 4:i + 6])
+
+                values.append((timestamp, pile_ref_voltage, pile_act_voltage))
+
+        finally:
+            self.release_lock()
+
+        return values
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def cmd_fail(self):
+        try:
+            self.obtain_lock()
+
+            self._command('mr', 0)          # should return two bytes - ignore these to cause SPI fail
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def _cmd_eeprom_read_unsigned_int(self, index):
+        try:
+            self.obtain_lock()
+
+            index_byte = self.__unpack_byte(index)
+
+            response = self._command('er', 2, index_byte)
+            value = self.__pack_unsigned_int(response)
+
+        finally:
+            self.release_lock()
+
+        return value
+
+
+    def _cmd_eeprom_write_unsigned_int(self, index, value):
+        try:
+            self.obtain_lock()
+
+            index_byte = self.__unpack_byte(index)
+
+            value_bytes = self.__unpack_unsigned_int(value)
+            self._command('ew', 0, index_byte, *value_bytes)
+
+        finally:
+            self.release_lock()
+
+
+    def _cmd_eeprom_read_float(self, index):
+        try:
+            self.obtain_lock()
+
+            index_byte = self.__unpack_byte(index)
+
+            response = self._command('er', 4, index_byte)
+            value = self.__pack_float(response)
+
+        finally:
+            self.release_lock()
+
+        return value
+
+
+    def _cmd_eeprom_write_float(self, index, value):
+        try:
+            self.obtain_lock()
+
+            index_byte = self.__unpack_byte(index)
+
+            value_bytes = self.__unpack_float(value)
+            self._command('ew', 0, index_byte, *value_bytes)
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def _command(self, cmd, return_size, *params):
+        print("cmd: %s return_size: %d params:%s len:%d" % (cmd, return_size, str(params), len(params)))
+
         try:
             self.__spi.open()
 
@@ -336,10 +564,16 @@ class NDIR(object):
             self.__spi.xfer(request)
             time.sleep(self.__CMD_DELAY)
 
+            if cmd == 'rr':
+                time.sleep(1.01)
+
             # ACK...
             response = self.__spi.read_bytes(1)
 
-            if response[0] != self.__RESPONSE_ACK:
+            if response[0] == 0:
+                raise ValueError("None received for command: %s params: %s" % (cmd, params))
+
+            if response[0] == self.__RESPONSE_NACK:
                 raise ValueError("NACK received for command: %s params: %s" % (cmd, params))
 
             # response...
@@ -347,6 +581,8 @@ class NDIR(object):
                 return None
 
             response = self.__spi.read_bytes(return_size)
+
+            print("response: %s" % str(response))
 
             return response[0] if return_size == 1 else response
 
