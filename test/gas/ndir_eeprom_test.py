@@ -28,6 +28,8 @@ try:
     print("-")
 
     ndir.cmd_eeprom_write_time_to_sample(1234)
+
+    '''
     ndir.cmd_eeprom_write_time_after_sample(4321)
     ndir.cmd_eeprom_write_coeff_b(0.123456)
     ndir.cmd_eeprom_write_coeff_c(-0.123456)
@@ -38,11 +40,14 @@ try:
     ndir.cmd_eeprom_write_alpha(123.456789)
     ndir.cmd_eeprom_write_beta_a(-123.456789)
     ndir.cmd_eeprom_write_t_cal(-1234.567890)
+    '''
+    print("-")
 
     time_to_sample = ndir.cmd_eeprom_read_time_to_sample()
     print("time_to_sample: %d" % time_to_sample)
     print("-")
 
+    '''
     time_after_sample = ndir.cmd_eeprom_read_time_after_sample()
     print("time_after_sample: %d" % time_after_sample)
     print("-")
@@ -82,6 +87,7 @@ try:
     t_cal = ndir.cmd_eeprom_read_t_cal()
     print("t_cal: %f" % t_cal)
     print("-")
+    '''
 
 except ValueError as ex:
     print("ValueError: %s" % ex)

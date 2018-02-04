@@ -27,10 +27,9 @@ try:
     print("status: %s" % status)
     print("-")
 
-    pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_sample_raw()
-    print("%d, %d, %d" % (pile_ref_value, pile_act_value, thermistor_value))
+    data = ndir.cmd_record_raw(200)
 
-    data = ndir.cmd_run_recorder(150)
+    print("timestamp, raw_pile_ref, raw_pile_act")
 
     for datum in data:
         print("%d, %d, %d" % (datum[0], datum[1], datum[2]))

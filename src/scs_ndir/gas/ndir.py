@@ -56,10 +56,10 @@ class NDIR(object):
 
     __RESET_DELAY =                     2.000           # seconds
     __BOOT_DELAY =                      0.500           # seconds
-    __CMD_DELAY =                       0.002           # seconds
+    __CMD_DELAY =                       0.001           # seconds
 
     __RESPONSE_ACK =                    0x01
-    __RESPONSE_NACK =                   0x00
+    __RESPONSE_NACK =                   0x02
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -87,6 +87,13 @@ class NDIR(object):
         packed = struct.unpack('f', struct.pack('BBBB', *byte_values))
 
         return None if math.isnan(packed[0]) else packed[0]
+
+
+    @staticmethod
+    def __unpack_byte(value):
+        unpacked = struct.unpack('BB', struct.pack('H', value))
+
+        return unpacked[0]
 
 
     @staticmethod
@@ -441,12 +448,21 @@ class NDIR(object):
         return pile_ref_voltage, pile_act_voltage, thermistor_voltage
 
 
-    def cmd_run_recorder(self, count):
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def cmd_record_raw(self, count):
         try:
             self.obtain_lock()
 
+            # start recording...
             count_bytes = self.__unpack_unsigned_int(count)
-            response = self._command('rr', count * 6, *count_bytes)
+            self._command('rs', 0, *count_bytes)
+
+            # wait...
+            time.sleep(1.2)
+
+            # playback...
+            response = self._command('rp', count * 6)
 
             values = []
 
@@ -481,7 +497,9 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            response = self._command('er', 2, index)
+            index_byte = self.__unpack_byte(index)
+
+            response = self._command('er', 2, index_byte)
             value = self.__pack_unsigned_int(response)
 
         finally:
@@ -494,8 +512,10 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
+            index_byte = self.__unpack_byte(index)
+
             value_bytes = self.__unpack_unsigned_int(value)
-            self._command('ew', 0, index, *value_bytes)
+            self._command('ew', 0, index_byte, *value_bytes)
 
         finally:
             self.release_lock()
@@ -505,7 +525,9 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            response = self._command('er', 4, index)
+            index_byte = self.__unpack_byte(index)
+
+            response = self._command('er', 4, index_byte)
             value = self.__pack_float(response)
 
         finally:
@@ -518,8 +540,10 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
+            index_byte = self.__unpack_byte(index)
+
             value_bytes = self.__unpack_float(value)
-            self._command('ew', 0, index, *value_bytes)
+            self._command('ew', 0, index_byte, *value_bytes)
 
         finally:
             self.release_lock()
@@ -528,7 +552,7 @@ class NDIR(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def _command(self, cmd, return_size, *params):
-        # print("cmd: %s return_size: %d params:%s len:%d" % (cmd, return_size, str(params), len(params)))
+        print("cmd: %s return_size: %d params:%s len:%d" % (cmd, return_size, str(params), len(params)))
 
         try:
             self.__spi.open()
@@ -541,12 +565,15 @@ class NDIR(object):
             time.sleep(self.__CMD_DELAY)
 
             if cmd == 'rr':
-                time.sleep(1.0)
+                time.sleep(1.01)
 
             # ACK...
             response = self.__spi.read_bytes(1)
 
-            if response[0] != self.__RESPONSE_ACK:
+            if response[0] == 0:
+                raise ValueError("None received for command: %s params: %s" % (cmd, params))
+
+            if response[0] == self.__RESPONSE_NACK:
                 raise ValueError("NACK received for command: %s params: %s" % (cmd, params))
 
             # response...
@@ -555,7 +582,7 @@ class NDIR(object):
 
             response = self.__spi.read_bytes(return_size)
 
-            # print("response: %s" % str(response))
+            print("response: %s" % str(response))
 
             return response[0] if return_size == 1 else response
 
