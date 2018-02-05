@@ -6,6 +6,7 @@ Created on 11 Dec 2017
 
 import math
 import struct
+import sys
 import time
 
 from scs_core.gas.co2_datum import CO2Datum
@@ -87,13 +88,6 @@ class NDIR(object):
         packed = struct.unpack('f', struct.pack('BBBB', *byte_values))
 
         return None if math.isnan(packed[0]) else packed[0]
-
-
-    @staticmethod
-    def __unpack_byte(value):
-        unpacked = struct.unpack('BB', struct.pack('H', value))
-
-        return unpacked[0]
 
 
     @staticmethod
@@ -187,7 +181,7 @@ class NDIR(object):
             self.obtain_lock()
 
             size = len(byte_values)
-            response = self._command('ec', size, size, *byte_values)
+            response = self._command(size, 'ec', (size, ), byte_values)
 
         finally:
             self.release_lock()
@@ -201,10 +195,10 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            response = self._command('vi', 40)
+            response = self._command(40, 'vi')
             id = ''.join([chr(byte) for byte in response]).strip()
 
-            response = self._command('vt', 11)
+            response = self._command(11, 'vt')
             tag = ''.join([chr(byte) for byte in response]).strip()
 
             version = NDIRVersion(id, NDIRTag.construct_from_jdict(tag))
@@ -219,13 +213,13 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            response = self._command('ws', 1)
+            response = self._command(1, 'ws')
             watchdog_reset = bool(response)
 
-            response = self._command('mv', 4)
+            response = self._command(4, 'mv')
             pwr_in = self.__pack_float(response)
 
-            response = self._command('up', 4)
+            response = self._command(4, 'up')
             seconds = self.__pack_unsigned_long(response)
 
             status = NDIRStatus(watchdog_reset, pwr_in, NDIRUptime(seconds))
@@ -242,7 +236,7 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            self._command('wc', 0)
+            self._command(0, 'wc')
 
         finally:
             self.release_lock()
@@ -252,10 +246,10 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            self._command('wr', 0)
+            self._command(0, 'wr')
             time.sleep(NDIR.__RESET_DELAY + NDIR.__BOOT_DELAY)
 
-            self._command('wc', 0)      # clear watchdog flag because reset was commanded
+            self._command(0, 'wc')      # clear watchdog flag because reset was commanded
 
         finally:
             self.release_lock()
@@ -358,7 +352,7 @@ class NDIR(object):
             self.obtain_lock()
 
             voltage_bytes = self.__unpack_float(voltage)
-            self._command('ll', 0, *voltage_bytes)
+            self._command(0, 'll', voltage_bytes)
 
         finally:
             self.release_lock()
@@ -369,7 +363,7 @@ class NDIR(object):
             self.obtain_lock()
 
             period_bytes = self.__unpack_int(period)
-            self._command('lp', 0, *period_bytes)
+            self._command(0, 'lp', period_bytes)
 
         finally:
             self.release_lock()
@@ -380,7 +374,7 @@ class NDIR(object):
             self.obtain_lock()
 
             on_byte = 1 if on else 0
-            self._command('lr', 0, on_byte)
+            self._command(0, 'lr', (on_byte, ))
 
         finally:
             self.release_lock()
@@ -392,7 +386,7 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            response = self._command('mr', 2)
+            response = self._command(2, 'mr')
             v_in_value = self.__pack_int(response)
 
         finally:
@@ -405,7 +399,7 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            response = self._command('mv', 4)
+            response = self._command(4, 'mv')
             v_in_voltage = self.__pack_float(response)
 
         finally:
@@ -420,7 +414,7 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            response = self._command('sr', 6)
+            response = self._command(6, 'sr')
 
             pile_ref_value = self.__pack_unsigned_int(response[0:2])
             pile_act_value = self.__pack_unsigned_int(response[2:4])
@@ -436,7 +430,7 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            response = self._command('sv', 12)
+            response = self._command(12, 'sv')
 
             pile_ref_voltage = self.__pack_float(response[0:4])
             pile_act_voltage = self.__pack_float(response[4:8])
@@ -456,13 +450,13 @@ class NDIR(object):
 
             # start recording...
             count_bytes = self.__unpack_unsigned_int(count)
-            self._command('rs', 0, *count_bytes)
+            self._command(0, 'rs', count_bytes)
 
             # wait...
             time.sleep(1.2)
 
             # playback...
-            response = self._command('rp', count * 6)
+            response = self._command(count * 6, 'rp')
 
             values = []
 
@@ -485,7 +479,7 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            self._command('mr', 0)          # should return two bytes - ignore these to cause SPI fail
+            self._command(0, 'mr')          # should return two bytes - ignore these to cause SPI fail
 
         finally:
             self.release_lock()
@@ -497,9 +491,7 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            index_byte = self.__unpack_byte(index)
-
-            response = self._command('er', 2, index_byte)
+            response = self._command(2, 'er', (index, ))
             value = self.__pack_unsigned_int(response)
 
         finally:
@@ -512,22 +504,22 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            index_byte = self.__unpack_byte(index)
-
             value_bytes = self.__unpack_unsigned_int(value)
-            self._command('ew', 0, index_byte, *value_bytes)
+            response = self._command(0, 'ew', (index, ), value_bytes)
+
+            time.sleep(0.01)
 
         finally:
             self.release_lock()
+
+        return response
 
 
     def _cmd_eeprom_read_float(self, index):
         try:
             self.obtain_lock()
 
-            index_byte = self.__unpack_byte(index)
-
-            response = self._command('er', 4, index_byte)
+            response = self._command(4, 'er', (index, ))
             value = self.__pack_float(response)
 
         finally:
@@ -540,54 +532,65 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            index_byte = self.__unpack_byte(index)
-
             value_bytes = self.__unpack_float(value)
-            self._command('ew', 0, index_byte, *value_bytes)
+            response = self._command(0, 'ew', (index, ), value_bytes)
+
+            time.sleep(0.01)
 
         finally:
             self.release_lock()
 
+        return response
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def _command(self, cmd, return_size, *params):
-        print("cmd: %s return_size: %d params:%s len:%d" % (cmd, return_size, str(params), len(params)))
+    def _command(self, return_size, cmd, param_group_1=None, param_group_2=None):
+        print("return_size: %d cmd: %s param_group_1:%s param_group_2:%s" %
+              (return_size, cmd, str(param_group_1), str(param_group_2)), file=sys.stderr)
 
         try:
             self.__spi.open()
 
-            # request...
-            request = [ord(cmd[0]), ord(cmd[1])]
-            request.extend(params)
+            # transfer...
+            self._command_xfer((ord(cmd[0]), ord(cmd[1])))
 
-            self.__spi.xfer(request)
+            if param_group_1:
+                self._command_xfer(param_group_1)
+
+            if param_group_2:
+                self._command_xfer(param_group_2)
+
+            # wait...
             time.sleep(self.__CMD_DELAY)
 
-            if cmd == 'rr':
-                time.sleep(1.01)
-
-            # ACK...
+            # ACK / NACK...
             response = self.__spi.read_bytes(1)
 
             if response[0] == 0:
-                raise ValueError("None received for command: %s params: %s" % (cmd, params))
+                raise ValueError("None received for command: %s params: %s %s" % (cmd, param_group_1, param_group_2))
 
             if response[0] == self.__RESPONSE_NACK:
-                raise ValueError("NACK received for command: %s params: %s" % (cmd, params))
+                raise ValueError("NACK received for command: %s params: %s %s" % (cmd, param_group_1, param_group_2))
 
             # response...
             if return_size < 1:
                 return None
 
             response = self.__spi.read_bytes(return_size)
-
-            print("response: %s" % str(response))
+            print("response: %s" % str(response), file=sys.stderr)
 
             return response[0] if return_size == 1 else response
 
         finally:
             self.__spi.close()
+
+
+    def _command_xfer(self, values):
+        request = []
+        request.extend(values)
+
+        self.__spi.xfer(request)
 
 
     # ----------------------------------------------------------------------------------------------------------------
