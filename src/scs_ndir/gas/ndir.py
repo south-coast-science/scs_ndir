@@ -505,14 +505,12 @@ class NDIR(object):
             self.obtain_lock()
 
             value_bytes = self.__unpack_unsigned_int(value)
-            response = self._command(0, 'ew', (index, ), value_bytes)
+            self._command(0, 'ew', (index, ), value_bytes)
 
             time.sleep(0.01)
 
         finally:
             self.release_lock()
-
-        return response
 
 
     def _cmd_eeprom_read_float(self, index):
@@ -533,14 +531,12 @@ class NDIR(object):
             self.obtain_lock()
 
             value_bytes = self.__unpack_float(value)
-            response = self._command(0, 'ew', (index, ), value_bytes)
+            self._command(0, 'ew', (index, ), value_bytes)
 
             time.sleep(0.01)
 
         finally:
             self.release_lock()
-
-        return response
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -575,7 +571,7 @@ class NDIR(object):
 
             # response...
             if return_size < 1:
-                return None
+                return
 
             response = self.__spi.read_bytes(return_size)
             print("response: %s" % str(response), file=sys.stderr)
@@ -587,7 +583,7 @@ class NDIR(object):
 
 
     def _command_xfer(self, values):
-        request = []
+        request = []                        # convert tuples to arrays
         request.extend(values)
 
         self.__spi.xfer(request)
