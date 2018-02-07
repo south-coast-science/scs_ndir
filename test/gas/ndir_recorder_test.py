@@ -29,7 +29,7 @@ try:
 
     data = ndir.cmd_record_raw(200)
 
-    print("timestamp, raw_pile_ref, raw_pile_act")
+    print("rec, raw_pile_ref, raw_pile_act")
 
     for datum in data:
         print("%d, %d, %d" % (datum[0], datum[1], datum[2]))

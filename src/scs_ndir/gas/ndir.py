@@ -453,7 +453,7 @@ class NDIR(object):
             self._command(0, 'rs', count_bytes)
 
             # wait...
-            time.sleep(1.2)
+            time.sleep(2.2)
 
             # playback...
             response = self._command(count * 6, 'rp')
@@ -574,7 +574,7 @@ class NDIR(object):
                 return
 
             response = self.__spi.read_bytes(return_size)
-            print("response: %s" % str(response), file=sys.stderr)
+            # print("response: %s" % str(response), file=sys.stderr)
 
             return response[0] if return_size == 1 else response
 
@@ -583,7 +583,7 @@ class NDIR(object):
 
 
     def _command_xfer(self, values):
-        request = []                        # convert tuples to arrays
+        request = []                        # convert tuple to array
         request.extend(values)
 
         self.__spi.xfer(request)
