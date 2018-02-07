@@ -6,6 +6,7 @@ Created on 2 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
+import sys
 import time
 
 from scs_core.data.json import JSONify
@@ -23,36 +24,35 @@ try:
     I2C.open(Host.I2C_SENSORS)
 
     ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
-    print(ndir)
-    print("-")
+    print(ndir, file=sys.stderr)
+    print("-", file=sys.stderr)
 
     ndir.power_on()
-
-    echo = ndir.cmd_echo([12, 34, 56, 78, 90])
-    print("echo: %s" % echo)
-    print("-")
 
     version = ndir.cmd_version()
     jstr = JSONify.dumps(version)
 
-    print("version: %s" % jstr)
-    print("-")
+    print("version: %s" % jstr, file=sys.stderr)
+    print("-", file=sys.stderr)
 
     status = ndir.cmd_status()
     jstr = JSONify.dumps(status)
 
-    print("status: %s" % jstr)
-    print("-")
+    print("status: %s" % jstr, file=sys.stderr)
+    print("-", file=sys.stderr)
 
     start_time = time.time()
 
-    timer = IntervalTimer(0.1)
+    timer = IntervalTimer(0.01)
 
-    while timer.true():
+    print("rec, raw_pile_ref, raw_pile_act, thermistor")
+
+    for _ in timer.range(1000):
         pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_sample_raw()
         elapsed_time = time.time() - start_time
 
         print("%0.3f, %d, %d, %d" % (elapsed_time, pile_ref_value, pile_act_value, thermistor_value))
+        sys.stdout.flush()
 
     # ndir.power_off()
 

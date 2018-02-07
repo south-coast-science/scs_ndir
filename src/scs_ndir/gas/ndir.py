@@ -444,13 +444,21 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_record_raw(self, count):
+    def cmd_record_raw(self, delay, interval, count):
         try:
             self.obtain_lock()
 
             # start recording...
+            delay_bytes = self.__unpack_unsigned_int(delay)
+            interval_bytes = self.__unpack_unsigned_int(interval)
             count_bytes = self.__unpack_unsigned_int(count)
-            self._command(0, 'rs', count_bytes)
+
+            param_bytes = []
+            param_bytes.extend(delay_bytes)
+            param_bytes.extend(interval_bytes)
+            param_bytes.extend(count_bytes)
+
+            self._command(0, 'rs', param_bytes)
 
             # wait...
             time.sleep(2.2)
