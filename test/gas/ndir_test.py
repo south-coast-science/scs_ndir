@@ -27,10 +27,6 @@ try:
 
     ndir.power_on()
 
-    echo = ndir.cmd_echo([12, 34, 56, 78, 90])
-    print("echo: %s" % echo)
-    print("-")
-
     version = ndir.cmd_version()
     jstr = JSONify.dumps(version)
 
@@ -41,9 +37,6 @@ try:
     jstr = JSONify.dumps(status)
 
     print("status: %s" % jstr)
-    print("-")
-
-    watchdog = ndir.cmd_watchdog_clear()
     print("-")
 
     v_in_value = ndir.cmd_monitor_raw()
