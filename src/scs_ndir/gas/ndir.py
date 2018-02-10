@@ -236,20 +236,24 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            self._cmd_eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
+            self._eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
+            self._eeprom_write_float(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
 
-            self._cmd_eeprom_write_float(NDIRCalib.INDEX_COEFF_B, calib.coeff_b)
-            self._cmd_eeprom_write_float(NDIRCalib.INDEX_COEFF_C, calib.coeff_c)
+            self._eeprom_write_unsigned_int(NDIRCalib.INDEX_SPAN, calib.span)
 
-            self._cmd_eeprom_write_float(NDIRCalib.INDEX_THERM_A, calib.therm_a)
-            self._cmd_eeprom_write_float(NDIRCalib.INDEX_THERM_B, calib.therm_b)
-            self._cmd_eeprom_write_float(NDIRCalib.INDEX_THERM_C, calib.therm_c)
-            self._cmd_eeprom_write_float(NDIRCalib.INDEX_THERM_D, calib.therm_d)
+            self._eeprom_write_float(NDIRCalib.INDEX_LIN_B, calib.lin_b)
+            self._eeprom_write_float(NDIRCalib.INDEX_LIN_C, calib.lin_c)
 
-            self._cmd_eeprom_write_float(NDIRCalib.INDEX_ALPHA, calib.alpha)
-            self._cmd_eeprom_write_float(NDIRCalib.INDEX_BETA_A, calib.beta_a)
+            self._eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
+            self._eeprom_write_float(NDIRCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
+            self._eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_A, calib.temp_beta_a)
 
-            self._cmd_eeprom_write_float(NDIRCalib.INDEX_T_CAL, calib.t_cal)
+            self._eeprom_write_float(NDIRCalib.INDEX_THERM_A, calib.therm_a)
+            self._eeprom_write_float(NDIRCalib.INDEX_THERM_B, calib.therm_b)
+            self._eeprom_write_float(NDIRCalib.INDEX_THERM_C, calib.therm_c)
+            self._eeprom_write_float(NDIRCalib.INDEX_THERM_D, calib.therm_d)
+
+            self._eeprom_write_float(NDIRCalib.INDEX_T_CAL, calib.t_cal)
 
         finally:
             self.release_lock()
@@ -259,50 +263,33 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            lamp_period = self._cmd_eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
+            lamp_period = self._eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
+            lamp_voltage = self._eeprom_read_float(NDIRCalib.INDEX_LAMP_VOLTAGE)
 
-            coeff_b = self._cmd_eeprom_read_float(NDIRCalib.INDEX_COEFF_B)
-            coeff_c = self._cmd_eeprom_read_float(NDIRCalib.INDEX_COEFF_C)
+            span = self._eeprom_read_unsigned_int(NDIRCalib.INDEX_SPAN)
 
-            therm_a = self._cmd_eeprom_read_float(NDIRCalib.INDEX_THERM_A)
-            therm_b = self._cmd_eeprom_read_float(NDIRCalib.INDEX_THERM_B)
-            therm_c = self._cmd_eeprom_read_float(NDIRCalib.INDEX_THERM_C)
-            therm_d = self._cmd_eeprom_read_float(NDIRCalib.INDEX_THERM_D)
+            lin_b = self._eeprom_read_float(NDIRCalib.INDEX_LIN_B)
+            lin_c = self._eeprom_read_float(NDIRCalib.INDEX_LIN_C)
 
-            alpha = self._cmd_eeprom_read_float(NDIRCalib.INDEX_ALPHA)
-            beta_a = self._cmd_eeprom_read_float(NDIRCalib.INDEX_BETA_A)
+            temp_beta_o = self._eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_O)
+            temp_alpha = self._eeprom_read_float(NDIRCalib.INDEX_TEMP_ALPHA)
+            temp_beta_a = self._eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_A)
 
-            t_cal = self._cmd_eeprom_read_float(NDIRCalib.INDEX_T_CAL)
+            therm_a = self._eeprom_read_float(NDIRCalib.INDEX_THERM_A)
+            therm_b = self._eeprom_read_float(NDIRCalib.INDEX_THERM_B)
+            therm_c = self._eeprom_read_float(NDIRCalib.INDEX_THERM_C)
+            therm_d = self._eeprom_read_float(NDIRCalib.INDEX_THERM_D)
 
-            return NDIRCalib(lamp_period, coeff_b, coeff_c, therm_a, therm_b, therm_c, therm_d, alpha, beta_a, t_cal)
+            t_cal = self._eeprom_read_float(NDIRCalib.INDEX_T_CAL)
+
+            return NDIRCalib(lamp_period, lamp_voltage, span, lin_b, lin_c, temp_beta_o, temp_alpha, temp_beta_a,
+                             therm_a, therm_b, therm_c, therm_d, t_cal)
 
         finally:
             self.release_lock()
 
 
     # ----------------------------------------------------------------------------------------------------------------
-
-    def cmd_lamp_level(self, voltage):
-        try:
-            self.obtain_lock()
-
-            voltage_bytes = self.__unpack_float(voltage)
-            self._command(0, 'll', voltage_bytes)
-
-        finally:
-            self.release_lock()
-
-
-    def cmd_lamp_pwm(self, period):
-        try:
-            self.obtain_lock()
-
-            period_bytes = self.__unpack_int(period)
-            self._command(0, 'lp', period_bytes)
-
-        finally:
-            self.release_lock()
-
 
     def cmd_lamp_run(self, on):
         try:
@@ -432,28 +419,28 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def _cmd_eeprom_read_unsigned_int(self, index):
+    def _eeprom_read_unsigned_int(self, index):
         response = self._command(2, 'er', (index, ))
         value = self.__pack_unsigned_int(response)
 
         return value
 
 
-    def _cmd_eeprom_write_unsigned_int(self, index, value):
+    def _eeprom_write_unsigned_int(self, index, value):
         value_bytes = self.__unpack_unsigned_int(value)
         self._command(0, 'ew', (index, ), value_bytes)
 
         time.sleep(self.__EEPROM_WRITE_DELAY)
 
 
-    def _cmd_eeprom_read_float(self, index):
+    def _eeprom_read_float(self, index):
         response = self._command(4, 'er', (index, ))
         value = self.__pack_float(response)
 
         return value
 
 
-    def _cmd_eeprom_write_float(self, index, value):
+    def _eeprom_write_float(self, index, value):
         value_bytes = self.__unpack_float(value)
         self._command(0, 'ew', (index, ), value_bytes)
 
