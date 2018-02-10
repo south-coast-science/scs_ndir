@@ -9,7 +9,7 @@ Alphasense Application Note AAN 201-06
 http://www.alphasense.com/WEB1213/wp-content/uploads/2014/12/AAN_201-06.pdf
 
 example JSON:
-{"lamp-period": 1000, "lamp-voltage": 5.0, "span": 1, "lin-b": 0.000325, "lin-c": 0.9363,
+{"lamp-period": 1000, "lamp-voltage": 5.0, "span": 1, "linear-b": 0.000325, "linear-c": 0.9363,
 "temp-beta-o": 1e-05, "temp-alpha": 0.00056, "temp-beta-a": 1e-05,
 "therm-a": 0.0, "therm-b": 0.0, "therm-c": 0.0, "therm-d": 0.0,
 "t-cal": 1.0}
@@ -28,7 +28,7 @@ class NDIRCalib(PersistentJSONable):
     classdocs
     """
 
-    CALIB_IAQ = '{"lamp-period": 1000, "lamp-voltage": 5.0, "span": 1, "lin-b": 0.000325, "lin-c": 0.9363, ' \
+    CALIB_IAQ = '{"lamp-period": 1000, "lamp-voltage": 5.0, "span": 1, "linear-b": 0.000325, "linear-c": 0.9363, ' \
                 '"temp-beta-o": 0.00001, "temp-alpha": 0.00056, "temp-beta-a": 0.00001, ' \
                 '"therm-a": 0.0, "therm-b": 0.0, "therm-c": 0.0, "therm-d": 0.0, ' \
                 '"t-cal": 1.0}'
@@ -38,11 +38,14 @@ class NDIRCalib(PersistentJSONable):
     SPAN_COMBUSTION =                3              # 0 to 20%
     SPAN_INDUSTRIAL =                4              # 0 to 100%
 
+    # common fields...
     INDEX_LAMP_PERIOD =              0
     INDEX_LAMP_VOLTAGE =             1
     INDEX_SPAN =                     2
-    INDEX_LIN_B =                    3
-    INDEX_LIN_C =                    4
+
+    # span fields...
+    INDEX_LINEAR_B =                 3
+    INDEX_LINEAR_C =                 4
     INDEX_TEMP_BETA_O =              5
     INDEX_TEMP_ALPHA =               6
     INDEX_TEMP_BETA_A =              7
@@ -71,8 +74,8 @@ class NDIRCalib(PersistentJSONable):
 
         span = jdict.get('span')
 
-        lin_b = jdict.get('lin-b')
-        lin_c = jdict.get('lin-c')
+        linear_b = jdict.get('linear-b')
+        linear_c = jdict.get('linear-c')
 
         temp_beta_o = jdict.get('temp-beta-o')
         temp_alpha = jdict.get('temp-alpha')
@@ -85,13 +88,13 @@ class NDIRCalib(PersistentJSONable):
 
         t_cal = jdict.get('t-cal')
 
-        return NDIRCalib(lamp_period, lamp_voltage, span, lin_b, lin_c, temp_beta_o, temp_alpha, temp_beta_a,
+        return NDIRCalib(lamp_period, lamp_voltage, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a,
                          therm_a, therm_b, therm_c, therm_d, t_cal)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, lamp_period, lamp_voltage, span, lin_b, lin_c, temp_beta_o, temp_alpha, temp_beta_a,
+    def __init__(self, lamp_period, lamp_voltage, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a,
                  therm_a, therm_b, therm_c, therm_d, t_cal):
         """
         Constructor
@@ -103,8 +106,8 @@ class NDIRCalib(PersistentJSONable):
 
         self.__span = span
 
-        self.__lin_b = Datum.float(lin_b, 6)
-        self.__lin_c = Datum.float(lin_c, 6)
+        self.__linear_b = Datum.float(linear_b, 6)
+        self.__linear_c = Datum.float(linear_c, 6)
 
         self.__temp_beta_o = Datum.float(temp_beta_o, 6)
         self.__temp_alpha = Datum.float(temp_alpha, 6)
@@ -136,13 +139,13 @@ class NDIRCalib(PersistentJSONable):
 
 
     @property
-    def lin_b(self):
-        return self.__lin_b
+    def linear_b(self):
+        return self.__linear_b
 
 
     @property
-    def lin_c(self):
-        return self.__lin_c
+    def linear_c(self):
+        return self.__linear_c
 
 
     @property
@@ -195,8 +198,8 @@ class NDIRCalib(PersistentJSONable):
 
         jdict['span'] = self.span
 
-        jdict['lin-b'] = self.lin_b
-        jdict['lin-c'] = self.lin_c
+        jdict['linear-b'] = self.linear_b
+        jdict['linear-c'] = self.linear_c
 
         jdict['temp-beta-o'] = self.temp_beta_o
         jdict['temp-alpha'] = self.temp_alpha
@@ -215,10 +218,10 @@ class NDIRCalib(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRCalib:{lamp_period:%s, lamp_voltage:%s, span:%s, lin_b:%s, lin_c:%s, " \
+        return "NDIRCalib:{lamp_period:%s, lamp_voltage:%s, span:%s, linear_b:%s, linear_c:%s, " \
                "temp_beta_o:%s, temp_alpha:%s, temp_beta_a:%s, therm_a:%s, therm_b:%s, therm_c:%s, therm_d:%s, " \
                "t_cal:%s}" %  \
-               (self.lamp_period, self.lamp_voltage, self.span, self.lin_b, self.lin_c,
+               (self.lamp_period, self.lamp_voltage, self.span, self.linear_b, self.linear_c,
                 self.temp_beta_o, self.temp_alpha, self.temp_beta_a,
                 self.therm_a, self.therm_b, self.therm_c, self.therm_d,
                 self.t_cal)

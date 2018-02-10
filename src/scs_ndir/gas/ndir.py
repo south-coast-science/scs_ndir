@@ -39,18 +39,18 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    __LOCK_TIMEOUT =                    3.0
-
-    __SPI_CLOCK =                       488000
-    __SPI_MODE =                        1
+    __LOCK_TIMEOUT =                    4.0             # seconds
 
     __RESET_DELAY =                     2.000           # seconds
     __BOOT_DELAY =                      0.500           # seconds
     __CMD_DELAY =                       0.001           # seconds
-    __EEPROM_WRITE_DELAY =              0.01            # seconds
+    __EEPROM_WRITE_DELAY =              0.010           # seconds
 
     __RESPONSE_ACK =                    0x01
     __RESPONSE_NACK =                   0x02
+
+    __SPI_CLOCK =                       488000
+    __SPI_MODE =                        1
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -241,8 +241,8 @@ class NDIR(object):
 
             self._eeprom_write_unsigned_int(NDIRCalib.INDEX_SPAN, calib.span)
 
-            self._eeprom_write_float(NDIRCalib.INDEX_LIN_B, calib.lin_b)
-            self._eeprom_write_float(NDIRCalib.INDEX_LIN_C, calib.lin_c)
+            self._eeprom_write_float(NDIRCalib.INDEX_LINEAR_B, calib.linear_b)
+            self._eeprom_write_float(NDIRCalib.INDEX_LINEAR_C, calib.linear_c)
 
             self._eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
             self._eeprom_write_float(NDIRCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
@@ -268,8 +268,8 @@ class NDIR(object):
 
             span = self._eeprom_read_unsigned_int(NDIRCalib.INDEX_SPAN)
 
-            lin_b = self._eeprom_read_float(NDIRCalib.INDEX_LIN_B)
-            lin_c = self._eeprom_read_float(NDIRCalib.INDEX_LIN_C)
+            linear_b = self._eeprom_read_float(NDIRCalib.INDEX_LINEAR_B)
+            linear_c = self._eeprom_read_float(NDIRCalib.INDEX_LINEAR_C)
 
             temp_beta_o = self._eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_O)
             temp_alpha = self._eeprom_read_float(NDIRCalib.INDEX_TEMP_ALPHA)
@@ -282,7 +282,7 @@ class NDIR(object):
 
             t_cal = self._eeprom_read_float(NDIRCalib.INDEX_T_CAL)
 
-            return NDIRCalib(lamp_period, lamp_voltage, span, lin_b, lin_c, temp_beta_o, temp_alpha, temp_beta_a,
+            return NDIRCalib(lamp_period, lamp_voltage, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a,
                              therm_a, therm_b, therm_c, therm_d, t_cal)
 
         finally:
