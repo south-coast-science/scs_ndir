@@ -27,12 +27,12 @@ try:
     print("status: %s" % status)
     print("-")
 
-    data = ndir.cmd_record_raw(0, 5, 200)
+    data = ndir.cmd_record_raw(0, 5, 100)
 
-    print("rec, raw_pile_ref, raw_pile_act, thermistor")
+    print("rec, raw_pile_ref, raw_pile_act")
 
     for datum in data:
-        print("%d, %d, %d, %d" % datum)
+        print("%d, %d, %d" % datum)
 
 
 except ValueError as ex:

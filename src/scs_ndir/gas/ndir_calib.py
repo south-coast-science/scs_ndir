@@ -3,7 +3,7 @@ Created on 8 Feb 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-manages EEPROM parameters for the NDIR
+NDIR EEPROM parameters
 
 Alphasense Application Note AAN 201-06
 http://www.alphasense.com/WEB1213/wp-content/uploads/2014/12/AAN_201-06.pdf

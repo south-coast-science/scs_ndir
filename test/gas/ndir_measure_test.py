@@ -51,7 +51,7 @@ try:
     print("rec, raw_pile_ref, raw_pile_act, thermistor")
 
     for _ in timer.range(samples):
-        pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_sample_raw()
+        pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_measure_raw()
         elapsed_time = time.time() - start_time
 
         print("%0.3f, %d, %d, %d" % (elapsed_time, pile_ref_value, pile_act_value, thermistor_value))

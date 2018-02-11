@@ -191,7 +191,7 @@ class NDIR(object):
             response = self._command(1, 'ws')
             watchdog_reset = bool(response)
 
-            response = self._command(4, 'mv')
+            response = self._command(4, 'iv')
             pwr_in = self.__pack_float(response)
 
             response = self._command(4, 'up')
@@ -304,11 +304,11 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_monitor_raw(self):
+    def cmd_input_raw(self):
         try:
             self.obtain_lock()
 
-            response = self._command(2, 'mr')
+            response = self._command(2, 'ir')
             v_in_value = self.__pack_int(response)
 
             return v_in_value
@@ -317,11 +317,11 @@ class NDIR(object):
             self.release_lock()
 
 
-    def cmd_monitor(self):
+    def cmd_input(self):
         try:
             self.obtain_lock()
 
-            response = self._command(4, 'mv')
+            response = self._command(4, 'iv')
             v_in_voltage = self.__pack_float(response)
 
             return v_in_voltage
@@ -332,11 +332,11 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_sample_raw(self):
+    def cmd_measure_raw(self):
         try:
             self.obtain_lock()
 
-            response = self._command(6, 'sr')
+            response = self._command(6, 'mr')
 
             pile_ref_value = self.__pack_unsigned_int(response[0:2])
             pile_act_value = self.__pack_unsigned_int(response[2:4])
@@ -348,11 +348,11 @@ class NDIR(object):
             self.release_lock()
 
 
-    def cmd_sample(self):
+    def cmd_measure(self):
         try:
             self.obtain_lock()
 
-            response = self._command(12, 'sv')
+            response = self._command(12, 'mv')
 
             pile_ref_voltage = self.__pack_float(response[0:4])
             pile_act_voltage = self.__pack_float(response[4:8])
@@ -387,17 +387,16 @@ class NDIR(object):
             time.sleep(2.2)
 
             # playback...
-            response = self._command(count * 8, 'rp')
+            response = self._command(count * 6, 'rp')
 
             values = []
 
-            for i in range(0, count * 8, 8):
+            for i in range(0, count * 6, 6):
                 timestamp = self.__pack_unsigned_int(response[i:i + 2])
                 pile_ref_voltage = self.__pack_unsigned_int(response[i + 2:i + 4])
                 pile_act_voltage = self.__pack_unsigned_int(response[i + 4:i + 6])
-                thermistor_voltage = self.__pack_unsigned_int(response[i + 6:i + 8])
 
-                values.append((timestamp, pile_ref_voltage, pile_act_voltage, thermistor_voltage))
+                values.append((timestamp, pile_ref_voltage, pile_act_voltage))
 
             return values
 
