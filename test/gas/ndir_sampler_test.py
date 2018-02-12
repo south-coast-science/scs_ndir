@@ -32,7 +32,7 @@ try:
     print("-")
 
     pile_ref_min, pile_act_min, thermistor_min, pile_ref_max, pile_act_max, thermistor_max, \
-    pile_ref_amplitude, pile_act_amplitude, thermistor_average = \
+        pile_ref_amplitude, pile_act_amplitude, thermistor_average = \
         ndir.cmd_sample_raw(max_scan_deferral, min_scan_deferral)
 
     print("pile_ref_min: %s" % pile_ref_min)
