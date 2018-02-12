@@ -21,7 +21,7 @@ from scs_ndir.gas.ndir import NDIR
 # --------------------------------------------------------------------------------------------------------------------
 
 interval = 0.01             # 10 mS is fastest possible
-samples = 1000              # 10 mS * 1000 = 10 S
+samples = 200               # 10 mS * 1000 = 10 S
 
 try:
     I2C.open(Host.I2C_SENSORS)

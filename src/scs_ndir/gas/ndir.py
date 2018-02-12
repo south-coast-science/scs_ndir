@@ -170,9 +170,11 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
+            # version ident...
             response = self._command(40, 'vi')
             id = ''.join([chr(byte) for byte in response]).strip()
 
+            # version tag...
             response = self._command(11, 'vt')
             tag = ''.join([chr(byte) for byte in response]).strip()
 
@@ -188,12 +190,15 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
+            # watchdog restart status...
             response = self._command(1, 'ws')
             watchdog_reset = bool(response)
 
+            # input voltage...
             response = self._command(4, 'iv')
             pwr_in = self.__pack_float(response)
 
+            # uptime...
             response = self._command(4, 'up')
             seconds = self.__pack_unsigned_long(response)
 
@@ -221,10 +226,12 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
+            # force reset...
             self._command(0, 'wr')
             time.sleep(NDIR.__RESET_DELAY + NDIR.__BOOT_DELAY)
 
-            self._command(0, 'wc')      # clear watchdog flag because reset was commanded
+            # clear status...
+            self._command(0, 'wc')
 
         finally:
             self.release_lock()
@@ -236,11 +243,13 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
+            # common fields...
             self._eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
             self._eeprom_write_float(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
 
             self._eeprom_write_unsigned_int(NDIRCalib.INDEX_SPAN, calib.span)
 
+            # span fields...
             self._eeprom_write_float(NDIRCalib.INDEX_LINEAR_B, calib.linear_b)
             self._eeprom_write_float(NDIRCalib.INDEX_LINEAR_C, calib.linear_c)
 
@@ -263,11 +272,13 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
+            # common fields...
             lamp_period = self._eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
             lamp_voltage = self._eeprom_read_float(NDIRCalib.INDEX_LAMP_VOLTAGE)
 
             span = self._eeprom_read_unsigned_int(NDIRCalib.INDEX_SPAN)
 
+            # span fields...
             linear_b = self._eeprom_read_float(NDIRCalib.INDEX_LINEAR_B)
             linear_c = self._eeprom_read_float(NDIRCalib.INDEX_LINEAR_C)
 
@@ -364,7 +375,6 @@ class NDIR(object):
             self.release_lock()
 
 
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def cmd_record_raw(self, delay, interval, count):
@@ -399,6 +409,47 @@ class NDIR(object):
                 values.append((timestamp, pile_ref_voltage, pile_act_voltage))
 
             return values
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def cmd_sample_raw(self, max_scan_deferral, min_scan_deferral):
+        try:
+            self.obtain_lock()
+
+            # start recording...
+            max_scan_deferral_bytes = self.__unpack_unsigned_int(max_scan_deferral)
+            min_scan_deferral_bytes = self.__unpack_unsigned_int(min_scan_deferral)
+
+            param_bytes = []
+            param_bytes.extend(max_scan_deferral_bytes)
+            param_bytes.extend(min_scan_deferral_bytes)
+
+            self._command(0, 'ss', param_bytes)
+
+            # wait...
+            time.sleep(2.2)
+
+            # report...
+            response = self._command(18, 'sr')
+
+            pile_ref_min = self.__pack_unsigned_int(response[0:2])
+            pile_act_min = self.__pack_unsigned_int(response[2:4])
+            thermistor_min = self.__pack_unsigned_int(response[4:6])
+
+            pile_ref_max = self.__pack_unsigned_int(response[6:8])
+            pile_act_max = self.__pack_unsigned_int(response[8:10])
+            thermistor_max = self.__pack_unsigned_int(response[10:12])
+
+            pile_ref_amplitude = self.__pack_unsigned_int(response[12:14])
+            pile_act_amplitude = self.__pack_unsigned_int(response[14:16])
+            thermistor_average = self.__pack_unsigned_int(response[16:18])
+
+            return pile_ref_min, pile_act_min, thermistor_min, pile_ref_max, pile_act_max, thermistor_max, \
+                   pile_ref_amplitude, pile_act_amplitude, thermistor_average
 
         finally:
             self.release_lock()
