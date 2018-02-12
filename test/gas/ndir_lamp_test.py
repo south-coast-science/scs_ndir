@@ -33,54 +33,11 @@ try:
     print("version: %s" % version)
     print("-")
 
-    voltage = 3.3       # 4.65
-    ndir.cmd_lamp_level(voltage)
-    print("lamp voltage: %0.3f" % voltage)
 
-    period = 1000
-    ndir.cmd_lamp_pwm(period)
-    print("lamp period: %d" % period)
-    print("-")
+    ndir.cmd_lamp_run(False)
+    time.sleep(5.0)
 
     ndir.cmd_lamp_run(True)
-
-    '''
-    while True:
-        if True:
-            on = 0x0fff
-            ndir.cmd_lamp_set(on)
-            print("lamp: %d ..." % on)
-
-            time.sleep(4)
-
-            pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.cmd_sample()
-
-            print("pile_ref_voltage: %f" % pile_ref_voltage)
-            print("pile_act_voltage: %f" % pile_act_voltage)
-            print("thermistor_voltage: %f" % thermistor_voltage)
-            print("-")
-
-        if True:
-            on = 0x0000
-            ndir.cmd_lamp_set(on)
-            print("lamp: %d ..." % on)
-
-            time.sleep(4)
-
-            pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.cmd_sample()
-
-            print("pile_ref_voltage: %f" % pile_ref_voltage)
-            print("pile_act_voltage: %f" % pile_act_voltage)
-            print("thermistor_voltage: %f" % thermistor_voltage)
-            print("-")
-
-        status = ndir.cmd_status()
-        print("uptime: %s" % status.uptime.timedelta)
-        print("-")
-
-        if status.uptime.seconds > 100000:
-            break
-    '''
 
 
 except ValueError as ex:

@@ -20,6 +20,9 @@ from scs_ndir.gas.ndir import NDIR
 
 # --------------------------------------------------------------------------------------------------------------------
 
+interval = 0.01             # 10 mS is fastest possible
+samples = 200               # 10 mS * 1000 = 10 S
+
 try:
     I2C.open(Host.I2C_SENSORS)
 
@@ -43,12 +46,12 @@ try:
 
     start_time = time.time()
 
-    timer = IntervalTimer(0.01)
+    timer = IntervalTimer(interval)
 
     print("rec, raw_pile_ref, raw_pile_act, thermistor")
 
-    for _ in timer.range(1000):
-        pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_sample_raw()
+    for _ in timer.range(samples):
+        pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_measure_raw()
         elapsed_time = time.time() - start_time
 
         print("%0.3f, %d, %d, %d" % (elapsed_time, pile_ref_value, pile_act_value, thermistor_value))

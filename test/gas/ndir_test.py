@@ -27,10 +27,6 @@ try:
 
     ndir.power_on()
 
-    echo = ndir.cmd_echo([12, 34, 56, 78, 90])
-    print("echo: %s" % echo)
-    print("-")
-
     version = ndir.cmd_version()
     jstr = JSONify.dumps(version)
 
@@ -43,26 +39,23 @@ try:
     print("status: %s" % jstr)
     print("-")
 
-    watchdog = ndir.cmd_watchdog_clear()
-    print("-")
-
-    v_in_value = ndir.cmd_monitor_raw()
+    v_in_value = ndir.cmd_input_raw()
 
     print("v_in_value: %d" % v_in_value)
 
-    v_in_voltage = ndir.cmd_monitor()
+    v_in_voltage = ndir.cmd_input()
 
     print("v_in_voltage: %0.3f" % v_in_voltage)
     print("-")
 
-    pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_sample_raw()
+    pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_measure_raw()
 
     print("pile_ref_value: %d" % pile_ref_value)
     print("pile_act_value: %d" % pile_act_value)
     print("thermistor_value: %d" % thermistor_value)
     print("-")
 
-    pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.cmd_sample()
+    pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.cmd_measure()
 
     print("pile_ref_voltage: %f" % pile_ref_voltage)
     print("pile_act_voltage: %f" % pile_act_voltage)
