@@ -27,7 +27,7 @@ try:
     print("status: %s" % status)
     print("-")
 
-    data = ndir.cmd_record_raw(0, 5, 100)
+    data = ndir.cmd_record_raw(0, 5, 200)
 
     print("rec, raw_pile_ref, raw_pile_act")
 

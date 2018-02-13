@@ -14,8 +14,8 @@ from scs_ndir.gas.ndir import NDIR
 
 # --------------------------------------------------------------------------------------------------------------------
 
-max_scan_deferral = 180
-min_scan_deferral = 730
+max_scan_deferral = 200
+min_scan_deferral = 740
 
 
 try:

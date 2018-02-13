@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
 """
-Created on 1 Jan 2018
+Created on 13 Feb 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
-
-import time
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
@@ -16,9 +14,8 @@ from scs_ndir.gas.ndir import NDIR
 
 # --------------------------------------------------------------------------------------------------------------------
 
-ndir = None
+scan_deferral = 740
 
-start_time = time.time()
 
 try:
     I2C.open(Host.I2C_SENSORS)
@@ -29,17 +26,19 @@ try:
 
     ndir.power_on()
 
-    version = ndir.cmd_version()
-    print("version: %s" % version)
+    status = ndir.cmd_status()
+    print("status: %s" % status)
     print("-")
 
-    print("off...")
-    ndir.cmd_lamp_run(False)
-    time.sleep(5.0)
+    print("rec, pile_ref, pile_act, thermistor")
 
-    print("on...")
-    ndir.cmd_lamp_run(True)
+    data = ndir.cmd_sample_dump(scan_deferral, scan_deferral)
 
+    for i in range(len(data)):
+        rec = scan_deferral + i + 1
+        datum = data[i]
+
+        print("%d, %d, %d, %d" % (rec, datum[0], datum[1], datum[2]))
 
 except ValueError as ex:
     print("ValueError: %s" % ex)
@@ -48,14 +47,4 @@ except KeyboardInterrupt:
     print("")
 
 finally:
-    if ndir:
-        pass
-        # ndir.cmd_lamp_level(0)
-
-        # time.sleep(10.0)
-        # ndir.power_off()
-
-    elapsed_time = time.time() - start_time
-    print("elapsed time: %0.1f" % elapsed_time)
-
     I2C.close()
