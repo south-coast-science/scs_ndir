@@ -44,6 +44,7 @@ class NDIR(object):
     __LOCK_TIMEOUT =                    4.0             # seconds
 
     __BOOT_DELAY =                      0.500           # seconds
+    __PARAM_DELAY =                     0.001           # seconds
 
     __RESPONSE_ACK =                    0x01
     __RESPONSE_NACK =                   0x02
@@ -252,25 +253,28 @@ class NDIR(object):
             self.obtain_lock()
 
             # common fields...
-            self._eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
-            self._eeprom_write_float(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
+            self.eeprom_write_float(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
+            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
 
-            self._eeprom_write_unsigned_int(NDIRCalib.INDEX_SPAN, calib.span)
+            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL, calib.max_deferral)
+            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL, calib.min_deferral)
+
+            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_SPAN, calib.span)
 
             # span fields...
-            self._eeprom_write_float(NDIRCalib.INDEX_LINEAR_B, calib.linear_b)
-            self._eeprom_write_float(NDIRCalib.INDEX_LINEAR_C, calib.linear_c)
+            self.eeprom_write_float(NDIRCalib.INDEX_LINEAR_B, calib.linear_b)
+            self.eeprom_write_float(NDIRCalib.INDEX_LINEAR_C, calib.linear_c)
 
-            self._eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
-            self._eeprom_write_float(NDIRCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
-            self._eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_A, calib.temp_beta_a)
+            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
+            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
+            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_A, calib.temp_beta_a)
 
-            self._eeprom_write_float(NDIRCalib.INDEX_THERM_A, calib.therm_a)
-            self._eeprom_write_float(NDIRCalib.INDEX_THERM_B, calib.therm_b)
-            self._eeprom_write_float(NDIRCalib.INDEX_THERM_C, calib.therm_c)
-            self._eeprom_write_float(NDIRCalib.INDEX_THERM_D, calib.therm_d)
+            self.eeprom_write_float(NDIRCalib.INDEX_THERM_A, calib.therm_a)
+            self.eeprom_write_float(NDIRCalib.INDEX_THERM_B, calib.therm_b)
+            self.eeprom_write_float(NDIRCalib.INDEX_THERM_C, calib.therm_c)
+            self.eeprom_write_float(NDIRCalib.INDEX_THERM_D, calib.therm_d)
 
-            self._eeprom_write_float(NDIRCalib.INDEX_T_CAL, calib.t_cal)
+            self.eeprom_write_float(NDIRCalib.INDEX_T_CAL, calib.t_cal)
 
         finally:
             self.release_lock()
@@ -281,28 +285,31 @@ class NDIR(object):
             self.obtain_lock()
 
             # common fields...
-            lamp_period = self._eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
-            lamp_voltage = self._eeprom_read_float(NDIRCalib.INDEX_LAMP_VOLTAGE)
+            lamp_voltage = self.eeprom_read_float(NDIRCalib.INDEX_LAMP_VOLTAGE)
+            lamp_period = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
 
-            span = self._eeprom_read_unsigned_int(NDIRCalib.INDEX_SPAN)
+            max_deferral = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL)
+            min_deferral = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL)
+
+            span = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_SPAN)
 
             # span fields...
-            linear_b = self._eeprom_read_float(NDIRCalib.INDEX_LINEAR_B)
-            linear_c = self._eeprom_read_float(NDIRCalib.INDEX_LINEAR_C)
+            linear_b = self.eeprom_read_float(NDIRCalib.INDEX_LINEAR_B)
+            linear_c = self.eeprom_read_float(NDIRCalib.INDEX_LINEAR_C)
 
-            temp_beta_o = self._eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_O)
-            temp_alpha = self._eeprom_read_float(NDIRCalib.INDEX_TEMP_ALPHA)
-            temp_beta_a = self._eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_A)
+            temp_beta_o = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_O)
+            temp_alpha = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_ALPHA)
+            temp_beta_a = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_A)
 
-            therm_a = self._eeprom_read_float(NDIRCalib.INDEX_THERM_A)
-            therm_b = self._eeprom_read_float(NDIRCalib.INDEX_THERM_B)
-            therm_c = self._eeprom_read_float(NDIRCalib.INDEX_THERM_C)
-            therm_d = self._eeprom_read_float(NDIRCalib.INDEX_THERM_D)
+            therm_a = self.eeprom_read_float(NDIRCalib.INDEX_THERM_A)
+            therm_b = self.eeprom_read_float(NDIRCalib.INDEX_THERM_B)
+            therm_c = self.eeprom_read_float(NDIRCalib.INDEX_THERM_C)
+            therm_d = self.eeprom_read_float(NDIRCalib.INDEX_THERM_D)
 
-            t_cal = self._eeprom_read_float(NDIRCalib.INDEX_T_CAL)
+            t_cal = self.eeprom_read_float(NDIRCalib.INDEX_T_CAL)
 
-            return NDIRCalib(lamp_period, lamp_voltage, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a,
-                             therm_a, therm_b, therm_c, therm_d, t_cal)
+            return NDIRCalib(lamp_voltage, lamp_period, max_deferral, min_deferral, span, linear_b, linear_c,
+                             temp_beta_o, temp_alpha, temp_beta_a, therm_a, therm_b, therm_c, therm_d, t_cal)
 
         finally:
             self.release_lock()
@@ -355,6 +362,17 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def cmd_measure_calibrate(self):
+        try:
+            self.obtain_lock()
+
+            cmd = NDIRCmd.find('mc')
+            self._execute(cmd)
+
+        finally:
+            self.release_lock()
+
+
     def cmd_measure_raw(self):
         try:
             self.obtain_lock()
@@ -391,17 +409,17 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_record_raw(self, delay, interval, count):
+    def cmd_record_raw(self, deferral, interval, count):
         try:
             self.obtain_lock()
 
             # start recording...
-            delay_bytes = self.__unpack_unsigned_int(delay)
+            deferral_bytes = self.__unpack_unsigned_int(deferral)
             interval_bytes = self.__unpack_unsigned_int(interval)
             count_bytes = self.__unpack_unsigned_int(count)
 
             param_bytes = []
-            param_bytes.extend(delay_bytes)
+            param_bytes.extend(deferral_bytes)
             param_bytes.extend(interval_bytes)
             param_bytes.extend(count_bytes)
 
@@ -421,10 +439,10 @@ class NDIR(object):
 
             for i in range(0, cmd.return_count, 6):
                 timestamp = self.__pack_unsigned_int(response[i:i + 2])
-                pile_ref_voltage = self.__pack_unsigned_int(response[i + 2:i + 4])
-                pile_act_voltage = self.__pack_unsigned_int(response[i + 4:i + 6])
+                pile_ref = self.__pack_unsigned_int(response[i + 2:i + 4])
+                pile_act = self.__pack_unsigned_int(response[i + 4:i + 6])
 
-                values.append((timestamp, pile_ref_voltage, pile_act_voltage))
+                values.append((timestamp, pile_ref, pile_act))
 
             return values
 
@@ -434,48 +452,59 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_sample_raw(self, max_scan_deferral, min_scan_deferral):
+    def cmd_sample_mode(self, single_shot):
         try:
             self.obtain_lock()
 
-            # start recording...
-            max_scan_deferral_bytes = self.__unpack_unsigned_int(max_scan_deferral)
-            min_scan_deferral_bytes = self.__unpack_unsigned_int(min_scan_deferral)
+            mode_byte = 1 if single_shot else 0
 
-            param_bytes = []
-            param_bytes.extend(max_scan_deferral_bytes)
-            param_bytes.extend(min_scan_deferral_bytes)
-
-            cmd = NDIRCmd.find('ss')
-            self._execute(cmd, param_bytes)
+            cmd = NDIRCmd.find('sm')
+            self._execute(cmd, (mode_byte, ))
 
             # wait...
             time.sleep(cmd.execution_time)
-
-            # report...
-            cmd = NDIRCmd.find('sr')
-            response = self._execute(cmd)
-
-            pile_ref_min = self.__pack_unsigned_int(response[0:2])
-            pile_act_min = self.__pack_unsigned_int(response[2:4])
-            thermistor_min = self.__pack_unsigned_int(response[4:6])
-
-            pile_ref_max = self.__pack_unsigned_int(response[6:8])
-            pile_act_max = self.__pack_unsigned_int(response[8:10])
-            thermistor_max = self.__pack_unsigned_int(response[10:12])
-
-            pile_ref_amplitude = self.__pack_unsigned_int(response[12:14])
-            pile_act_amplitude = self.__pack_unsigned_int(response[14:16])
-            thermistor_average = self.__pack_unsigned_int(response[16:18])
-
-            return pile_ref_min, pile_act_min, thermistor_min, pile_ref_max, pile_act_max, thermistor_max, \
-                pile_ref_amplitude, pile_act_amplitude, thermistor_average
 
         finally:
             self.release_lock()
 
 
-    def cmd_sample_dump(self, max_scan_deferral, min_scan_deferral):
+    def cmd_sample_raw(self):
+        try:
+            self.obtain_lock()
+
+            # report...
+            cmd = NDIRCmd.find('sr')
+            response = self._execute(cmd)
+
+            pile_ref_amplitude = self.__pack_unsigned_int(response[0:2])
+            pile_act_amplitude = self.__pack_unsigned_int(response[2:4])
+            thermistor_average = self.__pack_unsigned_int(response[4:6])
+
+            return pile_ref_amplitude, pile_act_amplitude, thermistor_average
+
+        finally:
+            self.release_lock()
+
+
+    def cmd_sample(self):
+        try:
+            self.obtain_lock()
+
+            # report...
+            cmd = NDIRCmd.find('sv')
+            response = self._execute(cmd)
+
+            pile_ref_amplitude = self.__pack_float(response[0:4])
+            pile_act_amplitude = self.__pack_float(response[4:8])
+            thermistor_average = self.__pack_float(response[8:12])
+
+            return pile_ref_amplitude, pile_act_amplitude, thermistor_average
+
+        finally:
+            self.release_lock()
+
+
+    def cmd_sample_dump(self, max_scan_deferral, min_scan_deferral):        # TODO: re-write
         try:
             self.obtain_lock()
 
@@ -486,6 +515,7 @@ class NDIR(object):
             param_bytes = []
             param_bytes.extend(max_scan_deferral_bytes)
             param_bytes.extend(min_scan_deferral_bytes)
+            param_bytes.append(1)                               # 1 = single shot, 0 = continuous
 
             cmd = NDIRCmd.find('ss')
             self._execute(cmd, param_bytes)
@@ -518,8 +548,10 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
+            # TODO: test fro insufficient bytes sent
+
             cmd = NDIRCmd.find('mr')
-            cmd.return_count = 0                       # should return two bytes - ignore these to cause SPI fail
+            cmd.return_count = 0            # should return two bytes - ignore these to cause SPI fail
 
             self._execute(cmd)
 
@@ -529,7 +561,7 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def _eeprom_read_unsigned_int(self, index):
+    def eeprom_read_unsigned_int(self, index):
         cmd = NDIRCmd.find('er')
         cmd.return_count = 2
 
@@ -539,7 +571,7 @@ class NDIR(object):
         return value
 
 
-    def _eeprom_write_unsigned_int(self, index, value):
+    def eeprom_write_unsigned_int(self, index, value):
         cmd = NDIRCmd.find('ew')
 
         value_bytes = self.__unpack_unsigned_int(value)
@@ -548,7 +580,7 @@ class NDIR(object):
         time.sleep(cmd.execution_time)
 
 
-    def _eeprom_read_float(self, index):
+    def eeprom_read_float(self, index):
         cmd = NDIRCmd.find('er')
         cmd.return_count = 4
 
@@ -558,7 +590,7 @@ class NDIR(object):
         return value
 
 
-    def _eeprom_write_float(self, index, value):
+    def eeprom_write_float(self, index, value):
         cmd = NDIRCmd.find('ew')
 
         value_bytes = self.__unpack_float(value)
@@ -577,13 +609,15 @@ class NDIR(object):
             self.__spi.open()
 
             # transfer...
-            self._command_xfer(cmd.name_bytes())
+            self._xfer(cmd.name_bytes())
 
             if param_group_1:
-                self._command_xfer(param_group_1)
+                time.sleep(self.__PARAM_DELAY)
+                self._xfer(param_group_1)
 
             if param_group_2:
-                self._command_xfer(param_group_2)
+                time.sleep(self.__PARAM_DELAY)
+                self._xfer(param_group_2)
 
             # wait...
             time.sleep(cmd.response_time)
@@ -610,7 +644,7 @@ class NDIR(object):
             self.__spi.close()
 
 
-    def _command_xfer(self, values):
+    def _xfer(self, values):
         request = []                        # convert tuple to array
         request.extend(values)
 

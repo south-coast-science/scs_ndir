@@ -39,14 +39,16 @@ class NDIRCmd(object):
             'ir': NDIRCmd('ir', 0.001, 0.000, 2),               # input raw
             'iv': NDIRCmd('iv', 0.001, 0.000, 4),               # input voltage
 
+            'mc': NDIRCmd('mc', 0.001, 0.000, 0),               # measure calibrate
             'mr': NDIRCmd('mr', 0.001, 0.000, 6),               # measure raw
             'mv': NDIRCmd('mv', 0.001, 0.000, 12),              # measure voltage
 
             'rs': NDIRCmd('rs', 0.001, 2.200, 0),               # recorder start
             'rp': NDIRCmd('rp', 0.001, 0.000, None),            # recorder play
 
-            'ss': NDIRCmd('ss', 0.001, 2.200, 0),               # sampler start
-            'sr': NDIRCmd('sr', 0.001, 0.000, 18),              # sampler report
+            'sm': NDIRCmd('sm', 0.001, 2.200, 0),               # sampler mode
+            'sr': NDIRCmd('sr', 0.001, 0.000, 6),               # sampler raw
+            'sv': NDIRCmd('sv', 0.001, 0.000, 12),              # sampler voltage
             'sd': NDIRCmd('sd', 0.003, 0.000, 600)              # sampler dump
         }
 
