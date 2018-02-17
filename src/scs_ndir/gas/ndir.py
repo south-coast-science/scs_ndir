@@ -429,7 +429,7 @@ class NDIR(object):
             self._execute(cmd, param_bytes)
 
             # wait...
-            time.sleep(cmd.execution_time)
+            time.sleep(cmd.execution_time + (deferral / 1000))
 
             # playback...
             cmd = NDIRCmd.find('rp')
@@ -505,12 +505,12 @@ class NDIR(object):
             self.release_lock()
 
 
-    def cmd_sample_dump(self):
+    def cmd_sample_window(self):
         try:
             self.obtain_lock()
 
             # playback...
-            cmd = NDIRCmd.find('sd')
+            cmd = NDIRCmd.find('sw')
             response = self._execute(cmd)
 
             values = []

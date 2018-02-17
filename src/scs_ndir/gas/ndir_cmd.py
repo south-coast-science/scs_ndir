@@ -49,7 +49,7 @@ class NDIRCmd(object):
             'sm': NDIRCmd('sm', 0.001, 2.200, 0),               # sampler mode
             'sr': NDIRCmd('sr', 0.001, 0.000, 6),               # sampler raw
             'sv': NDIRCmd('sv', 0.001, 0.000, 12),              # sampler voltage
-            'sd': NDIRCmd('sd', 0.003, 0.000, 600)              # sampler dump
+            'sw': NDIRCmd('sw', 0.003, 0.000, 600)              # sampler window
         }
 
 

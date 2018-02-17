@@ -32,7 +32,7 @@ try:
 
     print("rec, pile_ref, pile_act, thermistor")
 
-    data = ndir.cmd_sample_dump()
+    data = ndir.cmd_sample_window()
 
     for i in range(len(data)):
         rec = scan_deferral + i + 1

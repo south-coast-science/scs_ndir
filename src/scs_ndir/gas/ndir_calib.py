@@ -111,12 +111,12 @@ class NDIRCalib(PersistentJSONable):
         super().__init__()
 
         self.__lamp_voltage = Datum.float(lamp_voltage, 1)
-        self.__lamp_period = lamp_period
+        self.__lamp_period = Datum.int(lamp_period)
 
-        self.__max_deferral = max_deferral
-        self.__min_deferral = min_deferral
+        self.__max_deferral = Datum.int(max_deferral)
+        self.__min_deferral = Datum.int(min_deferral)
 
-        self.__span = span
+        self.__span = Datum.int(span)
 
         self.__linear_b = Datum.float(linear_b, 6)
         self.__linear_c = Datum.float(linear_c, 6)
