@@ -369,6 +369,8 @@ class NDIR(object):
             cmd = NDIRCmd.find('mc')
             self._execute(cmd)
 
+            time.sleep(cmd.execution_time)
+
         finally:
             self.release_lock()
 
@@ -461,7 +463,6 @@ class NDIR(object):
             cmd = NDIRCmd.find('sm')
             self._execute(cmd, (mode_byte, ))
 
-            # wait...
             time.sleep(cmd.execution_time)
 
         finally:
@@ -504,24 +505,9 @@ class NDIR(object):
             self.release_lock()
 
 
-    def cmd_sample_dump(self, max_scan_deferral, min_scan_deferral):        # TODO: re-write
+    def cmd_sample_dump(self):
         try:
             self.obtain_lock()
-
-            # start recording...
-            max_scan_deferral_bytes = self.__unpack_unsigned_int(max_scan_deferral)
-            min_scan_deferral_bytes = self.__unpack_unsigned_int(min_scan_deferral)
-
-            param_bytes = []
-            param_bytes.extend(max_scan_deferral_bytes)
-            param_bytes.extend(min_scan_deferral_bytes)
-            param_bytes.append(1)                               # 1 = single shot, 0 = continuous
-
-            cmd = NDIRCmd.find('ss')
-            self._execute(cmd, param_bytes)
-
-            # wait...
-            time.sleep(cmd.execution_time)
 
             # playback...
             cmd = NDIRCmd.find('sd')
@@ -548,7 +534,7 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            # TODO: test fro insufficient bytes sent
+            # TODO: test for insufficient bytes sent
 
             cmd = NDIRCmd.find('mr')
             cmd.return_count = 0            # should return two bytes - ignore these to cause SPI fail

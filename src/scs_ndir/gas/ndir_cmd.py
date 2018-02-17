@@ -39,7 +39,7 @@ class NDIRCmd(object):
             'ir': NDIRCmd('ir', 0.001, 0.000, 2),               # input raw
             'iv': NDIRCmd('iv', 0.001, 0.000, 4),               # input voltage
 
-            'mc': NDIRCmd('mc', 0.001, 0.000, 0),               # measure calibrate
+            'mc': NDIRCmd('mc', 0.001, 1.000, 0),               # measure calibrate
             'mr': NDIRCmd('mr', 0.001, 0.000, 6),               # measure raw
             'mv': NDIRCmd('mv', 0.001, 0.000, 12),              # measure voltage
 
