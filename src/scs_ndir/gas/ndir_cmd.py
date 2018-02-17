@@ -4,12 +4,15 @@ Created on 13 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
+from collections import OrderedDict
+
 from scs_core.data.datum import Datum
+from scs_core.data.json import JSONable
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class NDIRCmd(object):
+class NDIRCmd(JSONable):
     """
     classdocs
     """
@@ -72,6 +75,20 @@ class NDIRCmd(object):
         self.__response_time = Datum.float(response_time, 3)            # float Seconds
         self.__execution_time = Datum.float(execution_time, 3)          # float Seconds
         self.__return_count = Datum.int(return_count)                   # int or None
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self):
+        jdict = OrderedDict()
+
+        jdict['name'] = self.name
+
+        jdict['response-time'] = self.response_time
+        jdict['execution-time'] = self.execution_time
+        jdict['return-count'] = self.return_count
+
+        return jdict
 
 
     # ----------------------------------------------------------------------------------------------------------------

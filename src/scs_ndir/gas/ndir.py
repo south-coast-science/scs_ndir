@@ -18,10 +18,11 @@ from scs_dfe.board.io import IO
 from scs_host.bus.spi import SPI
 from scs_host.lock.lock import Lock
 
+from scs_ndir.exception.ndir_exception import NDIRException
+
 from scs_ndir.gas.ndir_cmd import NDIRCmd
 from scs_ndir.gas.ndir_status import NDIRStatus
 from scs_ndir.gas.ndir_uptime import NDIRUptime
-
 from scs_ndir.gas.ndir_calib import NDIRCalib
 
 
@@ -48,6 +49,7 @@ class NDIR(object):
 
     __RESPONSE_ACK =                    0x01
     __RESPONSE_NACK =                   0x02
+    __RESPONSE_BUSY =                   0x03
 
     __SPI_CLOCK =                       488000
     __SPI_MODE =                        1
@@ -612,10 +614,13 @@ class NDIR(object):
             response = self.__spi.read_bytes(1)
 
             if response[0] == 0:
-                raise ValueError("None received for cmd: %s params: %s %s" % (cmd, param_group_1, param_group_2))
+                raise NDIRException('None received', response[0], cmd, (param_group_1, param_group_2))
 
             if response[0] == self.__RESPONSE_NACK:
-                raise ValueError("NACK received for cmd: %s params: %s %s" % (cmd, param_group_1, param_group_2))
+                raise NDIRException('NACK received', response[0], cmd, (param_group_1, param_group_2))
+
+            if response[0] == self.__RESPONSE_BUSY:
+                raise NDIRException('BUSY received', response[0], cmd, (param_group_1, param_group_2))
 
             # response...
             if cmd.return_count < 1:
