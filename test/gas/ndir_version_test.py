@@ -31,7 +31,7 @@ try:
 
     ndir.power_on()
 
-    version = ndir.cmd_version()
+    version = ndir.version()
     print("version: %s" % version)
     print("-")
 

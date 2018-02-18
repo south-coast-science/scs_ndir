@@ -167,8 +167,9 @@ class NDIR(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # identity...
 
-    def cmd_version(self):
+    def version(self):
         try:
             self.obtain_lock()
 
@@ -190,7 +191,7 @@ class NDIR(object):
             self.release_lock()
 
 
-    def cmd_status(self):
+    def status(self):
         try:
             self.obtain_lock()
 

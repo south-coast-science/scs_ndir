@@ -25,7 +25,7 @@ try:
 
     ndir.power_on()
 
-    status = ndir.cmd_status()
+    status = ndir.status()
     print("status: %s" % status)
     print("-")
 
@@ -37,7 +37,7 @@ try:
     print("NDIR RESET")
     print("-")
 
-    status = ndir.cmd_status()
+    status = ndir.status()
     print("status: %s" % status)
     print("-")
 

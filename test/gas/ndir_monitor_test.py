@@ -27,13 +27,13 @@ try:
 
     ndir.power_on()
 
-    version = ndir.cmd_version()
+    version = ndir.version()
     jstr = JSONify.dumps(version)
 
     print("version: %s" % jstr)
     print("-")
 
-    status = ndir.cmd_status()
+    status = ndir.status()
     jstr = JSONify.dumps(status)
 
     print("status: %s" % jstr)

@@ -32,7 +32,7 @@ try:
 
     ndir.power_on()
 
-    status = ndir.cmd_status()
+    status = ndir.status()
     jstr = JSONify.dumps(status)
 
     print("status: %s" % jstr, file=sys.stderr)

@@ -54,7 +54,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        status = ndir.cmd_status()
+        status = ndir.status()
         jstr = JSONify.dumps(status)
         print(jstr)
 

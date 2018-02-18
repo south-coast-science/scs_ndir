@@ -27,7 +27,7 @@ try:
 
     ndir.power_on()
 
-    status = ndir.cmd_status()
+    status = ndir.status()
     print("status: %s" % status)
     print("-")
 
@@ -37,7 +37,7 @@ try:
 
     time.sleep(NDIR.RECOVERY_TIME)      # TODO: tune the time
 
-    status = ndir.cmd_status()
+    status = ndir.status()
     print("status: %s" % status)
     print("-")
 
