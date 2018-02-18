@@ -27,13 +27,13 @@ try:
 
     ndir.power_on()
 
-    version = ndir.cmd_version()
+    version = ndir.version()
     jstr = JSONify.dumps(version)
 
     print("version: %s" % jstr)
     print("-")
 
-    status = ndir.cmd_status()
+    status = ndir.status()
     jstr = JSONify.dumps(status)
 
     print("status: %s" % jstr)
@@ -46,20 +46,6 @@ try:
     v_in_voltage = ndir.cmd_input()
 
     print("v_in_voltage: %0.3f" % v_in_voltage)
-    print("-")
-
-    pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_measure_raw()
-
-    print("pile_ref_value: %d" % pile_ref_value)
-    print("pile_act_value: %d" % pile_act_value)
-    print("thermistor_value: %d" % thermistor_value)
-    print("-")
-
-    pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.cmd_measure()
-
-    print("pile_ref_voltage: %f" % pile_ref_voltage)
-    print("pile_act_voltage: %f" % pile_act_voltage)
-    print("thermistor_voltage: %f" % thermistor_voltage)
     print("-")
 
     # ndir.power_off()

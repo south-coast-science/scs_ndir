@@ -26,13 +26,13 @@ try:
 
     ndir.power_on()
 
-    status = ndir.cmd_status()
+    status = ndir.status()
     print("status: %s" % status)
     print("=")
 
-    print("current...")
-    calib = ndir.cmd_retrieve_eeprom_calib()
-    print("calib: %s" % calib)
+    # print("current...")
+    # calib = ndir.cmd_retrieve_eeprom_calib()
+    # print("calib: %s" % calib)
 
     calib = NDIRCalib.load(Host)
 
@@ -41,7 +41,7 @@ try:
 
     print("new...")
     calib = ndir.cmd_retrieve_eeprom_calib()
-    print("calib: %s" % calib)
+    print("new calib: %s" % calib)
 
 
 except KeyboardInterrupt:

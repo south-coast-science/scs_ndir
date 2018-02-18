@@ -30,32 +30,36 @@ class NDIRCalib(PersistentJSONable):
     classdocs
     """
 
-    CALIB_IAQ = '{"lamp-period": 1000, "lamp-voltage": 5.0, "span": 1, "linear-b": 0.000325, "linear-c": 0.9363, ' \
+    CALIB_IAQ = '{"lamp-voltage": 5.0, "lamp-period": 1000, "max-deferral": 200, "min-deferral": 740, "span": 1, ' \
+                '"linear-b": 0.000325, "linear-c": 0.9363, ' \
                 '"temp-beta-o": 0.00001, "temp-alpha": 0.00056, "temp-beta-a": 0.00001, ' \
-                '"therm-a": 0.0, "therm-b": 0.0, "therm-c": 0.0, "therm-d": 0.0, ' \
-                '"t-cal": 1.0}'
+                '"therm-a": 0.0, "therm-b": 0.0, "therm-c": 0.0, "therm-d": 0.0, "t-cal": 1.0}'
 
-    SPAN_IAQ =                       1              # 0 to 5000 ppm
-    SPAN_SAFETY =                    2              # 0 to 5%
-    SPAN_COMBUSTION =                3              # 0 to 20%
-    SPAN_INDUSTRIAL =                4              # 0 to 100%
+    SPAN_IAQ =                       1              # 0 to 5,000 ppm
+    SPAN_SAFETY =                    2              # 0 to 50,000 ppm (5%)
+    SPAN_COMBUSTION =                3              # 0 to 200,000 ppm (20%)
+    SPAN_INDUSTRIAL =                4              # 0 to 1,000,000 ppm (100%)
 
     # common fields...
-    INDEX_LAMP_PERIOD =              0
-    INDEX_LAMP_VOLTAGE =             1
-    INDEX_SPAN =                     2
+    INDEX_LAMP_VOLTAGE =             0
+    INDEX_LAMP_PERIOD =              1
+
+    INDEX_MAX_DEFERRAL =             2
+    INDEX_MIN_DEFERRAL =             3
+
+    INDEX_SPAN =                     4
 
     # span fields...
-    INDEX_LINEAR_B =                 3
-    INDEX_LINEAR_C =                 4
-    INDEX_TEMP_BETA_O =              5
-    INDEX_TEMP_ALPHA =               6
-    INDEX_TEMP_BETA_A =              7
-    INDEX_THERM_A =                  8
-    INDEX_THERM_B =                  9
-    INDEX_THERM_C =                 10
-    INDEX_THERM_D =                 11
-    INDEX_T_CAL =                   12
+    INDEX_LINEAR_B =                 5
+    INDEX_LINEAR_C =                 6
+    INDEX_TEMP_BETA_O =              7
+    INDEX_TEMP_ALPHA =               8
+    INDEX_TEMP_BETA_A =              9
+    INDEX_THERM_A =                 10
+    INDEX_THERM_B =                 11
+    INDEX_THERM_C =                 12
+    INDEX_THERM_D =                 13
+    INDEX_T_CAL =                   14
 
     __FILENAME = "ndir_calib.json"
 
@@ -71,8 +75,11 @@ class NDIRCalib(PersistentJSONable):
         if not jdict:
             return None
 
-        lamp_period = jdict.get('lamp-period')
         lamp_voltage = jdict.get('lamp-voltage')
+        lamp_period = jdict.get('lamp-period')
+
+        max_deferral = jdict.get('max-deferral')
+        min_deferral = jdict.get('min-deferral')
 
         span = jdict.get('span')
 
@@ -90,23 +97,26 @@ class NDIRCalib(PersistentJSONable):
 
         t_cal = jdict.get('t-cal')
 
-        return NDIRCalib(lamp_period, lamp_voltage, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a,
-                         therm_a, therm_b, therm_c, therm_d, t_cal)
+        return NDIRCalib(lamp_voltage, lamp_period, max_deferral, min_deferral, span, linear_b, linear_c,
+                         temp_beta_o, temp_alpha, temp_beta_a, therm_a, therm_b, therm_c, therm_d, t_cal)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, lamp_period, lamp_voltage, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a,
-                 therm_a, therm_b, therm_c, therm_d, t_cal):
+    def __init__(self, lamp_voltage, lamp_period, max_deferral, min_deferral, span, linear_b, linear_c,
+                 temp_beta_o, temp_alpha, temp_beta_a, therm_a, therm_b, therm_c, therm_d, t_cal):
         """
         Constructor
         """
         super().__init__()
 
-        self.__lamp_period = lamp_period
         self.__lamp_voltage = Datum.float(lamp_voltage, 1)
+        self.__lamp_period = Datum.int(lamp_period)
 
-        self.__span = span
+        self.__max_deferral = Datum.int(max_deferral)
+        self.__min_deferral = Datum.int(min_deferral)
+
+        self.__span = Datum.int(span)
 
         self.__linear_b = Datum.float(linear_b, 6)
         self.__linear_c = Datum.float(linear_c, 6)
@@ -126,13 +136,23 @@ class NDIRCalib(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def lamp_voltage(self):
+        return self.__lamp_voltage
+
+
+    @property
     def lamp_period(self):
         return self.__lamp_period
 
 
     @property
-    def lamp_voltage(self):
-        return self.__lamp_voltage
+    def max_deferral(self):
+        return self.__max_deferral
+
+
+    @property
+    def min_deferral(self):
+        return self.__min_deferral
 
 
     @property
@@ -195,8 +215,11 @@ class NDIRCalib(PersistentJSONable):
     def as_json(self):
         jdict = OrderedDict()
 
-        jdict['lamp-period'] = self.lamp_period
         jdict['lamp-voltage'] = self.lamp_voltage
+        jdict['lamp-period'] = self.lamp_period
+
+        jdict['max-deferral'] = self.max_deferral
+        jdict['min-deferral'] = self.min_deferral
 
         jdict['span'] = self.span
 
@@ -220,10 +243,9 @@ class NDIRCalib(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRCalib:{lamp_period:%s, lamp_voltage:%s, span:%s, linear_b:%s, linear_c:%s, " \
-               "temp_beta_o:%s, temp_alpha:%s, temp_beta_a:%s, therm_a:%s, therm_b:%s, therm_c:%s, therm_d:%s, " \
-               "t_cal:%s}" %  \
-               (self.lamp_period, self.lamp_voltage, self.span, self.linear_b, self.linear_c,
-                self.temp_beta_o, self.temp_alpha, self.temp_beta_a,
-                self.therm_a, self.therm_b, self.therm_c, self.therm_d,
-                self.t_cal)
+        return "NDIRCalib:{lamp_voltage:%s, lamp_period:%s, max_deferral:%s, min_deferral:%s, span:%s, " \
+               "linear_b:%s, linear_c:%s, temp_beta_o:%s, temp_alpha:%s, temp_beta_a:%s, " \
+               "therm_a:%s, therm_b:%s, therm_c:%s, therm_d:%s, t_cal:%s}" %  \
+               (self.lamp_voltage, self.lamp_period, self.max_deferral, self.min_deferral, self.span,
+                self.linear_b, self.linear_c, self.temp_beta_o, self.temp_alpha, self.temp_beta_a,
+                self.therm_a, self.therm_b, self.therm_c, self.therm_d, self.t_cal)

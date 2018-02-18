@@ -20,8 +20,8 @@ from scs_ndir.gas.ndir import NDIR
 
 # --------------------------------------------------------------------------------------------------------------------
 
-interval = 0.01             # 10 mS is fastest possible
-samples = 200               # 10 mS * 1000 = 10 S
+interval = 0.01                 # 10 mS is fastest possible
+sample_count = 200              # 10 mS * 1000 = 10 S
 
 try:
     I2C.open(Host.I2C_SENSORS)
@@ -32,29 +32,25 @@ try:
 
     ndir.power_on()
 
-    version = ndir.cmd_version()
-    jstr = JSONify.dumps(version)
-
-    print("version: %s" % jstr, file=sys.stderr)
-    print("-", file=sys.stderr)
-
-    status = ndir.cmd_status()
+    status = ndir.status()
     jstr = JSONify.dumps(status)
 
     print("status: %s" % jstr, file=sys.stderr)
     print("-", file=sys.stderr)
 
-    start_time = time.time()
+    print("calibrating...", file=sys.stderr)
+    ndir.cmd_measure_calibrate()
 
+    start_time = time.time()
     timer = IntervalTimer(interval)
 
-    print("rec, raw_pile_ref, raw_pile_act, thermistor")
+    print("rec, pile_ref, pile_act, thermistor")
 
-    for _ in timer.range(samples):
-        pile_ref_value, pile_act_value, thermistor_value = ndir.cmd_measure_raw()
+    for _ in timer.range(sample_count):
+        pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.cmd_measure()
         elapsed_time = time.time() - start_time
 
-        print("%0.3f, %d, %d, %d" % (elapsed_time, pile_ref_value, pile_act_value, thermistor_value))
+        print("%0.3f, %0.4f, %0.4f, %0.4f" % (elapsed_time, pile_ref_voltage, pile_act_voltage, thermistor_voltage))
         sys.stdout.flush()
 
     # ndir.power_off()

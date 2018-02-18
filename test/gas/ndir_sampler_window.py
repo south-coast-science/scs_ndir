@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Created on 30 Jan 2018
+Created on 13 Feb 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -13,6 +13,9 @@ from scs_ndir.gas.ndir import NDIR
 
 
 # --------------------------------------------------------------------------------------------------------------------
+
+scan_deferral = 740
+
 
 try:
     I2C.open(Host.I2C_SENSORS)
@@ -27,13 +30,15 @@ try:
     print("status: %s" % status)
     print("-")
 
-    data = ndir.cmd_record_raw(0, 5, 200)
+    print("rec, pile_ref, pile_act, thermistor")
 
-    print("rec, raw_pile_ref, raw_pile_act")
+    data = ndir.cmd_sample_window()
 
-    for datum in data:
-        print("%d, %d, %d" % datum)
+    for i in range(len(data)):
+        rec = scan_deferral + i + 1
+        datum = data[i]
 
+        print("%d, %d, %d, %d" % (rec, datum[0], datum[1], datum[2]))
 
 except ValueError as ex:
     print("ValueError: %s" % ex)

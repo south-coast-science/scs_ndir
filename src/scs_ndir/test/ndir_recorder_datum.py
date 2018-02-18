@@ -1,10 +1,10 @@
 """
-Created on 2 Jan 2018
+Created on 17 Feb 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 document example:
-{"w-rst": false, "pwr-in": 4.5, "up": {"period": "00-00:21:04.000"}}
+{"rec": 840, "pile-ref": 4367, "pile-act": 4785, "thermistor": 10284}
 """
 
 from collections import OrderedDict
@@ -12,12 +12,10 @@ from collections import OrderedDict
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONable
 
-from scs_ndir.gas.ndir_uptime import NDIRUptime
-
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class NDIRStatus(JSONable):
+class NDIRRecorderDatum(JSONable):
     """
     classdocs
     """
@@ -25,28 +23,38 @@ class NDIRStatus(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
+    def construct_from_sample(cls, sample):
+        if not sample:
+            return None
+
+        rec, pile_ref, pile_act = sample
+
+        return NDIRRecorderDatum(rec, pile_ref, pile_act)
+
+
+    @classmethod
     def construct_from_jdict(cls, jdict):
         if not jdict:
             return None
 
-        watchdog_reset = jdict.get('w-rst')
-        power_in = jdict.get('pwr-in')
+        rec = jdict.get('rec')
 
-        uptime = NDIRUptime.construct_from_jdict(jdict.get('up'))
+        pile_ref = jdict.get('pile-ref')
+        pile_act = jdict.get('pile-act')
 
-        return NDIRStatus(watchdog_reset, power_in, uptime)
+        return NDIRRecorderDatum(rec, pile_ref, pile_act)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, watchdog_reset, power_in, uptime):
+    def __init__(self, rec, pile_ref, pile_act):
         """
         Constructor
         """
-        self.__watchdog_reset = watchdog_reset                  # restart because of watchdog timeout       bool
-        self.__power_in = Datum.float(power_in, 1)              # PSU input voltage                         float
+        self.__rec = Datum.int(rec)
 
-        self.__uptime = uptime                                  # Uptime
+        self.__pile_ref = Datum.int(pile_ref)
+        self.__pile_act = Datum.int(pile_act)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -54,10 +62,10 @@ class NDIRStatus(JSONable):
     def as_json(self):
         jdict = OrderedDict()
 
-        jdict['w-rst'] = self.watchdog_reset
-        jdict['pwr-in'] = self.power_in
+        jdict['rec'] = self.rec
 
-        jdict['up'] = self.uptime
+        jdict['pile-ref'] = self.pile_ref
+        jdict['pile-act'] = self.pile_act
 
         return jdict
 
@@ -65,22 +73,22 @@ class NDIRStatus(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def watchdog_reset(self):
-        return self.__watchdog_reset
+    def rec(self):
+        return self.__rec
 
 
     @property
-    def power_in(self):
-        return self.__power_in
+    def pile_ref(self):
+        return self.__pile_ref
 
 
     @property
-    def uptime(self):
-        return self.__uptime
+    def pile_act(self):
+        return self.__pile_act
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRStatus:{watchdog_reset:%s, power_in:%s, uptime:%s}" % \
-               (self.watchdog_reset, self.power_in, self.uptime)
+        return "NDIRRecorderDatum:{rec:%s, pile_ref:%s, pile_act:%s}" % \
+               (self.rec, self.pile_ref, self.pile_act)

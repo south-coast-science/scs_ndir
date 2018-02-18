@@ -29,14 +29,15 @@ try:
 
     ndir.power_on()
 
-    version = ndir.cmd_version()
+    version = ndir.version()
     print("version: %s" % version)
     print("-")
 
-
+    print("off...")
     ndir.cmd_lamp_run(False)
     time.sleep(5.0)
 
+    print("on...")
     ndir.cmd_lamp_run(True)
 
 
