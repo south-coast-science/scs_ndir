@@ -87,11 +87,13 @@ if __name__ == '__main__':
 
 
         elif cmd.dump is not None:
-            single_shot, is_running, index, cycles = ndir.cmd_sample_dump()
+            single_shot, is_running, index, max_cycles, min_cycles, cycles = ndir.cmd_sample_dump()
 
             print("single_shot: %s" % single_shot)
             print("is_running: %s" % is_running)
             print("index: %s" % index)
+            print("max_cycles: %s" % max_cycles)
+            print("min_cycles: %s" % min_cycles)
             print("cycles: %s" % cycles)
 
         else:
@@ -110,11 +112,13 @@ if __name__ == '__main__':
                 if sample == prev_sample == prev_prev_sample:
                     print(chr(7))
 
-                    single_shot, is_running, index, cycles = ndir.cmd_sample_dump()
+                    single_shot, is_running, index, max_cycles, min_cycles, cycles = ndir.cmd_sample_dump()
 
                     print("single_shot: %s" % single_shot)
                     print("is_running: %s" % is_running)
                     print("index: %s" % index)
+                    print("max_cycles: %s" % max_cycles)
+                    print("min_cycles: %s" % min_cycles)
                     print("cycles: %s" % cycles)
 
                     break

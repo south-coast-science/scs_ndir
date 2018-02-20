@@ -542,9 +542,11 @@ class NDIR(object):
             single_shot = response[0]
             is_running = response[1]
             index = self.__pack_unsigned_int(response[2:4])
-            cycles = self.__pack_unsigned_long(response[4:8])
+            max_cycles = self.__pack_unsigned_long(response[4:8])
+            min_cycles = self.__pack_unsigned_long(response[8:12])
+            cycles = self.__pack_unsigned_long(response[12:16])
 
-            return single_shot, is_running, index, cycles
+            return single_shot, is_running, index, max_cycles, min_cycles, cycles
 
         finally:
             self.release_lock()

@@ -90,7 +90,7 @@ class NDIRSampleVoltageDatum(JSONable):
         jdict['pile-act-ampl'] = self.pile_act_ampl
         jdict['therm-avg'] = self.thermistor_avg
 
-        jdict['pile-ratio'] = Datum.float(self.pile_act_ampl / self.pile_ref_ampl, 4)
+        jdict['pile-ratio'] = Datum.float(self.pile_act_ampl / self.pile_ref_ampl, 6)
 
         return jdict
 
