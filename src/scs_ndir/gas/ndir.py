@@ -6,7 +6,7 @@ Created on 11 Dec 2017
 
 import math
 import struct
-# import sys
+import sys
 import time
 
 from scs_core.gas.co2_datum import CO2Datum
@@ -531,6 +531,25 @@ class NDIR(object):
             self.release_lock()
 
 
+    def cmd_sample_dump(self):
+        try:
+            self.obtain_lock()
+
+            # report...
+            cmd = NDIRCmd.find('sd')
+            response = self._execute(cmd)
+
+            single_shot = response[0]
+            is_running = response[1]
+            index = self.__pack_unsigned_int(response[2:4])
+            cycles = self.__pack_unsigned_long(response[4:8])
+
+            return single_shot, is_running, index, cycles
+
+        finally:
+            self.release_lock()
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def cmd_fail(self):
@@ -591,8 +610,8 @@ class NDIR(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def _execute(self, cmd, param_group_1=None, param_group_2=None):
-        # print("cmd: %s param_group_1:%s param_group_2:%s" %
-        #       (cmd, str(param_group_1), str(param_group_2)), file=sys.stderr)
+        print("cmd: %s param_group_1:%s param_group_2:%s" %
+              (cmd, str(param_group_1), str(param_group_2)), file=sys.stderr)
 
         try:
             self.__spi.open()
@@ -628,7 +647,7 @@ class NDIR(object):
                 return
 
             response = self.__spi.read_bytes(cmd.return_count)
-            # print("response: %s" % str(response), file=sys.stderr)
+            print("response: %s" % str(response), file=sys.stderr)
 
             return response[0] if cmd.return_count == 1 else response
 

@@ -85,14 +85,42 @@ if __name__ == '__main__':
                 datum = NDIRWindowDatum.construct_from_sample(rec, samples[i])
                 print(JSONify.dumps(datum))
 
+
+        elif cmd.dump is not None:
+            single_shot, is_running, index, cycles = ndir.cmd_sample_dump()
+
+            print("single_shot: %s" % single_shot)
+            print("is_running: %s" % is_running)
+            print("index: %s" % index)
+            print("cycles: %s" % cycles)
+
         else:
             # run sampling...
             runner = TimedRunner(cmd.interval, cmd.samples)
             sampler = NDIRVoltageSampler(runner, ndir)
 
+            prev_prev_sample = None
+            prev_sample = None
+
             for sample in sampler.samples():
                 print(JSONify.dumps(sample))
                 sys.stdout.flush()
+
+                # check for stuck data
+                if sample == prev_sample == prev_prev_sample:
+                    print(chr(7))
+
+                    single_shot, is_running, index, cycles = ndir.cmd_sample_dump()
+
+                    print("single_shot: %s" % single_shot)
+                    print("is_running: %s" % is_running)
+                    print("index: %s" % index)
+                    print("cycles: %s" % cycles)
+
+                    break
+
+                prev_prev_sample = prev_sample
+                prev_sample = sample
 
 
     # ----------------------------------------------------------------------------------------------------------------

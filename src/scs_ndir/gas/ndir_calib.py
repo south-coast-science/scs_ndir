@@ -30,7 +30,7 @@ class NDIRCalib(PersistentJSONable):
     classdocs
     """
 
-    CALIB_IAQ = '{"lamp-voltage": 5.0, "lamp-period": 1000, "max-deferral": 200, "min-deferral": 740, "span": 1, ' \
+    CALIB_IAQ = '{"lamp-voltage": 5.0, "lamp-period": 500, "max-deferral": 220, "min-deferral": 480, "span": 1, ' \
                 '"linear-b": 0.000325, "linear-c": 0.9363, ' \
                 '"temp-beta-o": 0.00001, "temp-alpha": 0.00056, "temp-beta-a": 0.00001, ' \
                 '"therm-a": 0.0, "therm-b": 0.0, "therm-c": 0.0, "therm-d": 0.0, "t-cal": 1.0}'
@@ -47,19 +47,23 @@ class NDIRCalib(PersistentJSONable):
     INDEX_MAX_DEFERRAL =             2
     INDEX_MIN_DEFERRAL =             3
 
-    INDEX_SPAN =                     4
+    INDEX_ZERO =                     4          # SET IN CALIBRATION
+
+    INDEX_SPAN =                     4          # SET IN CALIBRATION
 
     # span fields...
-    INDEX_LINEAR_B =                 5
-    INDEX_LINEAR_C =                 6
-    INDEX_TEMP_BETA_O =              7
-    INDEX_TEMP_ALPHA =               8
-    INDEX_TEMP_BETA_A =              9
+    INDEX_LINEAR_B =                 5          # SET IN CALIBRATION
+    INDEX_LINEAR_C =                 6          # SET IN CALIBRATION
+    INDEX_TEMP_BETA_O =              7          # SET IN CALIBRATION  correction of sensitivity for temp
+    INDEX_TEMP_ALPHA =               8          # SET IN CALIBRATION  correction for temperature on absorbance
+    INDEX_TEMP_BETA_A =              9          # SET IN CALIBRATION  correction of sensitivity for temp after alpha
+
     INDEX_THERM_A =                 10
     INDEX_THERM_B =                 11
     INDEX_THERM_C =                 12
     INDEX_THERM_D =                 13
-    INDEX_T_CAL =                   14
+
+    INDEX_T_CAL =                   14          # SET IN CALIBRATION
 
     __FILENAME = "ndir_calib.json"
 

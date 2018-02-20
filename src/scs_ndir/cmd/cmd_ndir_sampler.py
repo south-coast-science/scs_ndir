@@ -16,8 +16,8 @@ class CmdNDIRSampler(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -m { 1 | 0 } | -w | [-i INTERVAL [-n SAMPLES]] } [-v]",
-                                              version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -m { 1 | 0 } | -w | [-i INTERVAL [-n SAMPLES]] | -d } "
+                                                    "[-v]", version="%prog 1.0")
 
         # compulsory...
         self.__parser.add_option("--mode", "-m", type="int", nargs=1, action="store", dest="mode",
@@ -31,6 +31,9 @@ class CmdNDIRSampler(object):
 
         self.__parser.add_option("--samples", "-n", type="int", nargs=1, action="store", dest="samples",
                                  help="number of samples (1 if interval not specified)")
+
+        self.__parser.add_option("--dump", "-d", action="store_true", dest="dump",
+                                 help="dump the sampler state")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -51,6 +54,9 @@ class CmdNDIRSampler(object):
             param_count += 1
 
         if self.__opts.interval is not None:
+            param_count += 1
+
+        if self.__opts.dump is not None:
             param_count += 1
 
         if param_count > 1:
@@ -95,6 +101,11 @@ class CmdNDIRSampler(object):
     @property
     def samples(self):
         return 1 if self.__opts.interval is None else self.__opts.samples
+
+
+    @property
+    def dump(self):
+        return self.__opts.dump
 
 
     @property

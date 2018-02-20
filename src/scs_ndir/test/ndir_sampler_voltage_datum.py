@@ -4,8 +4,8 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 document example:
-{"rec": "2018-02-17T13:01:25.584+00:00", "pile-ref-ampl": 2.6213, "pile-act-ampl": 2.5588, "therm-avg": 0.9949,
-"pile-diff": 0.0625}
+{"rec": "2018-02-20T12:51:34.181+00:00", "pile-ref-ampl": 2.1037, "pile-act-ampl": 2.0615, "therm-avg": 0.9931,
+"pile-ratio": 0.9799}
 """
 
 from collections import OrderedDict
@@ -61,6 +61,24 @@ class NDIRSampleVoltageDatum(JSONable):
         self.__thermistor_avg = Datum.float(thermistor_avg, 4)
 
 
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+
+        # no check of rec field
+
+        if self.pile_ref_ampl != other.pile_ref_ampl:
+            return False
+
+        if self.pile_act_ampl != other.pile_act_ampl:
+            return False
+
+        if self.thermistor_avg != other.thermistor_avg:
+            return False
+
+        return True
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self):
@@ -72,7 +90,7 @@ class NDIRSampleVoltageDatum(JSONable):
         jdict['pile-act-ampl'] = self.pile_act_ampl
         jdict['therm-avg'] = self.thermistor_avg
 
-        jdict['pile-diff'] = Datum.float(self.pile_ref_ampl - self.pile_act_ampl, 4)
+        jdict['pile-ratio'] = Datum.float(self.pile_act_ampl / self.pile_ref_ampl, 4)
 
         return jdict
 
