@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
         elif cmd.window is not None:
             # retrieve the last sample window...
-            calib = ndir.cmd_retrieve_eeprom_calib()
+            calib = ndir.retrieve_eeprom_calib()
             samples = ndir.cmd_sample_window()
 
             for i in range(len(samples)):

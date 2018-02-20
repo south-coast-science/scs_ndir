@@ -68,7 +68,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        calib = ndir.cmd_retrieve_eeprom_calib()
+        calib = ndir.retrieve_eeprom_calib()
         jdict = calib.as_json()
 
         if cmd.get() or cmd.set():
@@ -91,7 +91,7 @@ if __name__ == '__main__':
                 exit(2)
 
             # save...
-            ndir.cmd_store_eeprom_calib(calib)
+            ndir.store_eeprom_calib(calib)
 
         else:
             # report...

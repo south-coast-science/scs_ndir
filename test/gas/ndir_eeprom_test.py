@@ -30,17 +30,17 @@ try:
     print("status: %s" % status)
     print("=")
 
-    # print("current...")
-    # calib = ndir.cmd_retrieve_eeprom_calib()
-    # print("calib: %s" % calib)
+    print("current...")
+    calib = ndir.retrieve_eeprom_calib()
+    print("calib: %s" % calib)
 
     calib = NDIRCalib.load(Host)
 
-    ndir.cmd_store_eeprom_calib(calib)
+    ndir.store_eeprom_calib(calib)
     print("-")
 
     print("new...")
-    calib = ndir.cmd_retrieve_eeprom_calib()
+    calib = ndir.retrieve_eeprom_calib()
     print("new calib: %s" % calib)
 
 
