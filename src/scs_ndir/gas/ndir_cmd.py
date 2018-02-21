@@ -52,11 +52,11 @@ class NDIRCmd(JSONable):
             'sm': NDIRCmd('sm', 0.001, 2.200, 0),               # sampler mode
             'sr': NDIRCmd('sr', 0.001, 0.000, 6),               # sampler raw
             'sv': NDIRCmd('sv', 0.001, 0.000, 12),              # sampler voltage
+            'sg': NDIRCmd('sg', 0.010, 0.000, 12),              # sampler gas
 
             'sw': NDIRCmd('sw', 0.003, 0.000, 600),             # sampler window
-            'sd': NDIRCmd('sd', 0.001, 0.000, 16),              # sampler window
+            'sd': NDIRCmd('sd', 0.001, 0.000, 16),              # sampler dump
 
-            'tt': NDIRCmd('tt', 0.001, 0.000, 4)                # thermistor temp
         }
 
 

@@ -16,7 +16,7 @@ class CmdNDIRSampler(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -m { 1 | 0 } | -w | [-i INTERVAL [-n SAMPLES]] | -d } "
+        self.__parser = optparse.OptionParser(usage="%prog { -m { 1 | 0 } | -w | [-i INTERVAL [-n SAMPLES] [-r]] | -d } "
                                                     "[-v]", version="%prog 1.0")
 
         # compulsory...
@@ -31,6 +31,9 @@ class CmdNDIRSampler(object):
 
         self.__parser.add_option("--samples", "-n", type="int", nargs=1, action="store", dest="samples",
                                  help="number of samples (1 if interval not specified)")
+
+        self.__parser.add_option("--raw", "-r", action="store_true", dest="raw", default=False,
+                                 help="report voltages instead of concentrations")
 
         self.__parser.add_option("--dump", "-d", action="store_true", dest="dump",
                                  help="dump the sampler state")
@@ -91,6 +94,11 @@ class CmdNDIRSampler(object):
 
 
     @property
+    def raw(self):
+        return self.__opts.raw
+
+
+    @property
     def dump(self):
         return self.__opts.dump
 
@@ -112,5 +120,5 @@ class CmdNDIRSampler(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRSampler:{mode:%s, window:%s, interval:%s, samples:%s, dump:%s, verbose:%s, args:%s}" % \
-               (self.mode, self.window, self.interval, self.samples, self.dump, self.verbose, self.args)
+        return "CmdNDIRSampler:{mode:%s, window:%s, interval:%s, samples:%s, raw:%s, dump:%s, verbose:%s, args:%s}" % \
+               (self.mode, self.window, self.interval, self.samples, self.dump, self.raw, self.verbose, self.args)

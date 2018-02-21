@@ -38,9 +38,11 @@ from scs_ndir.cmd.cmd_ndir_sampler import CmdNDIRSampler
 from scs_ndir.exception.ndir_exception import NDIRException
 
 from scs_ndir.gas.ndir import NDIR
+
+from scs_ndir.sampler.ndir_gas_sampler import NDIRGasSampler
 from scs_ndir.sampler.ndir_voltage_sampler import NDIRVoltageSampler
 
-from scs_ndir.test.ndir_window_datum import NDIRWindowDatum
+from scs_ndir.datum.ndir_window_datum import NDIRWindowDatum
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -99,7 +101,7 @@ if __name__ == '__main__':
         else:
             # run sampling...
             runner = TimedRunner(cmd.interval, cmd.samples)
-            sampler = NDIRVoltageSampler(runner, ndir)
+            sampler = NDIRVoltageSampler(runner, ndir) if cmd.raw else NDIRGasSampler(runner, ndir)
 
             prev_prev_sample = None
             prev_sample = None
@@ -109,19 +111,9 @@ if __name__ == '__main__':
                 sys.stdout.flush()
 
                 # check for stuck data
-                if sample == prev_sample == prev_prev_sample:
-                    print(chr(7))
-
-                    single_shot, is_running, index, max_cycles, min_cycles, cycles = ndir.cmd_sample_dump()
-
-                    print("single_shot: %s" % single_shot)
-                    print("is_running: %s" % is_running)
-                    print("index: %s" % index)
-                    print("max_cycles: %s" % max_cycles)
-                    print("min_cycles: %s" % min_cycles)
-                    print("cycles: %s" % cycles)
-
-                    break
+                # if sample == prev_sample == prev_prev_sample:
+                #     print(chr(7))
+                #     break
 
                 prev_prev_sample = prev_sample
                 prev_sample = sample

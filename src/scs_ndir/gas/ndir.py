@@ -6,11 +6,10 @@ Created on 11 Dec 2017
 
 import math
 import struct
-# import sys
+import sys
 import time
 
 from scs_core.gas.co2_datum import CO2Datum
-from scs_core.gas.ndir_datum import NDIRDatum
 from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
 
 from scs_dfe.board.io import IO
@@ -146,28 +145,26 @@ class NDIR(object):
     # ----------------------------------------------------------------------------------------------------------------
     # sampling...
 
-    # noinspection PyMethodMayBeStatic
-    def sample(self):
-        return NDIRDatum(None, None, None, None)        # TODO: implement sample
+    def sample_gas(self):
+        try:
+            self.obtain_lock()
+
+            cmd = NDIRCmd.find('sg')
+            response = self._execute(cmd)
+
+            cnc = self.__pack_float(response[0:4])
+            cnc_igl = self.__pack_float(response[4:8])
+            temp = self.__pack_float(response[8:12])
+
+            return cnc, cnc_igl, temp
+
+        finally:
+            self.release_lock()
 
 
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def sample_co2(self, ideal_gas_law):                # TODO: implement sample_co2
         return CO2Datum(None)
-
-
-    def sample_temp(self):
-        cmd = NDIRCmd.find('tt')
-        response = self._execute(cmd)
-
-        temp = self.__pack_float(response)
-
-        return round(temp, 1)
-
-
-    # noinspection PyMethodMayBeStatic
-    def sample_dc(self):                                # TODO: implement sample_dc
-        return None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -564,7 +561,7 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            # TODO: test for insufficient bytes sent
+            # TODO: datum for insufficient bytes sent
 
             cmd = NDIRCmd.find('mr')
             cmd.return_count = 0            # should return two bytes - ignore these to cause SPI fail
