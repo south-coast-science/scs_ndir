@@ -156,9 +156,13 @@ class NDIR(object):
         return CO2Datum(None)
 
 
-    # noinspection PyMethodMayBeStatic
-    def sample_temp(self):                              # TODO: implement sample_temp
-        return None
+    def sample_temp(self):
+        cmd = NDIRCmd.find('tt')
+        response = self._execute(cmd)
+
+        temp = self.__pack_float(response)
+
+        return round(temp, 1)
 
 
     # noinspection PyMethodMayBeStatic
@@ -668,6 +672,9 @@ class NDIR(object):
             # return values...
             if cmd.return_count < 1:
                 return
+
+            # wait...
+            time.sleep(self.__PARAM_DELAY)
 
             response = self.__spi.read_bytes(cmd.return_count)
             # print("response: %s" % str(response), file=sys.stderr)

@@ -9,31 +9,21 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdNDIRSampler(object):
+class CmdNDIRTemp(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -m { 1 | 0 } | -w | [-i INTERVAL [-n SAMPLES]] | -d } "
-                                                    "[-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { [-i INTERVAL [-n SAMPLES]] } [-v]", version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--mode", "-m", type="int", nargs=1, action="store", dest="mode",
-                                 help="run continuous (1) or single-shot (0)")
-
-        self.__parser.add_option("--window", "-w", action="store_true", dest="window",
-                                 help="report scan of window (single-shot mode only)")
-
         self.__parser.add_option("--interval", "-i", type="float", nargs=1, action="store", dest="interval",
                                  help="sampling interval in seconds")
 
         self.__parser.add_option("--samples", "-n", type="int", nargs=1, action="store", dest="samples",
                                  help="number of samples (1 if interval not specified)")
-
-        self.__parser.add_option("--dump", "-d", action="store_true", dest="dump",
-                                 help="dump the sampler state")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -45,23 +35,6 @@ class CmdNDIRSampler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        param_count = 0
-
-        if self.__opts.mode is not None:
-            param_count += 1
-
-        if self.__opts.window is not None:
-            param_count += 1
-
-        if self.__opts.interval is not None:
-            param_count += 1
-
-        if self.__opts.dump is not None:
-            param_count += 1
-
-        if param_count > 1:
-            return False
-
         if self.__opts.samples is not None and self.__opts.interval is None:
             return False
 
@@ -71,16 +44,6 @@ class CmdNDIRSampler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def mode(self):
-        return self.__opts.mode
-
-
-    @property
-    def window(self):
-        return self.__opts.window
-
-
-    @property
     def interval(self):
         return 1.0 if self.__opts.interval is None else self.__opts.interval
 
@@ -88,11 +51,6 @@ class CmdNDIRSampler(object):
     @property
     def samples(self):
         return 1 if self.__opts.interval is None else self.__opts.samples
-
-
-    @property
-    def dump(self):
-        return self.__opts.dump
 
 
     @property
@@ -112,5 +70,5 @@ class CmdNDIRSampler(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRSampler:{mode:%s, window:%s, interval:%s, samples:%s, dump:%s, verbose:%s, args:%s}" % \
-               (self.mode, self.window, self.interval, self.samples, self.dump, self.verbose, self.args)
+        return "CmdNDIRTemp:{interval:%s, samples:%s, verbose:%s, args:%s}" % \
+               (self.interval, self.samples, self.verbose, self.args)
