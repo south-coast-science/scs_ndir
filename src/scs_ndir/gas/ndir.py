@@ -145,6 +145,23 @@ class NDIR(object):
     # ----------------------------------------------------------------------------------------------------------------
     # sampling...
 
+    def sample_co2(self, ideal_gas_law):
+        try:
+            self.obtain_lock()
+
+            cmd = NDIRCmd.find('sg')
+            response = self._execute(cmd)
+
+            cnc = self.__pack_float(response[0:4])
+            cnc_igl = self.__pack_float(response[4:8])
+
+            return CO2Datum(cnc_igl if ideal_gas_law else cnc)
+
+        finally:
+            self.release_lock()
+
+
+
     def sample_gas(self):
         try:
             self.obtain_lock()
@@ -160,11 +177,6 @@ class NDIR(object):
 
         finally:
             self.release_lock()
-
-
-    # noinspection PyMethodMayBeStatic,PyUnusedLocal
-    def sample_co2(self, ideal_gas_law):                # TODO: implement sample_co2
-        return CO2Datum(None)
 
 
     # ----------------------------------------------------------------------------------------------------------------
