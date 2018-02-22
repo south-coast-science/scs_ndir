@@ -9,9 +9,9 @@ Alphasense Application Note AAN 201-06
 http://www.alphasense.com/WEB1213/wp-content/uploads/2014/12/AAN_201-06.pdf
 
 example JSON:
-{"ndir-serial": 12601304, "board-serial": 2, "sensor": 0,
-"lamp-voltage": 5.0, "lamp-period": 500, "max-deferral": 220, "min-deferral": 480,
-"zero": 1.0, "span": 2.0, "linear-b": 0.000325, "linear-c": 0.9363,
+{"ndir-serial": 12601304, "board-serial": 2, "sensor": 0, "lamp-voltage": 5, "lamp-period": 333,
+"max-deferral": 160, "min-deferral": 340, "zero": 1.0, "span": -0.292553,
+"linear-b": 0.000325, "linear-c": 0.9363,
 "temp-beta-o": 1e-05, "temp-alpha": 0.00056, "temp-beta-a": 1e-05,
 "t-cal": 1.0}
 """
@@ -32,7 +32,7 @@ class NDIRCalib(PersistentJSONable):
     """
 
     CALIB_IAQ = '{"ndir-serial": 12601304, "board-serial": 2, "sensor": 0, ' \
-                '"lamp-voltage": 5.0, "lamp-period": 500, "max-deferral": 220, "min-deferral": 480, ' \
+                '"lamp-voltage": 5.0, "lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
                 '"zero": 1.0, "span": -0.292553, "linear-b": 0.000325, "linear-c": 0.9363, ' \
                 '"temp-beta-o": 0.00001, "temp-alpha": 0.00056, "temp-beta-a": 0.00001, "t-cal": 1.0}'
 
@@ -134,7 +134,7 @@ class NDIRCalib(PersistentJSONable):
         self.__max_deferral = Datum.int(max_deferral)
         self.__min_deferral = Datum.int(min_deferral)
 
-        # RANGE fields...
+        # range fields...
         self.__zero = Datum.float(zero, 6)
         self.__span = Datum.float(span, 6)
 
@@ -186,7 +186,7 @@ class NDIRCalib(PersistentJSONable):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # getters: RANGE fields
+    # getters: range fields
 
     @property
     def zero(self):
@@ -245,7 +245,7 @@ class NDIRCalib(PersistentJSONable):
         jdict['max-deferral'] = self.max_deferral
         jdict['min-deferral'] = self.min_deferral
 
-        # RANGE fields...
+        # range fields...
         jdict['zero'] = self.zero
         jdict['span'] = self.span
 
