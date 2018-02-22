@@ -4,8 +4,7 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 document example:
-{"rec": "2018-02-17T13:01:25.584+00:00", "pile-ref-ampl": 2.6213, "pile-act-ampl": 2.5588, "therm-avg": 0.9949,
-"pile-diff": 0.0625}
+{"rec": "2018-02-21T18:50:32.761+00:00", "cnc": 301.4, "cnc-igl": 53.4, "temp": 28.9}
 """
 
 from collections import OrderedDict
@@ -17,7 +16,7 @@ from scs_core.data.localized_datetime import LocalizedDatetime
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class NDIRSampleVoltageDatum(JSONable):
+class NDIRSampleGasDatum(JSONable):
     """
     classdocs
     """
@@ -29,9 +28,9 @@ class NDIRSampleVoltageDatum(JSONable):
         if not sample:
             return None
 
-        pile_ref_ampl, pile_act_ampl, thermistor_avg = sample
+        cnc, cnc_igl, temp = sample
 
-        return NDIRSampleVoltageDatum(rec, pile_ref_ampl, pile_act_ampl, thermistor_avg)
+        return NDIRSampleGasDatum(rec, cnc, cnc_igl, temp)
 
 
     @classmethod
@@ -41,24 +40,42 @@ class NDIRSampleVoltageDatum(JSONable):
 
         rec = LocalizedDatetime.construct_from_jdict(jdict.get('rec'))
 
-        pile_ref_ampl = jdict.get('pile-ref-ampl')
-        pile_act_ampl = jdict.get('pile-act-ampl')
-        thermistor_avg = jdict.get('therm-avg')
+        cnc = jdict.get('cnc')
+        cnc_igl = jdict.get('cnc-igl')
+        temp = jdict.get('temp')
 
-        return NDIRSampleVoltageDatum(rec, pile_ref_ampl, pile_act_ampl, thermistor_avg)
+        return NDIRSampleGasDatum(rec, cnc, cnc_igl, temp)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, rec, pile_ref_ampl, pile_act_ampl, thermistor_avg):
+    def __init__(self, rec, cnc, cnc_igl, temp):
         """
         Constructor
         """
         self.__rec = rec
 
-        self.__pile_ref_ampl = Datum.float(pile_ref_ampl, 4)
-        self.__pile_act_ampl = Datum.float(pile_act_ampl, 4)
-        self.__thermistor_avg = Datum.float(thermistor_avg, 4)
+        self.__cnc = Datum.float(cnc, 1)
+        self.__cnc_igl = Datum.float(cnc_igl, 1)
+        self.__temp = Datum.float(temp, 1)
+
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+
+        # no check of rec field
+
+        if self.cnc != other.cnc:
+            return False
+
+        if self.cnc_igl != other.cnc_igl:
+            return False
+
+        if self.temp != other.temp:
+            return False
+
+        return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -68,11 +85,9 @@ class NDIRSampleVoltageDatum(JSONable):
 
         jdict['rec'] = self.rec.as_json()
 
-        jdict['pile-ref-ampl'] = self.pile_ref_ampl
-        jdict['pile-act-ampl'] = self.pile_act_ampl
-        jdict['therm-avg'] = self.thermistor_avg
-
-        jdict['pile-diff'] = Datum.float(self.pile_ref_ampl - self.pile_act_ampl, 4)
+        jdict['cnc'] = self.cnc
+        jdict['cnc-igl'] = self.cnc_igl
+        jdict['temp'] = self.temp
 
         return jdict
 
@@ -85,22 +100,22 @@ class NDIRSampleVoltageDatum(JSONable):
 
 
     @property
-    def pile_ref_ampl(self):
-        return self.__pile_ref_ampl
+    def cnc(self):
+        return self.__cnc
 
 
     @property
-    def pile_act_ampl(self):
-        return self.__pile_act_ampl
+    def cnc_igl(self):
+        return self.__cnc_igl
 
 
     @property
-    def thermistor_avg(self):
-        return self.__thermistor_avg
+    def temp(self):
+        return self.__temp
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRSampleVoltageDatum:{rec:%s, pile_ref_ampl:%s, pile_act_ampl:%s, thermistor_avg:%s}" % \
-               (self.rec, self.pile_ref_ampl, self.pile_act_ampl, self.thermistor_avg)
+        return "NDIRSampleGasDatum:{rec:%s, cnc:%s, cnc_igl:%s, temp:%s}" %  \
+               (self.rec, self.cnc, self.cnc_igl, self.temp)

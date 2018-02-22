@@ -6,11 +6,10 @@ Created on 11 Dec 2017
 
 import math
 import struct
-# import sys
+import sys
 import time
 
 from scs_core.gas.co2_datum import CO2Datum
-from scs_core.gas.ndir_datum import NDIRDatum
 from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
 
 from scs_dfe.board.io import IO
@@ -146,24 +145,26 @@ class NDIR(object):
     # ----------------------------------------------------------------------------------------------------------------
     # sampling...
 
-    # noinspection PyMethodMayBeStatic
-    def sample(self):
-        return NDIRDatum(None, None, None, None)        # TODO: implement sample
+    def sample_gas(self):
+        try:
+            self.obtain_lock()
+
+            cmd = NDIRCmd.find('sg')
+            response = self._execute(cmd)
+
+            cnc = self.__pack_float(response[0:4])
+            cnc_igl = self.__pack_float(response[4:8])
+            temp = self.__pack_float(response[8:12])
+
+            return cnc, cnc_igl, temp
+
+        finally:
+            self.release_lock()
 
 
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def sample_co2(self, ideal_gas_law):                # TODO: implement sample_co2
         return CO2Datum(None)
-
-
-    # noinspection PyMethodMayBeStatic
-    def sample_temp(self):                              # TODO: implement sample_temp
-        return None
-
-
-    # noinspection PyMethodMayBeStatic
-    def sample_dc(self):                                # TODO: implement sample_dc
-        return None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -220,6 +221,77 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def store_eeprom_calib(self, calib):
+        try:
+            self.obtain_lock()
+
+            # common fields...
+            self.eeprom_write_unsigned_long(NDIRCalib.INDEX_NDIR_SERIAL, calib.ndir_serial)
+            self.eeprom_write_unsigned_long(NDIRCalib.INDEX_BOARD_SERIAL, calib.board_serial)
+
+            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_SENSOR, calib.sensor)
+
+            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
+            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
+
+            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL, calib.max_deferral)
+            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL, calib.min_deferral)
+
+            # RANGE fields...
+            self.eeprom_write_float(NDIRCalib.INDEX_ZERO, calib.zero)
+            self.eeprom_write_float(NDIRCalib.INDEX_SPAN, calib.span)
+
+            self.eeprom_write_float(NDIRCalib.INDEX_LINEAR_B, calib.linear_b)
+            self.eeprom_write_float(NDIRCalib.INDEX_LINEAR_C, calib.linear_c)
+
+            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
+            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
+            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_A, calib.temp_beta_a)
+
+            self.eeprom_write_float(NDIRCalib.INDEX_T_CAL, calib.t_cal)
+
+        finally:
+            self.release_lock()
+
+
+    def retrieve_eeprom_calib(self):
+        try:
+            self.obtain_lock()
+
+            # common fields...
+            ndir_serial = self.eeprom_read_unsigned_long(NDIRCalib.INDEX_NDIR_SERIAL)
+            board_serial = self.eeprom_read_unsigned_long(NDIRCalib.INDEX_BOARD_SERIAL)
+
+            sensor = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_SENSOR)
+
+            lamp_voltage = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE)
+            lamp_period = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
+
+            max_deferral = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL)
+            min_deferral = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL)
+
+            # RANGE fields...
+            zero = self.eeprom_read_float(NDIRCalib.INDEX_ZERO)
+            span = self.eeprom_read_float(NDIRCalib.INDEX_SPAN)
+
+            linear_b = self.eeprom_read_float(NDIRCalib.INDEX_LINEAR_B)
+            linear_c = self.eeprom_read_float(NDIRCalib.INDEX_LINEAR_C)
+
+            temp_beta_o = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_O)
+            temp_alpha = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_ALPHA)
+            temp_beta_a = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_A)
+
+            t_cal = self.eeprom_read_float(NDIRCalib.INDEX_T_CAL)
+
+            return NDIRCalib(ndir_serial, board_serial, sensor, lamp_voltage, lamp_period, max_deferral, min_deferral,
+                             zero, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a, t_cal)
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def cmd_watchdog_clear(self):
         try:
             self.obtain_lock()
@@ -244,75 +316,6 @@ class NDIR(object):
             # clear status...
             cmd = NDIRCmd.find('wc')
             self._execute(cmd)
-
-        finally:
-            self.release_lock()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def cmd_store_eeprom_calib(self, calib):
-        try:
-            self.obtain_lock()
-
-            # common fields...
-            self.eeprom_write_float(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
-            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
-
-            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL, calib.max_deferral)
-            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL, calib.min_deferral)
-
-            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_SPAN, calib.span)
-
-            # span fields...
-            self.eeprom_write_float(NDIRCalib.INDEX_LINEAR_B, calib.linear_b)
-            self.eeprom_write_float(NDIRCalib.INDEX_LINEAR_C, calib.linear_c)
-
-            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
-            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
-            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_A, calib.temp_beta_a)
-
-            self.eeprom_write_float(NDIRCalib.INDEX_THERM_A, calib.therm_a)
-            self.eeprom_write_float(NDIRCalib.INDEX_THERM_B, calib.therm_b)
-            self.eeprom_write_float(NDIRCalib.INDEX_THERM_C, calib.therm_c)
-            self.eeprom_write_float(NDIRCalib.INDEX_THERM_D, calib.therm_d)
-
-            self.eeprom_write_float(NDIRCalib.INDEX_T_CAL, calib.t_cal)
-
-        finally:
-            self.release_lock()
-
-
-    def cmd_retrieve_eeprom_calib(self):
-        try:
-            self.obtain_lock()
-
-            # common fields...
-            lamp_voltage = self.eeprom_read_float(NDIRCalib.INDEX_LAMP_VOLTAGE)
-            lamp_period = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
-
-            max_deferral = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL)
-            min_deferral = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL)
-
-            span = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_SPAN)
-
-            # span fields...
-            linear_b = self.eeprom_read_float(NDIRCalib.INDEX_LINEAR_B)
-            linear_c = self.eeprom_read_float(NDIRCalib.INDEX_LINEAR_C)
-
-            temp_beta_o = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_O)
-            temp_alpha = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_ALPHA)
-            temp_beta_a = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_A)
-
-            therm_a = self.eeprom_read_float(NDIRCalib.INDEX_THERM_A)
-            therm_b = self.eeprom_read_float(NDIRCalib.INDEX_THERM_B)
-            therm_c = self.eeprom_read_float(NDIRCalib.INDEX_THERM_C)
-            therm_d = self.eeprom_read_float(NDIRCalib.INDEX_THERM_D)
-
-            t_cal = self.eeprom_read_float(NDIRCalib.INDEX_T_CAL)
-
-            return NDIRCalib(lamp_voltage, lamp_period, max_deferral, min_deferral, span, linear_b, linear_c,
-                             temp_beta_o, temp_alpha, temp_beta_a, therm_a, therm_b, therm_c, therm_d, t_cal)
 
         finally:
             self.release_lock()
@@ -531,13 +534,34 @@ class NDIR(object):
             self.release_lock()
 
 
+    def cmd_sample_dump(self):
+        try:
+            self.obtain_lock()
+
+            # report...
+            cmd = NDIRCmd.find('sd')
+            response = self._execute(cmd)
+
+            single_shot = response[0]
+            is_running = response[1]
+            index = self.__pack_unsigned_int(response[2:4])
+            max_cycles = self.__pack_unsigned_long(response[4:8])
+            min_cycles = self.__pack_unsigned_long(response[8:12])
+            cycles = self.__pack_unsigned_long(response[12:16])
+
+            return single_shot, is_running, index, max_cycles, min_cycles, cycles
+
+        finally:
+            self.release_lock()
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def cmd_fail(self):
         try:
             self.obtain_lock()
 
-            # TODO: test for insufficient bytes sent
+            # TODO: datum for insufficient bytes sent
 
             cmd = NDIRCmd.find('mr')
             cmd.return_count = 0            # should return two bytes - ignore these to cause SPI fail
@@ -564,6 +588,25 @@ class NDIR(object):
         cmd = NDIRCmd.find('ew')
 
         value_bytes = self.__unpack_unsigned_int(value)
+        self._execute(cmd, (index,), value_bytes)
+
+        time.sleep(cmd.execution_time)
+
+
+    def eeprom_read_unsigned_long(self, index):
+        cmd = NDIRCmd.find('er')
+        cmd.return_count = 4
+
+        response = self._execute(cmd, (index,))
+        value = self.__pack_unsigned_long(response)
+
+        return value
+
+
+    def eeprom_write_unsigned_long(self, index, value):
+        cmd = NDIRCmd.find('ew')
+
+        value_bytes = self.__unpack_unsigned_long(value)
         self._execute(cmd, (index,), value_bytes)
 
         time.sleep(cmd.execution_time)
@@ -597,7 +640,7 @@ class NDIR(object):
         try:
             self.__spi.open()
 
-            # transfer...
+            # command...
             self._xfer(cmd.name_bytes())
 
             if param_group_1:
@@ -623,9 +666,12 @@ class NDIR(object):
             if response[0] == self.__RESPONSE_BUSY:
                 raise NDIRException('BUSY received', response[0], cmd, (param_group_1, param_group_2))
 
-            # response...
+            # return values...
             if cmd.return_count < 1:
                 return
+
+            # wait...
+            time.sleep(self.__PARAM_DELAY)
 
             response = self.__spi.read_bytes(cmd.return_count)
             # print("response: %s" % str(response), file=sys.stderr)

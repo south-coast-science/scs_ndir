@@ -68,7 +68,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        calib = ndir.cmd_retrieve_eeprom_calib()
+        calib = ndir.retrieve_eeprom_calib()
         jdict = calib.as_json()
 
         if cmd.get() or cmd.set():
@@ -84,14 +84,14 @@ if __name__ == '__main__':
             jdict[cmd.name] = cmd.value
             calib = NDIRCalib.construct_from_jdict(jdict)
 
-            # test...
+            # datum...
             jdict = calib.as_json()
             if jdict[cmd.name] is None:
                 print("ndir_eeprom: value not acceptable: %s" % cmd.value, file=sys.stderr)
                 exit(2)
 
             # save...
-            ndir.cmd_store_eeprom_calib(calib)
+            ndir.store_eeprom_calib(calib)
 
         else:
             # report...
