@@ -105,7 +105,7 @@ ENV/
 
 # South Coast Science
 **/*.csv
+**/*.log
 **/*.numbers
 **/*.xls
 **/*.xlsx
-**/*.log
