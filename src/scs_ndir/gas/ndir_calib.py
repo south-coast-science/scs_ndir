@@ -44,15 +44,16 @@ class NDIRCalib(PersistentJSONable):
 
     # TODO: lamp voltage points?
 
-    # common fields...
+    # identity...
     INDEX_NDIR_SERIAL =              0          # unsigned long         SET IN CALIBRATION
     INDEX_BOARD_SERIAL =             1          # unsigned long
 
+    # common fields...
     INDEX_SENSOR =                   2          # unsigned int          SET IN CALIBRATION
 
     INDEX_LAMP_VOLTAGE =             3          # unsigned int
-    INDEX_LAMP_PERIOD =              4          # unsigned int
 
+    INDEX_LAMP_PERIOD =              4          # unsigned int
     INDEX_MAX_DEFERRAL =             5          # unsigned int
     INDEX_MIN_DEFERRAL =             6          # unsigned int
 
@@ -84,19 +85,20 @@ class NDIRCalib(PersistentJSONable):
         if not jdict:
             return None
 
-        # common fields...
+        # identity...
         ndir_serial = jdict.get('ndir-serial')
         board_serial = jdict.get('board-serial')
 
+        # common fields...
         sensor = jdict.get('sensor')
 
         lamp_voltage = jdict.get('lamp-voltage')
-        lamp_period = jdict.get('lamp-period')
 
+        lamp_period = jdict.get('lamp-period')
         max_deferral = jdict.get('max-deferral')
         min_deferral = jdict.get('min-deferral')
 
-        # RANGE fields...
+        # range fields...
         zero = jdict.get('zero')
         span = jdict.get('span')
 
@@ -122,15 +124,16 @@ class NDIRCalib(PersistentJSONable):
         """
         super().__init__()
 
-        # common fields...
+        # identity...
         self.__ndir_serial = ndir_serial
         self.__board_serial = board_serial
 
+        # common fields...
         self.__sensor = Datum.int(sensor)
 
         self.__lamp_voltage = Datum.int(lamp_voltage)
-        self.__lamp_period = Datum.int(lamp_period)
 
+        self.__lamp_period = Datum.int(lamp_period)
         self.__max_deferral = Datum.int(max_deferral)
         self.__min_deferral = Datum.int(min_deferral)
 
@@ -233,15 +236,16 @@ class NDIRCalib(PersistentJSONable):
     def as_json(self):
         jdict = OrderedDict()
 
-        # common fields...
+        # identity...
         jdict['ndir-serial'] = self.ndir_serial
         jdict['board-serial'] = self.board_serial
 
+        # common fields...
         jdict['sensor'] = self.sensor
 
         jdict['lamp-voltage'] = self.lamp_voltage
-        jdict['lamp-period'] = self.lamp_period
 
+        jdict['lamp-period'] = self.lamp_period
         jdict['max-deferral'] = self.max_deferral
         jdict['min-deferral'] = self.min_deferral
 
