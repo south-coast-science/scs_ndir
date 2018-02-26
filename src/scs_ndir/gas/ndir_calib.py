@@ -33,7 +33,7 @@ class NDIRCalib(PersistentJSONable):
 
     CALIB_IAQ = '{"ndir-serial": 12601304, "board-serial": 2, "sensor": 0, ' \
                 '"lamp-voltage": 5.0, "lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
-                '"zero": 1.0, "span": -0.292553, "linear-b": 0.000325, "linear-c": 0.9363, ' \
+                '"zero": 31.0, "span": -0.292553, "linear-b": 0.000325, "linear-c": 0.9363, ' \
                 '"temp-beta-o": 0.00001, "temp-alpha": 0.00056, "temp-beta-a": 0.00001, "t-cal": 1.0}'
 
     # sensor ranges...

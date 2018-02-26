@@ -4,10 +4,10 @@ Created on 11 Dec 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
-import math
-import struct
 # import sys
 import time
+
+from scs_core.data.datum import Datum
 
 from scs_core.gas.co2_datum import CO2Datum
 from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
@@ -56,61 +56,6 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    @staticmethod
-    def __pack_int(byte_values):
-        packed = struct.unpack('h', struct.pack('BB', *byte_values))
-        return packed[0]
-
-
-    @staticmethod
-    def __pack_unsigned_int(byte_values):
-        packed = struct.unpack('H', struct.pack('BB', *byte_values))
-        return packed[0]
-
-
-    @staticmethod
-    def __pack_unsigned_long(byte_values):
-        packed = struct.unpack('L', struct.pack('BBBB', *byte_values))
-        return packed[0]
-
-
-    @staticmethod
-    def __pack_float(byte_values):
-        packed = struct.unpack('f', struct.pack('BBBB', *byte_values))
-
-        return None if math.isnan(packed[0]) else packed[0]
-
-
-    @staticmethod
-    def __unpack_int(value):
-        unpacked = struct.unpack('BB', struct.pack('h', int(value)))
-
-        return unpacked
-
-
-    @staticmethod
-    def __unpack_unsigned_int(value):
-        unpacked = struct.unpack('BB', struct.pack('H', int(value)))
-
-        return unpacked
-
-
-    @staticmethod
-    def __unpack_unsigned_long(value):
-        unpacked = struct.unpack('BBBB', struct.pack('L', int(value)))
-
-        return unpacked
-
-
-    @staticmethod
-    def __unpack_float(value):
-        unpacked = struct.unpack('BBBB', struct.pack('f', float(value)))
-
-        return unpacked
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     @classmethod
     def obtain_lock(cls):
         Lock.acquire(cls.__name__, NDIR.__LOCK_TIMEOUT)
@@ -152,8 +97,8 @@ class NDIR(object):
             cmd = NDIRCmd.find('sg')
             response = self._execute(cmd)
 
-            cnc = self.__pack_float(response[0:4])
-            cnc_igl = self.__pack_float(response[4:8])
+            cnc = Datum.decode_float(response[0:4])
+            cnc_igl = Datum.decode_float(response[4:8])
 
             return CO2Datum(cnc_igl if ideal_gas_law else cnc)
 
@@ -169,9 +114,9 @@ class NDIR(object):
             cmd = NDIRCmd.find('sg')
             response = self._execute(cmd)
 
-            cnc = self.__pack_float(response[0:4])
-            cnc_igl = self.__pack_float(response[4:8])
-            temp = self.__pack_float(response[8:12])
+            cnc = Datum.decode_float(response[0:4])
+            cnc_igl = Datum.decode_float(response[4:8])
+            temp = Datum.decode_float(response[8:12])
 
             return cnc, cnc_igl, temp
 
@@ -216,12 +161,12 @@ class NDIR(object):
             # input voltage...
             cmd = NDIRCmd.find('iv')
             response = self._execute(cmd)
-            pwr_in = self.__pack_float(response)
+            pwr_in = Datum.decode_float(response)
 
             # uptime...
             cmd = NDIRCmd.find('up')
             response = self._execute(cmd)
-            seconds = self.__pack_unsigned_long(response)
+            seconds = Datum.decode_unsigned_long(response)
 
             status = NDIRStatus(watchdog_reset, pwr_in, NDIRUptime(seconds))
 
@@ -237,19 +182,20 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            # common fields...
+            # identity...
             self.eeprom_write_unsigned_long(NDIRCalib.INDEX_NDIR_SERIAL, calib.ndir_serial)
             self.eeprom_write_unsigned_long(NDIRCalib.INDEX_BOARD_SERIAL, calib.board_serial)
 
+            # common fields...
             self.eeprom_write_unsigned_int(NDIRCalib.INDEX_SENSOR, calib.sensor)
 
             self.eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
-            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
 
+            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
             self.eeprom_write_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL, calib.max_deferral)
             self.eeprom_write_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL, calib.min_deferral)
 
-            # RANGE fields...
+            # range fields...
             self.eeprom_write_float(NDIRCalib.INDEX_ZERO, calib.zero)
             self.eeprom_write_float(NDIRCalib.INDEX_SPAN, calib.span)
 
@@ -270,19 +216,20 @@ class NDIR(object):
         try:
             self.obtain_lock()
 
-            # common fields...
+            # identity...
             ndir_serial = self.eeprom_read_unsigned_long(NDIRCalib.INDEX_NDIR_SERIAL)
             board_serial = self.eeprom_read_unsigned_long(NDIRCalib.INDEX_BOARD_SERIAL)
 
+            # common fields...
             sensor = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_SENSOR)
 
             lamp_voltage = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE)
-            lamp_period = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
 
+            lamp_period = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
             max_deferral = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL)
             min_deferral = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL)
 
-            # RANGE fields...
+            # range fields...
             zero = self.eeprom_read_float(NDIRCalib.INDEX_ZERO)
             span = self.eeprom_read_float(NDIRCalib.INDEX_SPAN)
 
@@ -356,7 +303,7 @@ class NDIR(object):
 
             cmd = NDIRCmd.find('ir')
             response = self._execute(cmd)
-            v_in_value = self.__pack_int(response)
+            v_in_value = Datum.decode_unsigned_int(response)
 
             return v_in_value
 
@@ -370,7 +317,7 @@ class NDIR(object):
 
             cmd = NDIRCmd.find('iv')
             response = self._execute(cmd)
-            v_in_voltage = self.__pack_float(response)
+            v_in_voltage = Datum.decode_float(response)
 
             return v_in_voltage
 
@@ -400,9 +347,9 @@ class NDIR(object):
             cmd = NDIRCmd.find('mr')
             response = self._execute(cmd)
 
-            pile_ref_value = self.__pack_unsigned_int(response[0:2])
-            pile_act_value = self.__pack_unsigned_int(response[2:4])
-            thermistor_value = self.__pack_unsigned_int(response[4:6])
+            pile_ref_value = Datum.decode_unsigned_int(response[0:2])
+            pile_act_value = Datum.decode_unsigned_int(response[2:4])
+            thermistor_value = Datum.decode_unsigned_int(response[4:6])
 
             return pile_ref_value, pile_act_value, thermistor_value
 
@@ -417,9 +364,9 @@ class NDIR(object):
             cmd = NDIRCmd.find('mv')
             response = self._execute(cmd)
 
-            pile_ref_voltage = self.__pack_float(response[0:4])
-            pile_act_voltage = self.__pack_float(response[4:8])
-            thermistor_voltage = self.__pack_float(response[8:12])
+            pile_ref_voltage = Datum.decode_float(response[0:4])
+            pile_act_voltage = Datum.decode_float(response[4:8])
+            thermistor_voltage = Datum.decode_float(response[8:12])
 
             return pile_ref_voltage, pile_act_voltage, thermistor_voltage
 
@@ -434,9 +381,9 @@ class NDIR(object):
             self.obtain_lock()
 
             # start recording...
-            deferral_bytes = self.__unpack_unsigned_int(deferral)
-            interval_bytes = self.__unpack_unsigned_int(interval)
-            count_bytes = self.__unpack_unsigned_int(count)
+            deferral_bytes = Datum.encode_unsigned_int(deferral)
+            interval_bytes = Datum.encode_unsigned_int(interval)
+            count_bytes = Datum.encode_unsigned_int(count)
 
             param_bytes = []
             param_bytes.extend(deferral_bytes)
@@ -458,9 +405,9 @@ class NDIR(object):
             values = []
 
             for i in range(0, cmd.return_count, 6):
-                timestamp = self.__pack_unsigned_int(response[i:i + 2])
-                pile_ref = self.__pack_unsigned_int(response[i + 2:i + 4])
-                pile_act = self.__pack_unsigned_int(response[i + 4:i + 6])
+                timestamp = Datum.decode_unsigned_int(response[i:i + 2])
+                pile_ref = Datum.decode_unsigned_int(response[i + 2:i + 4])
+                pile_act = Datum.decode_unsigned_int(response[i + 4:i + 6])
 
                 values.append((timestamp, pile_ref, pile_act))
 
@@ -495,9 +442,9 @@ class NDIR(object):
             cmd = NDIRCmd.find('sr')
             response = self._execute(cmd)
 
-            pile_ref_amplitude = self.__pack_unsigned_int(response[0:2])
-            pile_act_amplitude = self.__pack_unsigned_int(response[2:4])
-            thermistor_average = self.__pack_unsigned_int(response[4:6])
+            pile_ref_amplitude = Datum.decode_unsigned_int(response[0:2])
+            pile_act_amplitude = Datum.decode_unsigned_int(response[2:4])
+            thermistor_average = Datum.decode_unsigned_int(response[4:6])
 
             return pile_ref_amplitude, pile_act_amplitude, thermistor_average
 
@@ -513,9 +460,9 @@ class NDIR(object):
             cmd = NDIRCmd.find('sv')
             response = self._execute(cmd)
 
-            pile_ref_amplitude = self.__pack_float(response[0:4])
-            pile_act_amplitude = self.__pack_float(response[4:8])
-            thermistor_average = self.__pack_float(response[8:12])
+            pile_ref_amplitude = Datum.decode_float(response[0:4])
+            pile_act_amplitude = Datum.decode_float(response[4:8])
+            thermistor_average = Datum.decode_float(response[8:12])
 
             return pile_ref_amplitude, pile_act_amplitude, thermistor_average
 
@@ -534,9 +481,9 @@ class NDIR(object):
             values = []
 
             for i in range(0, cmd.return_count, 6):
-                pile_ref = self.__pack_unsigned_int(response[i:i + 2])
-                pile_act = self.__pack_unsigned_int(response[i + 2:i + 4])
-                thermistor = self.__pack_unsigned_int(response[i + 4:i + 6])
+                pile_ref = Datum.decode_unsigned_int(response[i:i + 2])
+                pile_act = Datum.decode_unsigned_int(response[i + 2:i + 4])
+                thermistor = Datum.decode_unsigned_int(response[i + 4:i + 6])
 
                 values.append((pile_ref, pile_act, thermistor))
 
@@ -556,7 +503,7 @@ class NDIR(object):
 
             single_shot = response[0]
             is_running = response[1]
-            index = self.__pack_unsigned_int(response[2:4])
+            index = Datum.decode_unsigned_int(response[2:4])
 
             return single_shot, is_running, index
 
@@ -588,7 +535,7 @@ class NDIR(object):
         cmd.return_count = 2
 
         response = self._execute(cmd, (index,))
-        value = self.__pack_unsigned_int(response)
+        value = Datum.decode_unsigned_int(response)
 
         return value
 
@@ -596,7 +543,7 @@ class NDIR(object):
     def eeprom_write_unsigned_int(self, index, value):
         cmd = NDIRCmd.find('ew')
 
-        value_bytes = self.__unpack_unsigned_int(value)
+        value_bytes = Datum.encode_unsigned_int(value)
         self._execute(cmd, (index,), value_bytes)
 
         time.sleep(cmd.execution_time)
@@ -607,7 +554,7 @@ class NDIR(object):
         cmd.return_count = 4
 
         response = self._execute(cmd, (index,))
-        value = self.__pack_unsigned_long(response)
+        value = Datum.decode_unsigned_long(response)
 
         return value
 
@@ -615,7 +562,7 @@ class NDIR(object):
     def eeprom_write_unsigned_long(self, index, value):
         cmd = NDIRCmd.find('ew')
 
-        value_bytes = self.__unpack_unsigned_long(value)
+        value_bytes = Datum.encode_unsigned_long(value)
         self._execute(cmd, (index,), value_bytes)
 
         time.sleep(cmd.execution_time)
@@ -626,7 +573,7 @@ class NDIR(object):
         cmd.return_count = 4
 
         response = self._execute(cmd, (index,))
-        value = self.__pack_float(response)
+        value = Datum.decode_float(response)
 
         return value
 
@@ -634,7 +581,7 @@ class NDIR(object):
     def eeprom_write_float(self, index, value):
         cmd = NDIRCmd.find('ew')
 
-        value_bytes = self.__unpack_float(value)
+        value_bytes = Datum.encode_float(value)
         self._execute(cmd, (index,), value_bytes)
 
         time.sleep(cmd.execution_time)
