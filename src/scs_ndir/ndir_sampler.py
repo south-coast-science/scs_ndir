@@ -78,7 +78,7 @@ if __name__ == '__main__':
             ndir.cmd_sample_mode(cmd.mode == 0)
 
         elif cmd.window is not None:
-            # retrieve the last sample window...
+            # retrieve latest sample window...
             calib = ndir.retrieve_eeprom_calib()
             samples = ndir.cmd_sample_window()
 
@@ -87,16 +87,13 @@ if __name__ == '__main__':
                 datum = NDIRWindowDatum.construct_from_sample(rec, samples[i])
                 print(JSONify.dumps(datum))
 
-
         elif cmd.dump is not None:
-            single_shot, is_running, index, max_cycles, min_cycles, cycles = ndir.cmd_sample_dump()
+            # dump state of the sampler module...
+            single_shot, is_running, index = ndir.cmd_sample_dump()
 
             print("single_shot: %s" % single_shot)
             print("is_running: %s" % is_running)
             print("index: %s" % index)
-            print("max_cycles: %s" % max_cycles)
-            print("min_cycles: %s" % min_cycles)
-            print("cycles: %s" % cycles)
 
         else:
             # run sampling...
@@ -110,7 +107,7 @@ if __name__ == '__main__':
                 print(JSONify.dumps(sample))
                 sys.stdout.flush()
 
-                # check for stuck data
+                # check for stuck data...
                 # if sample == prev_sample == prev_prev_sample:
                 #     print(chr(7))
                 #     break

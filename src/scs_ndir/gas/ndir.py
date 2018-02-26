@@ -6,7 +6,7 @@ Created on 11 Dec 2017
 
 import math
 import struct
-import sys
+# import sys
 import time
 
 from scs_core.gas.co2_datum import CO2Datum
@@ -19,10 +19,10 @@ from scs_host.lock.lock import Lock
 
 from scs_ndir.exception.ndir_exception import NDIRException
 
+from scs_ndir.gas.ndir_calib import NDIRCalib
 from scs_ndir.gas.ndir_cmd import NDIRCmd
 from scs_ndir.gas.ndir_status import NDIRStatus
 from scs_ndir.gas.ndir_uptime import NDIRUptime
-from scs_ndir.gas.ndir_calib import NDIRCalib
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -83,28 +83,28 @@ class NDIR(object):
 
     @staticmethod
     def __unpack_int(value):
-        unpacked = struct.unpack('BB', struct.pack('h', value))
+        unpacked = struct.unpack('BB', struct.pack('h', int(value)))
 
         return unpacked
 
 
     @staticmethod
     def __unpack_unsigned_int(value):
-        unpacked = struct.unpack('BB', struct.pack('H', value))
+        unpacked = struct.unpack('BB', struct.pack('H', int(value)))
 
         return unpacked
 
 
     @staticmethod
     def __unpack_unsigned_long(value):
-        unpacked = struct.unpack('BBBB', struct.pack('L', value))
+        unpacked = struct.unpack('BBBB', struct.pack('L', int(value)))
 
         return unpacked
 
 
     @staticmethod
     def __unpack_float(value):
-        unpacked = struct.unpack('BBBB', struct.pack('f', value))
+        unpacked = struct.unpack('BBBB', struct.pack('f', float(value)))
 
         return unpacked
 
@@ -557,11 +557,8 @@ class NDIR(object):
             single_shot = response[0]
             is_running = response[1]
             index = self.__pack_unsigned_int(response[2:4])
-            max_cycles = self.__pack_unsigned_long(response[4:8])
-            min_cycles = self.__pack_unsigned_long(response[8:12])
-            cycles = self.__pack_unsigned_long(response[12:16])
 
-            return single_shot, is_running, index, max_cycles, min_cycles, cycles
+            return single_shot, is_running, index
 
         finally:
             self.release_lock()

@@ -40,6 +40,8 @@ from scs_ndir.gas.ndir import NDIR
 from scs_ndir.gas.ndir_calib import NDIRCalib
 
 
+# TODO: bug in eeprom serial number read / write?
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -89,6 +91,8 @@ if __name__ == '__main__':
             if jdict[cmd.name] is None:
                 print("ndir_eeprom: value not acceptable: %s" % cmd.value, file=sys.stderr)
                 exit(2)
+
+            print("calib: %s" % calib)
 
             # save...
             ndir.store_eeprom_calib(calib)
