@@ -3,10 +3,10 @@ Created on 21 Jun 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-specifies whether on not an NDIR is present
+specifies whether on not an NDIR is model
 
 example JSON:
-{"present": true}
+{"model": true}
 """
 
 import os
@@ -37,28 +37,28 @@ class NDIRConf(PersistentJSONable):
     @classmethod
     def construct_from_jdict(cls, jdict):
         if not jdict:
-            return NDIRConf(False)
+            return None
 
-        present = jdict.get('present')
+        model = jdict.get('model')
 
-        return NDIRConf(present)
+        return NDIRConf(model)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, present):
+    def __init__(self, model):
         """
         Constructor
         """
         super().__init__()
 
-        self.__present = bool(present)
+        self.__model = bool(model)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def ndir(self, host):
-        if not self.present:
+    def ndir(self, host):               # TODO: handle multiple NDIR models
+        if self.model is None:
             return None
 
         return NDIR(host.ndir_spi_bus(), host.ndir_spi_device())
@@ -67,8 +67,8 @@ class NDIRConf(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def present(self):
-        return self.__present
+    def model(self):
+        return self.__model
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ class NDIRConf(PersistentJSONable):
     def as_json(self):
         jdict = OrderedDict()
 
-        jdict['present'] = self.present
+        jdict['model'] = self.model
 
         return jdict
 
@@ -84,4 +84,4 @@ class NDIRConf(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRConf:{present:%s}" %  self.present
+        return "NDIRConf:{model:%s}" %  self.model

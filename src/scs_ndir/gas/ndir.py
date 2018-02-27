@@ -25,6 +25,8 @@ from scs_ndir.gas.ndir_status import NDIRStatus
 from scs_ndir.gas.ndir_uptime import NDIRUptime
 
 
+# TODO: requires NIIRMonitor class
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class NDIR(object):
