@@ -52,7 +52,7 @@ class NDIRConf(PersistentJSONable):
         """
         super().__init__()
 
-        self.__model = bool(model)
+        self.__model = model
 
 
     # ----------------------------------------------------------------------------------------------------------------
