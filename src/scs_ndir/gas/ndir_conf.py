@@ -40,24 +40,26 @@ class NDIRConf(PersistentJSONable):
             return None
 
         model = jdict.get('model')
+        avg_period = jdict.get('avg-period')
 
-        return NDIRConf(model)
+        return NDIRConf(model, avg_period)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, model):
+    def __init__(self, model, avg_period):
         """
         Constructor
         """
         super().__init__()
 
         self.__model = model
+        self.__avg_period = avg_period
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def ndir(self, host):               # TODO: handle multiple NDIR models
+    def ndir(self, host):               # TODO: handle multiple NDIR models / NDIR monitor
         if self.model is None:
             return None
 
@@ -71,12 +73,18 @@ class NDIRConf(PersistentJSONable):
         return self.__model
 
 
+    @property
+    def avg_period(self):
+        return self.__avg_period
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self):
         jdict = OrderedDict()
 
         jdict['model'] = self.model
+        jdict['avg-period'] = self.avg_period
 
         return jdict
 
@@ -84,4 +92,4 @@ class NDIRConf(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRConf:{model:%s}" %  self.model
+        return "NDIRConf:{model:%s, avg_period:%s}" %  (self.model, self.avg_period)
