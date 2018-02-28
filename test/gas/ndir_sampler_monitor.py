@@ -39,7 +39,7 @@ try:
 
     while timer.true():
         elapsed_time = time.time() - start_time
-        pile_ref_amplitude, pile_act_amplitude, thermistor_avg = ndir.cmd_sample()
+        pile_ref_amplitude, pile_act_amplitude, thermistor_avg = ndir.cmd_sample_voltage()
         diff = pile_ref_amplitude - pile_act_amplitude
 
         print("%7.3f, %0.4f, %0.4f, %0.4f, %0.4f" %

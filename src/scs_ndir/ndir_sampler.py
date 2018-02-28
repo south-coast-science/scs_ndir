@@ -30,6 +30,7 @@ import sys
 
 from scs_core.data.json import JSONify
 from scs_core.sync.timed_runner import TimedRunner
+from scs_core.sys.system_id import SystemID
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
@@ -39,7 +40,7 @@ from scs_ndir.exception.ndir_exception import NDIRException
 
 from scs_ndir.gas.ndir import NDIR
 
-from scs_ndir.sampler.ndir_gas_sampler import NDIRGasSampler
+from scs_ndir.sampler.ndir_sampler import NDIRSampler
 from scs_ndir.sampler.ndir_voltage_sampler import NDIRVoltageSampler
 
 from scs_ndir.datum.ndir_window_datum import NDIRWindowDatum
@@ -67,6 +68,14 @@ if __name__ == '__main__':
 
         I2C.open(Host.I2C_SENSORS)
 
+        # SystemID...
+        system_id = SystemID.load(Host)
+
+        if system_id is None:
+            print("SystemID not available.", file=sys.stderr)
+            exit(1)
+
+        # NDIR...
         ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
         ndir.power_on()
 
@@ -98,7 +107,7 @@ if __name__ == '__main__':
         else:
             # run sampling...
             runner = TimedRunner(cmd.interval, cmd.samples)
-            sampler = NDIRVoltageSampler(runner, ndir) if cmd.raw else NDIRGasSampler(runner, ndir)
+            sampler = NDIRVoltageSampler(runner, system_id, ndir) if cmd.raw else NDIRSampler(runner, system_id, ndir)
 
             prev_prev_sample = None
             prev_sample = None

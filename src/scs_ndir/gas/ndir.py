@@ -9,7 +9,7 @@ import time
 
 from scs_core.data.datum import Datum
 
-from scs_core.gas.co2_datum import CO2Datum
+from scs_core.gas.ndir_datum import NDIRDatum
 from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
 
 from scs_dfe.board.io import IO
@@ -25,8 +25,6 @@ from scs_ndir.gas.ndir_status import NDIRStatus
 from scs_ndir.gas.ndir_uptime import NDIRUptime
 
 
-# TODO: requires NDIRMonitor class
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class NDIR(object):
@@ -36,17 +34,17 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    RECOVERY_TIME =                     1.0             # time between bad SPI interaction and MCU recovery
-
-    RESET_QUARANTINE =                  8.0             # time between reset and stable readings
+    SAMPLE_INTERVAL =                   1.0             # seconds between sampling
+    RECOVERY_TIME =                     1.0             # seconds between bad SPI interaction and MCU recovery
+    RESET_QUARANTINE =                  8.0             # seconds between reset and stable readings
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     __LOCK_TIMEOUT =                    4.0             # seconds
 
-    __BOOT_DELAY =                      0.500           # seconds
-    __PARAM_DELAY =                     0.001           # seconds
+    __BOOT_DELAY =                      2.500           # seconds to first sample available
+    __PARAM_DELAY =                     0.001           # seconds between SPI sessions
 
     __RESPONSE_ACK =                    0x01
     __RESPONSE_NACK =                   0x02
@@ -92,24 +90,7 @@ class NDIR(object):
     # ----------------------------------------------------------------------------------------------------------------
     # sampling...
 
-    def sample_co2(self, ideal_gas_law):
-        try:
-            self.obtain_lock()
-
-            cmd = NDIRCmd.find('sg')
-            response = self._execute(cmd)
-
-            cnc = Datum.decode_float(response[0:4])
-            cnc_igl = Datum.decode_float(response[4:8])
-
-            return CO2Datum(cnc_igl if ideal_gas_law else cnc)
-
-        finally:
-            self.release_lock()
-
-
-
-    def sample_gas(self):
+    def sample(self):
         try:
             self.obtain_lock()
 
@@ -120,7 +101,7 @@ class NDIR(object):
             cnc_igl = Datum.decode_float(response[4:8])
             temp = Datum.decode_float(response[8:12])
 
-            return cnc, cnc_igl, temp
+            return NDIRDatum(cnc, cnc_igl, temp)
 
         finally:
             self.release_lock()
@@ -454,7 +435,7 @@ class NDIR(object):
             self.release_lock()
 
 
-    def cmd_sample(self):
+    def cmd_sample_voltage(self):
         try:
             self.obtain_lock()
 
