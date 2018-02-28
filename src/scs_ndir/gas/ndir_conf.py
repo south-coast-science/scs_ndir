@@ -39,21 +39,21 @@ class NDIRConf(PersistentJSONable):
             return None
 
         model = jdict.get('model')
-        avg_period = jdict.get('avg-period')
+        tally = jdict.get('tally')
 
-        return NDIRConf(model, avg_period)
+        return NDIRConf(model, tally)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, model, avg_period):
+    def __init__(self, model, tally):
         """
         Constructor
         """
         super().__init__()
 
         self.__model = model
-        self.__avg_period = avg_period
+        self.__tally = tally
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -75,8 +75,8 @@ class NDIRConf(PersistentJSONable):
 
 
     @property
-    def avg_period(self):
-        return self.__avg_period
+    def tally(self):
+        return self.__tally
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ class NDIRConf(PersistentJSONable):
         jdict = OrderedDict()
 
         jdict['model'] = self.model
-        jdict['avg-period'] = self.avg_period
+        jdict['tally'] = self.tally
 
         return jdict
 
@@ -93,4 +93,4 @@ class NDIRConf(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRConf:{model:%s, avg_period:%s}" %  (self.model, self.avg_period)
+        return "NDIRConf:{model:%s, tally:%s}" %  (self.model, self.tally)

@@ -101,7 +101,7 @@ class NDIR(object):
             cnc_igl = Datum.decode_float(response[4:8])
             temp = Datum.decode_float(response[8:12])
 
-            return NDIRDatum(cnc, cnc_igl, temp)
+            return NDIRDatum(temp, cnc, cnc_igl)
 
         finally:
             self.release_lock()
@@ -234,37 +234,6 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_watchdog_clear(self):
-        try:
-            self.obtain_lock()
-
-            cmd = NDIRCmd.find('wc')
-            self._execute(cmd)
-
-        finally:
-            self.release_lock()
-
-
-    def cmd_reset(self):
-        try:
-            self.obtain_lock()
-
-            # force reset...
-            cmd = NDIRCmd.find('wr')
-            self._execute(cmd)
-
-            time.sleep(cmd.execution_time)
-
-            # clear status...
-            cmd = NDIRCmd.find('wc')
-            self._execute(cmd)
-
-        finally:
-            self.release_lock()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def cmd_lamp_run(self, on):
         try:
             self.obtain_lock()
@@ -280,29 +249,93 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_input_raw(self):
+    def cmd_sample_mode(self, single_shot):
         try:
             self.obtain_lock()
 
-            cmd = NDIRCmd.find('ir')
-            response = self._execute(cmd)
-            v_in_value = Datum.decode_unsigned_int(response)
+            mode_byte = 1 if single_shot else 0
 
-            return v_in_value
+            cmd = NDIRCmd.find('sm')
+            self._execute(cmd, (mode_byte, ))
+
+            time.sleep(cmd.execution_time)
 
         finally:
             self.release_lock()
 
 
-    def cmd_input(self):
+    def cmd_sample_raw(self):
         try:
             self.obtain_lock()
 
-            cmd = NDIRCmd.find('iv')
+            # report...
+            cmd = NDIRCmd.find('sr')
             response = self._execute(cmd)
-            v_in_voltage = Datum.decode_float(response)
 
-            return v_in_voltage
+            pile_ref_amplitude = Datum.decode_unsigned_int(response[0:2])
+            pile_act_amplitude = Datum.decode_unsigned_int(response[2:4])
+            thermistor_average = Datum.decode_unsigned_int(response[4:6])
+
+            return pile_ref_amplitude, pile_act_amplitude, thermistor_average
+
+        finally:
+            self.release_lock()
+
+
+    def cmd_sample_voltage(self):
+        try:
+            self.obtain_lock()
+
+            # report...
+            cmd = NDIRCmd.find('sv')
+            response = self._execute(cmd)
+
+            pile_ref_amplitude = Datum.decode_float(response[0:4])
+            pile_act_amplitude = Datum.decode_float(response[4:8])
+            thermistor_average = Datum.decode_float(response[8:12])
+
+            return pile_ref_amplitude, pile_act_amplitude, thermistor_average
+
+        finally:
+            self.release_lock()
+
+
+    def cmd_sample_window(self):
+        try:
+            self.obtain_lock()
+
+            # playback...
+            cmd = NDIRCmd.find('sw')
+            response = self._execute(cmd)
+
+            values = []
+
+            for i in range(0, cmd.return_count, 6):
+                pile_ref = Datum.decode_unsigned_int(response[i:i + 2])
+                pile_act = Datum.decode_unsigned_int(response[i + 2:i + 4])
+                thermistor = Datum.decode_unsigned_int(response[i + 4:i + 6])
+
+                values.append((pile_ref, pile_act, thermistor))
+
+            return values
+
+        finally:
+            self.release_lock()
+
+
+    def cmd_sample_dump(self):
+        try:
+            self.obtain_lock()
+
+            # report...
+            cmd = NDIRCmd.find('sd')
+            response = self._execute(cmd)
+
+            single_shot = response[0]
+            is_running = response[1]
+            index = Datum.decode_unsigned_int(response[2:4])
+
+            return single_shot, is_running, index
 
         finally:
             self.release_lock()
@@ -402,93 +435,60 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_sample_mode(self, single_shot):
+    def cmd_input_raw(self):
         try:
             self.obtain_lock()
 
-            mode_byte = 1 if single_shot else 0
+            cmd = NDIRCmd.find('ir')
+            response = self._execute(cmd)
+            v_in_value = Datum.decode_unsigned_int(response)
 
-            cmd = NDIRCmd.find('sm')
-            self._execute(cmd, (mode_byte, ))
+            return v_in_value
+
+        finally:
+            self.release_lock()
+
+
+    def cmd_input(self):
+        try:
+            self.obtain_lock()
+
+            cmd = NDIRCmd.find('iv')
+            response = self._execute(cmd)
+            v_in_voltage = Datum.decode_float(response)
+
+            return v_in_voltage
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def cmd_watchdog_clear(self):
+        try:
+            self.obtain_lock()
+
+            cmd = NDIRCmd.find('wc')
+            self._execute(cmd)
+
+        finally:
+            self.release_lock()
+
+
+    def cmd_reset(self):
+        try:
+            self.obtain_lock()
+
+            # force reset...
+            cmd = NDIRCmd.find('wr')
+            self._execute(cmd)
 
             time.sleep(cmd.execution_time)
 
-        finally:
-            self.release_lock()
-
-
-    def cmd_sample_raw(self):
-        try:
-            self.obtain_lock()
-
-            # report...
-            cmd = NDIRCmd.find('sr')
-            response = self._execute(cmd)
-
-            pile_ref_amplitude = Datum.decode_unsigned_int(response[0:2])
-            pile_act_amplitude = Datum.decode_unsigned_int(response[2:4])
-            thermistor_average = Datum.decode_unsigned_int(response[4:6])
-
-            return pile_ref_amplitude, pile_act_amplitude, thermistor_average
-
-        finally:
-            self.release_lock()
-
-
-    def cmd_sample_voltage(self):
-        try:
-            self.obtain_lock()
-
-            # report...
-            cmd = NDIRCmd.find('sv')
-            response = self._execute(cmd)
-
-            pile_ref_amplitude = Datum.decode_float(response[0:4])
-            pile_act_amplitude = Datum.decode_float(response[4:8])
-            thermistor_average = Datum.decode_float(response[8:12])
-
-            return pile_ref_amplitude, pile_act_amplitude, thermistor_average
-
-        finally:
-            self.release_lock()
-
-
-    def cmd_sample_window(self):
-        try:
-            self.obtain_lock()
-
-            # playback...
-            cmd = NDIRCmd.find('sw')
-            response = self._execute(cmd)
-
-            values = []
-
-            for i in range(0, cmd.return_count, 6):
-                pile_ref = Datum.decode_unsigned_int(response[i:i + 2])
-                pile_act = Datum.decode_unsigned_int(response[i + 2:i + 4])
-                thermistor = Datum.decode_unsigned_int(response[i + 4:i + 6])
-
-                values.append((pile_ref, pile_act, thermistor))
-
-            return values
-
-        finally:
-            self.release_lock()
-
-
-    def cmd_sample_dump(self):
-        try:
-            self.obtain_lock()
-
-            # report...
-            cmd = NDIRCmd.find('sd')
-            response = self._execute(cmd)
-
-            single_shot = response[0]
-            is_running = response[1]
-            index = Datum.decode_unsigned_int(response[2:4])
-
-            return single_shot, is_running, index
+            # clear status...
+            cmd = NDIRCmd.find('wc')
+            self._execute(cmd)
 
         finally:
             self.release_lock()

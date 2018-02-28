@@ -7,6 +7,8 @@ Created on 28 Feb 2018
 from collections import OrderedDict
 from multiprocessing import Manager
 
+from scs_core.data.average import Average
+
 from scs_core.gas.ndir_datum import NDIRDatum
 
 from scs_core.sync.interval_timer import IntervalTimer
@@ -35,23 +37,24 @@ class NDIRMonitor(SynchronisedProcess):
         SynchronisedProcess.__init__(self, manager.list())
 
         self.__ndir = ndir
-        self.__conf = conf
+        self.__averaging = Average(conf.tally)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def run(self):
-        self.__ndir.sample()     # reset counts
-
         try:
             timer = IntervalTimer(NDIR.SAMPLE_INTERVAL)
 
             while timer.true():
                 sample = self.__ndir.sample()
 
+                self.__averaging.append(sample)
+                average = self.__averaging.compute()
+
                 # report...
                 with self._lock:
-                    sample.as_list(self._value)
+                    average.as_list(self._value)
 
         except KeyboardInterrupt:
             pass
@@ -62,6 +65,7 @@ class NDIRMonitor(SynchronisedProcess):
     def start(self):
         try:
             self.__ndir.power_on()
+            self.__averaging.reset()
 
             super().start()
 
@@ -78,7 +82,7 @@ class NDIRMonitor(SynchronisedProcess):
         except KeyboardInterrupt:
             pass
 
-        except LockTimeout:             # __power_cycle() may be running!
+        except LockTimeout:
             pass
 
 
@@ -92,4 +96,5 @@ class NDIRMonitor(SynchronisedProcess):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRMonitor:{value:%s, ndir:%s, conf:%s}" % (self._value, self.__ndir, self.__conf)
+        return "NDIRMonitor:{value:%s, averaging:%s, ndir:%s}" % \
+               (self._value, self.__averaging, self.__ndir)
