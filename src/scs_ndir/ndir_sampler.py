@@ -106,20 +106,9 @@ if __name__ == '__main__':
             runner = TimedRunner(cmd.interval, cmd.samples)
             sampler = NDIRVoltageSampler(runner, tag, ndir) if cmd.raw else NDIRSampler(runner, tag, ndir)
 
-            prev_prev_sample = None
-            prev_sample = None
-
             for sample in sampler.samples():
                 print(JSONify.dumps(sample))
                 sys.stdout.flush()
-
-                # check for stuck data...
-                # if sample == prev_sample == prev_prev_sample:
-                #     print(chr(7))
-                #     break
-
-                prev_prev_sample = prev_sample
-                prev_sample = sample
 
 
     # ----------------------------------------------------------------------------------------------------------------
