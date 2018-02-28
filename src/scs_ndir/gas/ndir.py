@@ -586,15 +586,15 @@ class NDIR(object):
             self.__spi.open()
 
             # command...
-            self._xfer(cmd.name_bytes())
+            self.__xfer(cmd.name_bytes())
 
             if param_group_1:
                 time.sleep(self.__PARAM_DELAY)
-                self._xfer(param_group_1)
+                self.__xfer(param_group_1)
 
             if param_group_2:
                 time.sleep(self.__PARAM_DELAY)
-                self._xfer(param_group_2)
+                self.__xfer(param_group_2)
 
             # wait...
             time.sleep(cmd.response_time)
@@ -627,7 +627,7 @@ class NDIR(object):
             self.__spi.close()
 
 
-    def _xfer(self, values):
+    def __xfer(self, values):
         request = []                        # convert tuple to array
         request.extend(values)
 
