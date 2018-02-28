@@ -70,10 +70,7 @@ if __name__ == '__main__':
 
         # SystemID...
         system_id = SystemID.load(Host)
-
-        if system_id is None:
-            print("SystemID not available.", file=sys.stderr)
-            exit(1)
+        tag = None if system_id is None else system_id.message_tag()
 
         # NDIR...
         ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
@@ -107,7 +104,7 @@ if __name__ == '__main__':
         else:
             # run sampling...
             runner = TimedRunner(cmd.interval, cmd.samples)
-            sampler = NDIRVoltageSampler(runner, system_id, ndir) if cmd.raw else NDIRSampler(runner, system_id, ndir)
+            sampler = NDIRVoltageSampler(runner, tag, ndir) if cmd.raw else NDIRSampler(runner, tag, ndir)
 
             prev_prev_sample = None
             prev_sample = None

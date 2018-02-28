@@ -18,13 +18,13 @@ class NDIRSampler(Sampler):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, runner, system_id, ndir):
+    def __init__(self, runner, tag, ndir):
         """
         Constructor
         """
         Sampler.__init__(self, runner)
 
-        self.__tag = system_id.message_tag()
+        self.__tag = tag
         self.__ndir = ndir
 
 

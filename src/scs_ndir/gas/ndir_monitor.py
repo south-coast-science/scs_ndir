@@ -14,6 +14,8 @@ from scs_core.sync.synchronised_process import SynchronisedProcess
 
 from scs_host.lock.lock_timeout import LockTimeout
 
+from scs_ndir.gas.ndir import NDIR
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -42,7 +44,7 @@ class NDIRMonitor(SynchronisedProcess):
         self.__ndir.sample()     # reset counts
 
         try:
-            timer = IntervalTimer(self.__conf.sample_period)
+            timer = IntervalTimer(NDIR.SAMPLE_INTERVAL)
 
             while timer.true():
                 sample = self.__ndir.sample()

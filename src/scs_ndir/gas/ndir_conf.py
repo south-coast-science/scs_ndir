@@ -1,12 +1,10 @@
 """
-Created on 21 Jun 2017
+Created on 28 Feb 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-specifies whether on not an NDIR is model
-
 example JSON:
-{"model": true}
+{"model": "Prototype1", "avg-period": 10}
 """
 
 import os
@@ -16,6 +14,7 @@ from collections import OrderedDict
 from scs_core.data.json import PersistentJSONable
 
 from scs_ndir.gas.ndir import NDIR
+from scs_ndir.gas.ndir_monitor import NDIRMonitor
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -59,11 +58,13 @@ class NDIRConf(PersistentJSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def ndir(self, host):               # TODO: handle multiple NDIR models / NDIR monitor
+    def ndir_monitor(self, host):
         if self.model is None:
-            return None
+            raise ValueError('unknown model: %s' % self.model)
 
-        return NDIR(host.ndir_spi_bus(), host.ndir_spi_device())
+        ndir = NDIR(host.ndir_spi_bus(), host.ndir_spi_device())
+
+        return NDIRMonitor(ndir, self)
 
 
     # ----------------------------------------------------------------------------------------------------------------
