@@ -30,6 +30,7 @@ import sys
 
 from scs_core.data.json import JSONify
 from scs_core.sync.timed_runner import TimedRunner
+from scs_core.sys.system_id import SystemID
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
@@ -39,7 +40,7 @@ from scs_ndir.exception.ndir_exception import NDIRException
 
 from scs_ndir.gas.ndir import NDIR
 
-from scs_ndir.sampler.ndir_gas_sampler import NDIRGasSampler
+from scs_ndir.sampler.ndir_sampler import NDIRSampler
 from scs_ndir.sampler.ndir_voltage_sampler import NDIRVoltageSampler
 
 from scs_ndir.datum.ndir_window_datum import NDIRWindowDatum
@@ -67,6 +68,11 @@ if __name__ == '__main__':
 
         I2C.open(Host.I2C_SENSORS)
 
+        # SystemID...
+        system_id = SystemID.load(Host)
+        tag = None if system_id is None else system_id.message_tag()
+
+        # NDIR...
         ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
         ndir.power_on()
 
@@ -78,7 +84,7 @@ if __name__ == '__main__':
             ndir.cmd_sample_mode(cmd.mode == 0)
 
         elif cmd.window is not None:
-            # retrieve the last sample window...
+            # retrieve latest sample window...
             calib = ndir.retrieve_eeprom_calib()
             samples = ndir.cmd_sample_window()
 
@@ -87,36 +93,22 @@ if __name__ == '__main__':
                 datum = NDIRWindowDatum.construct_from_sample(rec, samples[i])
                 print(JSONify.dumps(datum))
 
-
         elif cmd.dump is not None:
-            single_shot, is_running, index, max_cycles, min_cycles, cycles = ndir.cmd_sample_dump()
+            # dump state of the sampler module...
+            single_shot, is_running, index = ndir.cmd_sample_dump()
 
             print("single_shot: %s" % single_shot)
             print("is_running: %s" % is_running)
             print("index: %s" % index)
-            print("max_cycles: %s" % max_cycles)
-            print("min_cycles: %s" % min_cycles)
-            print("cycles: %s" % cycles)
 
         else:
             # run sampling...
             runner = TimedRunner(cmd.interval, cmd.samples)
-            sampler = NDIRVoltageSampler(runner, ndir) if cmd.raw else NDIRGasSampler(runner, ndir)
-
-            prev_prev_sample = None
-            prev_sample = None
+            sampler = NDIRVoltageSampler(runner, tag, ndir) if cmd.raw else NDIRSampler(runner, tag, ndir)
 
             for sample in sampler.samples():
                 print(JSONify.dumps(sample))
                 sys.stdout.flush()
-
-                # check for stuck data
-                # if sample == prev_sample == prev_prev_sample:
-                #     print(chr(7))
-                #     break
-
-                prev_prev_sample = prev_sample
-                prev_sample = sample
 
 
     # ----------------------------------------------------------------------------------------------------------------

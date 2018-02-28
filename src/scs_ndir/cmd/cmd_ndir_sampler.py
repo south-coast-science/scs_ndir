@@ -16,7 +16,7 @@ class CmdNDIRSampler(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -m { 1 | 0 } | -w | [-i INTERVAL [-n SAMPLES] [-r]] | -d } "
+        self.__parser = optparse.OptionParser(usage="%prog { -m { 1 | 0 } | -w | [-i INTERVAL [-n SAMPLES] [-r]] | -d }"
                                                     "[-v]", version="%prog 1.0")
 
         # compulsory...

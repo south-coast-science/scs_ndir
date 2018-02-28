@@ -1,12 +1,10 @@
 """
-Created on 21 Jun 2017
+Created on 28 Feb 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-specifies whether on not an NDIR is present
-
 example JSON:
-{"present": true}
+{"model": "Prototype1", "avg-period": 10}
 """
 
 import os
@@ -16,6 +14,7 @@ from collections import OrderedDict
 from scs_core.data.json import PersistentJSONable
 
 from scs_ndir.gas.ndir import NDIR
+from scs_ndir.gas.ndir_monitor import NDIRMonitor
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -37,38 +36,47 @@ class NDIRConf(PersistentJSONable):
     @classmethod
     def construct_from_jdict(cls, jdict):
         if not jdict:
-            return NDIRConf(False)
+            return None
 
-        present = jdict.get('present')
+        model = jdict.get('model')
+        tally = jdict.get('tally')
 
-        return NDIRConf(present)
+        return NDIRConf(model, tally)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, present):
+    def __init__(self, model, tally):
         """
         Constructor
         """
         super().__init__()
 
-        self.__present = bool(present)
+        self.__model = model
+        self.__tally = tally
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def ndir(self, host):
-        if not self.present:
-            return None
+    def ndir_monitor(self, host):
+        if self.model is None:
+            raise ValueError('unknown model: %s' % self.model)
 
-        return NDIR(host.ndir_spi_bus(), host.ndir_spi_device())
+        ndir = NDIR(host.ndir_spi_bus(), host.ndir_spi_device())
+
+        return NDIRMonitor(ndir, self)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def present(self):
-        return self.__present
+    def model(self):
+        return self.__model
+
+
+    @property
+    def tally(self):
+        return self.__tally
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -76,7 +84,8 @@ class NDIRConf(PersistentJSONable):
     def as_json(self):
         jdict = OrderedDict()
 
-        jdict['present'] = self.present
+        jdict['model'] = self.model
+        jdict['tally'] = self.tally
 
         return jdict
 
@@ -84,4 +93,4 @@ class NDIRConf(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRConf:{present:%s}" %  self.present
+        return "NDIRConf:{model:%s, tally:%s}" %  (self.model, self.tally)

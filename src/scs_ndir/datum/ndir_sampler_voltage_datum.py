@@ -12,7 +12,6 @@ from collections import OrderedDict
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONable
-from scs_core.data.localized_datetime import LocalizedDatetime
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -25,13 +24,13 @@ class NDIRSampleVoltageDatum(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def construct_from_sample(cls, rec, sample):
+    def construct_from_sample(cls, sample):
         if not sample:
             return None
 
         pile_ref_ampl, pile_act_ampl, thermistor_avg = sample
 
-        return NDIRSampleVoltageDatum(rec, pile_ref_ampl, pile_act_ampl, thermistor_avg)
+        return NDIRSampleVoltageDatum(pile_ref_ampl, pile_act_ampl, thermistor_avg)
 
 
     @classmethod
@@ -39,23 +38,19 @@ class NDIRSampleVoltageDatum(JSONable):
         if not jdict:
             return None
 
-        rec = LocalizedDatetime.construct_from_jdict(jdict.get('rec'))
-
         pile_ref_ampl = jdict.get('pile-ref-ampl')
         pile_act_ampl = jdict.get('pile-act-ampl')
         thermistor_avg = jdict.get('therm-avg')
 
-        return NDIRSampleVoltageDatum(rec, pile_ref_ampl, pile_act_ampl, thermistor_avg)
+        return NDIRSampleVoltageDatum(pile_ref_ampl, pile_act_ampl, thermistor_avg)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, rec, pile_ref_ampl, pile_act_ampl, thermistor_avg):
+    def __init__(self, pile_ref_ampl, pile_act_ampl, thermistor_avg):
         """
         Constructor
         """
-        self.__rec = rec
-
         self.__pile_ref_ampl = Datum.float(pile_ref_ampl, 4)
         self.__pile_act_ampl = Datum.float(pile_act_ampl, 4)
         self.__thermistor_avg = Datum.float(thermistor_avg, 4)
@@ -64,8 +59,6 @@ class NDIRSampleVoltageDatum(JSONable):
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
-
-        # no check of rec field
 
         if self.pile_ref_ampl != other.pile_ref_ampl:
             return False
@@ -84,8 +77,6 @@ class NDIRSampleVoltageDatum(JSONable):
     def as_json(self):
         jdict = OrderedDict()
 
-        jdict['rec'] = self.rec.as_json()
-
         jdict['pile-ref-ampl'] = self.pile_ref_ampl
         jdict['pile-act-ampl'] = self.pile_act_ampl
         jdict['therm-avg'] = self.thermistor_avg
@@ -96,11 +87,6 @@ class NDIRSampleVoltageDatum(JSONable):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def rec(self):
-        return self.__rec
-
 
     @property
     def pile_ref_ampl(self):
@@ -120,5 +106,5 @@ class NDIRSampleVoltageDatum(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRSampleVoltageDatum:{rec:%s, pile_ref_ampl:%s, pile_act_ampl:%s, thermistor_avg:%s}" % \
-               (self.rec, self.pile_ref_ampl, self.pile_act_ampl, self.thermistor_avg)
+        return "NDIRSampleVoltageDatum:{pile_ref_ampl:%s, pile_act_ampl:%s, thermistor_avg:%s}" % \
+               (self.pile_ref_ampl, self.pile_act_ampl, self.thermistor_avg)
