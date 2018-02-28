@@ -167,94 +167,6 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def store_eeprom_calib(self, calib):
-        try:
-            self.obtain_lock()
-
-            # identity...
-            self.eeprom_write_unsigned_long(NDIRCalib.INDEX_NDIR_SERIAL, calib.ndir_serial)
-            self.eeprom_write_unsigned_long(NDIRCalib.INDEX_BOARD_SERIAL, calib.board_serial)
-
-            # common fields...
-            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_SENSOR, calib.sensor)
-
-            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
-
-            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
-            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL, calib.max_deferral)
-            self.eeprom_write_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL, calib.min_deferral)
-
-            # range fields...
-            self.eeprom_write_float(NDIRCalib.INDEX_ZERO, calib.zero)
-            self.eeprom_write_float(NDIRCalib.INDEX_SPAN, calib.span)
-
-            self.eeprom_write_float(NDIRCalib.INDEX_LINEAR_B, calib.linear_b)
-            self.eeprom_write_float(NDIRCalib.INDEX_LINEAR_C, calib.linear_c)
-
-            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
-            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
-            self.eeprom_write_float(NDIRCalib.INDEX_TEMP_BETA_A, calib.temp_beta_a)
-
-            self.eeprom_write_float(NDIRCalib.INDEX_T_CAL, calib.t_cal)
-
-        finally:
-            self.release_lock()
-
-
-    def retrieve_eeprom_calib(self):
-        try:
-            self.obtain_lock()
-
-            # identity...
-            ndir_serial = self.eeprom_read_unsigned_long(NDIRCalib.INDEX_NDIR_SERIAL)
-            board_serial = self.eeprom_read_unsigned_long(NDIRCalib.INDEX_BOARD_SERIAL)
-
-            # common fields...
-            sensor = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_SENSOR)
-
-            lamp_voltage = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE)
-
-            lamp_period = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
-            max_deferral = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL)
-            min_deferral = self.eeprom_read_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL)
-
-            # range fields...
-            zero = self.eeprom_read_float(NDIRCalib.INDEX_ZERO)
-            span = self.eeprom_read_float(NDIRCalib.INDEX_SPAN)
-
-            linear_b = self.eeprom_read_float(NDIRCalib.INDEX_LINEAR_B)
-            linear_c = self.eeprom_read_float(NDIRCalib.INDEX_LINEAR_C)
-
-            temp_beta_o = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_O)
-            temp_alpha = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_ALPHA)
-            temp_beta_a = self.eeprom_read_float(NDIRCalib.INDEX_TEMP_BETA_A)
-
-            t_cal = self.eeprom_read_float(NDIRCalib.INDEX_T_CAL)
-
-            return NDIRCalib(ndir_serial, board_serial, sensor, lamp_voltage, lamp_period, max_deferral, min_deferral,
-                             zero, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a, t_cal)
-
-        finally:
-            self.release_lock()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def cmd_lamp_run(self, on):
-        try:
-            self.obtain_lock()
-
-            on_byte = 1 if on else 0
-
-            cmd = NDIRCmd.find('lr')
-            self._execute(cmd, (on_byte,))
-
-        finally:
-            self.release_lock()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def cmd_sample_mode(self, single_shot):
         try:
             self.obtain_lock()
@@ -342,6 +254,94 @@ class NDIR(object):
             index = Datum.decode_unsigned_int(response[2:4])
 
             return single_shot, is_running, index
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def store_eeprom_calib(self, calib):
+        try:
+            self.obtain_lock()
+
+            # identity...
+            self._eeprom_w_unsigned_long(NDIRCalib.INDEX_NDIR_SERIAL, calib.ndir_serial)
+            self._eeprom_w_unsigned_long(NDIRCalib.INDEX_BOARD_SERIAL, calib.board_serial)
+
+            # common fields...
+            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_SENSOR, calib.sensor)
+
+            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
+
+            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
+            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL, calib.max_deferral)
+            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL, calib.min_deferral)
+
+            # range fields...
+            self._eeprom_w_float(NDIRCalib.INDEX_ZERO, calib.zero)
+            self._eeprom_w_float(NDIRCalib.INDEX_SPAN, calib.span)
+
+            self._eeprom_w_float(NDIRCalib.INDEX_LINEAR_B, calib.linear_b)
+            self._eeprom_w_float(NDIRCalib.INDEX_LINEAR_C, calib.linear_c)
+
+            self._eeprom_w_float(NDIRCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
+            self._eeprom_w_float(NDIRCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
+            self._eeprom_w_float(NDIRCalib.INDEX_TEMP_BETA_A, calib.temp_beta_a)
+
+            self._eeprom_w_float(NDIRCalib.INDEX_T_CAL, calib.t_cal)
+
+        finally:
+            self.release_lock()
+
+
+    def retrieve_eeprom_calib(self):
+        try:
+            self.obtain_lock()
+
+            # identity...
+            ndir_serial = self._eeprom_r_unsigned_long(NDIRCalib.INDEX_NDIR_SERIAL)
+            board_serial = self._eeprom_r_unsigned_long(NDIRCalib.INDEX_BOARD_SERIAL)
+
+            # common fields...
+            sensor = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_SENSOR)
+
+            lamp_voltage = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE)
+
+            lamp_period = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
+            max_deferral = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL)
+            min_deferral = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL)
+
+            # range fields...
+            zero = self._eeprom_r_float(NDIRCalib.INDEX_ZERO)
+            span = self._eeprom_r_float(NDIRCalib.INDEX_SPAN)
+
+            linear_b = self._eeprom_r_float(NDIRCalib.INDEX_LINEAR_B)
+            linear_c = self._eeprom_r_float(NDIRCalib.INDEX_LINEAR_C)
+
+            temp_beta_o = self._eeprom_r_float(NDIRCalib.INDEX_TEMP_BETA_O)
+            temp_alpha = self._eeprom_r_float(NDIRCalib.INDEX_TEMP_ALPHA)
+            temp_beta_a = self._eeprom_r_float(NDIRCalib.INDEX_TEMP_BETA_A)
+
+            t_cal = self._eeprom_r_float(NDIRCalib.INDEX_T_CAL)
+
+            return NDIRCalib(ndir_serial, board_serial, sensor, lamp_voltage, lamp_period, max_deferral, min_deferral,
+                             zero, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a, t_cal)
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def cmd_lamp_run(self, on):
+        try:
+            self.obtain_lock()
+
+            on_byte = 1 if on else 0
+
+            cmd = NDIRCmd.find('lr')
+            self._execute(cmd, (on_byte,))
 
         finally:
             self.release_lock()
@@ -519,7 +519,7 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def eeprom_read_unsigned_int(self, index):
+    def _eeprom_r_unsigned_int(self, index):
         cmd = NDIRCmd.find('er')
         cmd.return_count = 2
 
@@ -529,7 +529,7 @@ class NDIR(object):
         return value
 
 
-    def eeprom_write_unsigned_int(self, index, value):
+    def _eeprom_w_unsigned_int(self, index, value):
         cmd = NDIRCmd.find('ew')
 
         value_bytes = Datum.encode_unsigned_int(value)
@@ -538,7 +538,7 @@ class NDIR(object):
         time.sleep(cmd.execution_time)
 
 
-    def eeprom_read_unsigned_long(self, index):
+    def _eeprom_r_unsigned_long(self, index):
         cmd = NDIRCmd.find('er')
         cmd.return_count = 4
 
@@ -548,7 +548,7 @@ class NDIR(object):
         return value
 
 
-    def eeprom_write_unsigned_long(self, index, value):
+    def _eeprom_w_unsigned_long(self, index, value):
         cmd = NDIRCmd.find('ew')
 
         value_bytes = Datum.encode_unsigned_long(value)
@@ -557,7 +557,7 @@ class NDIR(object):
         time.sleep(cmd.execution_time)
 
 
-    def eeprom_read_float(self, index):
+    def _eeprom_r_float(self, index):
         cmd = NDIRCmd.find('er')
         cmd.return_count = 4
 
@@ -567,7 +567,7 @@ class NDIR(object):
         return value
 
 
-    def eeprom_write_float(self, index, value):
+    def _eeprom_w_float(self, index, value):
         cmd = NDIRCmd.find('ew')
 
         value_bytes = Datum.encode_float(value)
