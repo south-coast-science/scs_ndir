@@ -79,8 +79,11 @@ class NDIR(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def power_on(self):
+        on = not self.__io.ndir_power           # active low
         self.__io.ndir_power = IO.LOW
-        time.sleep(self.__BOOT_DELAY)
+
+        if not on:
+            time.sleep(self.__BOOT_DELAY)
 
 
     def power_off(self):
