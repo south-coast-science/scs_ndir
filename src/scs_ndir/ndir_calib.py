@@ -23,7 +23,7 @@ scs_ndir/
 
 
 command line example:
-./ndir_eeprom.py -s min-deferral 740
+./ndir_calib.py -s min-deferral 740
 """
 
 import sys
@@ -64,13 +64,13 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        calib = ndir.retrieve_eeprom_calib()
+        calib = ndir.retrieve_calib()
         jdict = calib.as_json()
 
         if cmd.set():
             # validate...
             if cmd.name not in jdict:
-                print("ndir_eeprom: name not known: %s" % cmd.name, file=sys.stderr)
+                print("ndir_calib: field name not known: %s" % cmd.name, file=sys.stderr)
                 exit(2)
 
             # set...
@@ -80,11 +80,11 @@ if __name__ == '__main__':
             # datum...
             jdict = calib.as_json()
             if jdict[cmd.name] is None:
-                print("ndir_eeprom: value not acceptable: %s" % cmd.value, file=sys.stderr)
+                print("ndir_calib: field value not acceptable: %s" % cmd.value, file=sys.stderr)
                 exit(2)
 
             # save...
-            ndir.store_eeprom_calib(calib)
+            ndir.store_calib(calib)
 
         # report...
         print(JSONify.dumps(calib))

@@ -36,14 +36,13 @@ from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
 from scs_ndir.cmd.cmd_ndir_sampler import CmdNDIRSampler
+from scs_ndir.datum.ndir_window_datum import NDIRWindowDatum
 from scs_ndir.exception.ndir_exception import NDIRException
 
 from scs_ndir.gas.ndir import NDIR
 
 from scs_ndir.sampler.ndir_sampler import NDIRSampler
 from scs_ndir.sampler.ndir_voltage_sampler import NDIRVoltageSampler
-
-from scs_ndir.datum.ndir_window_datum import NDIRWindowDatum
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -85,7 +84,7 @@ if __name__ == '__main__':
 
         elif cmd.window is not None:
             # retrieve latest sample window...
-            calib = ndir.retrieve_eeprom_calib()
+            calib = ndir.retrieve_calib()
             samples = ndir.cmd_sample_window()
 
             for i in range(len(samples)):

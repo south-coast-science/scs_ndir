@@ -34,11 +34,11 @@ try:
     print("-")
 
     print("off...")
-    ndir.cmd_lamp_run(False)
+    ndir.lamp(False)
     time.sleep(5.0)
 
     print("on...")
-    ndir.cmd_lamp_run(True)
+    ndir.lamp(True)
 
 
 except ValueError as ex:
