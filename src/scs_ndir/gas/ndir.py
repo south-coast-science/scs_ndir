@@ -100,7 +100,7 @@ class NDIR(object):
             on_byte = 1 if on else 0
 
             cmd = NDIRCmd.find('lr')
-            self._execute(cmd, (on_byte,))
+            self._transact(cmd, (on_byte,))
 
         finally:
             self.release_lock()
@@ -114,7 +114,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('sg')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             cnc = Datum.decode_float(response[0:4])
             cnc_igl = Datum.decode_float(response[4:8])
@@ -135,12 +135,12 @@ class NDIR(object):
 
             # version ident...
             cmd = NDIRCmd.find('vi')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             id = ''.join([chr(byte) for byte in response]).strip()
 
             # version tag...
             cmd = NDIRCmd.find('vt')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             tag = ''.join([chr(byte) for byte in response]).strip()
 
             version = NDIRVersion(id, NDIRTag.construct_from_jdict(tag))
@@ -157,17 +157,17 @@ class NDIR(object):
 
             # restart status...
             cmd = NDIRCmd.find('ws')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             watchdog_reset = bool(response)
 
             # input voltage...
             cmd = NDIRCmd.find('iv')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             pwr_in = Datum.decode_float(response)
 
             # uptime...
             cmd = NDIRCmd.find('up')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             seconds = Datum.decode_unsigned_long(response)
 
             status = NDIRStatus(watchdog_reset, pwr_in, NDIRUptime(seconds))
@@ -260,7 +260,7 @@ class NDIR(object):
             mode_byte = 1 if single_shot else 0
 
             cmd = NDIRCmd.find('sm')
-            self._execute(cmd, (mode_byte, ))
+            self._transact(cmd, (mode_byte, ))
 
             time.sleep(cmd.execution_time)
 
@@ -274,7 +274,7 @@ class NDIR(object):
 
             # report...
             cmd = NDIRCmd.find('sr')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             pile_ref_amplitude = Datum.decode_unsigned_int(response[0:2])
             pile_act_amplitude = Datum.decode_unsigned_int(response[2:4])
@@ -292,7 +292,7 @@ class NDIR(object):
 
             # report...
             cmd = NDIRCmd.find('sv')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             pile_ref_amplitude = Datum.decode_float(response[0:4])
             pile_act_amplitude = Datum.decode_float(response[4:8])
@@ -310,7 +310,7 @@ class NDIR(object):
 
             # playback...
             cmd = NDIRCmd.find('sw')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             values = []
 
@@ -333,7 +333,7 @@ class NDIR(object):
 
             # report...
             cmd = NDIRCmd.find('sd')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             single_shot = response[0]
             is_running = response[1]
@@ -352,7 +352,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('mc')
-            self._execute(cmd)
+            self._transact(cmd)
 
             time.sleep(cmd.execution_time)
 
@@ -365,7 +365,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('mr')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             pile_ref_value = Datum.decode_unsigned_int(response[0:2])
             pile_act_value = Datum.decode_unsigned_int(response[2:4])
@@ -382,7 +382,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('mv')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             pile_ref_voltage = Datum.decode_float(response[0:4])
             pile_act_voltage = Datum.decode_float(response[4:8])
@@ -411,7 +411,7 @@ class NDIR(object):
             param_bytes.extend(count_bytes)
 
             cmd = NDIRCmd.find('rs')
-            self._execute(cmd, param_bytes)
+            self._transact(cmd, param_bytes)
 
             # wait...
             time.sleep(cmd.execution_time + (deferral / 1000))
@@ -420,7 +420,7 @@ class NDIR(object):
             cmd = NDIRCmd.find('rp')
             cmd.return_count = count * 6
 
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             values = []
 
@@ -444,7 +444,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('ir')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             v_in_value = Datum.decode_unsigned_int(response)
 
             return v_in_value
@@ -458,7 +458,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('iv')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             v_in_voltage = Datum.decode_float(response)
 
             return v_in_voltage
@@ -474,7 +474,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('wc')
-            self._execute(cmd)
+            self._transact(cmd)
 
         finally:
             self.release_lock()
@@ -486,13 +486,13 @@ class NDIR(object):
 
             # force reset...
             cmd = NDIRCmd.find('wr')
-            self._execute(cmd)
+            self._transact(cmd)
 
             time.sleep(cmd.execution_time)
 
             # clear status...
             cmd = NDIRCmd.find('wc')
-            self._execute(cmd)
+            self._transact(cmd)
 
         finally:
             self.release_lock()
@@ -509,7 +509,7 @@ class NDIR(object):
             cmd = NDIRCmd.find('mr')
             cmd.return_count = 0            # should return two bytes - ignore these to cause SPI fail
 
-            self._execute(cmd)
+            self._transact(cmd)
 
         finally:
             self.release_lock()
@@ -521,7 +521,7 @@ class NDIR(object):
         cmd = NDIRCmd.find('er')
         cmd.return_count = 2
 
-        response = self._execute(cmd, (index,))
+        response = self._transact(cmd, (index,))
         value = Datum.decode_unsigned_int(response)
 
         return value
@@ -531,7 +531,7 @@ class NDIR(object):
         cmd = NDIRCmd.find('ew')
 
         value_bytes = Datum.encode_unsigned_int(value)
-        self._execute(cmd, (index,), value_bytes)
+        self._transact(cmd, (index,), value_bytes)
 
         time.sleep(cmd.execution_time)
 
@@ -540,7 +540,7 @@ class NDIR(object):
         cmd = NDIRCmd.find('er')
         cmd.return_count = 4
 
-        response = self._execute(cmd, (index,))
+        response = self._transact(cmd, (index,))
         value = Datum.decode_unsigned_long(response)
 
         return value
@@ -550,7 +550,7 @@ class NDIR(object):
         cmd = NDIRCmd.find('ew')
 
         value_bytes = Datum.encode_unsigned_long(value)
-        self._execute(cmd, (index,), value_bytes)
+        self._transact(cmd, (index,), value_bytes)
 
         time.sleep(cmd.execution_time)
 
@@ -559,7 +559,7 @@ class NDIR(object):
         cmd = NDIRCmd.find('er')
         cmd.return_count = 4
 
-        response = self._execute(cmd, (index,))
+        response = self._transact(cmd, (index,))
         value = Datum.decode_float(response)
 
         return value
@@ -569,14 +569,14 @@ class NDIR(object):
         cmd = NDIRCmd.find('ew')
 
         value_bytes = Datum.encode_float(value)
-        self._execute(cmd, (index,), value_bytes)
+        self._transact(cmd, (index,), value_bytes)
 
         time.sleep(cmd.execution_time)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def _execute(self, cmd, param_group_1=None, param_group_2=None):
+    def _transact(self, cmd, param_group_1=None, param_group_2=None):
         # print("cmd: %s param_group_1:%s param_group_2:%s" %
         #       (cmd, str(param_group_1), str(param_group_2)), file=sys.stderr)
 

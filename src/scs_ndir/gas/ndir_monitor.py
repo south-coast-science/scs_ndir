@@ -88,6 +88,10 @@ class NDIRMonitor(SynchronisedProcess):
     # ----------------------------------------------------------------------------------------------------------------
     # data retrieval for client process...
 
+    def firmware(self):
+        return self.__ndir.version()
+
+
     def sample(self):
         with self._lock:
             value = self._value
