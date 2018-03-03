@@ -9,16 +9,19 @@ import optparse
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CmdNDIREEPROM(object):
+class CmdNDIRCalib(object):
     """unix command line handler"""
 
     def __init__(self):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-s NAME VALUE] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ -d | -s NAME VALUE}] [-v]", version="%prog 1.0")
 
         # optional...
+        self.__parser.add_option("--default", "-d", action="store_true", dest="default",
+                                 help="load the default settings")
+
         self.__parser.add_option("--set", "-s", type="string", nargs=2, action="store", dest="set",
                                  help="set the named field to VALUE")
 
@@ -30,11 +33,23 @@ class CmdNDIREEPROM(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def is_valid(self):
+        if self.default is not None and self.__opts.set is not None:
+            return False
+
+        return True
+
+
     def set(self):
         return self.__opts.set is not None
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def default(self):
+        return self.__opts.default
+
 
     @property
     def name(self):
@@ -69,4 +84,5 @@ class CmdNDIREEPROM(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIREEPROM:{set:%s, verbose:%s, args:%s}" % (self.__opts.set, self.verbose, self.args)
+        return "CmdNDIRCalib:{default:%s, set:%s, verbose:%s, args:%s}" % \
+               (self.default, self.__opts.set, self.verbose, self.args)

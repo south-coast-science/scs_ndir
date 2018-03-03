@@ -16,6 +16,7 @@ example JSON:
 "t-cal": 1.0}
 """
 
+import json
 import os
 
 from collections import OrderedDict
@@ -24,14 +25,15 @@ from scs_core.data.datum import Datum
 from scs_core.data.json import PersistentJSONable
 
 
+# TODO: handle multiple calib ranges
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class NDIRCalib(PersistentJSONable):
     """
     classdocs
     """
-
-    CALIB_IAQ = '{"ndir-serial": 12601304, "board-serial": 2, "sensor": 0, ' \
+    CALIB_IAQ = '{"ndir-serial": 0, "board-serial": 0, "sensor": 0, ' \
                 '"lamp-voltage": 5.0, "lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
                 '"zero": 31.0, "span": -0.292553, "linear-b": 0.000325, "linear-c": 0.9363, ' \
                 '"temp-beta-o": 0.00001, "temp-alpha": 0.00056, "temp-beta-a": 0.00001, "t-cal": 1.0}'
@@ -79,6 +81,13 @@ class NDIRCalib(PersistentJSONable):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @classmethod
+    def default(cls):
+        jdict = json.loads(cls.CALIB_IAQ, object_pairs_hook=OrderedDict)
+
+        return NDIRCalib.construct_from_jdict(jdict)
+
 
     @classmethod
     def construct_from_jdict(cls, jdict):
