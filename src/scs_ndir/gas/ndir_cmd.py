@@ -55,7 +55,7 @@ class NDIRCmd(JSONable):
             'sg': NDIRCmd('sg', 0.010, 0.000, 12),              # sampler gas
 
             'sw': NDIRCmd('sw', 0.003, 0.000, 600),             # sampler window
-            'sd': NDIRCmd('sd', 0.001, 0.000, 16),              # sampler dump
+            'sd': NDIRCmd('sd', 0.001, 0.000, 4),               # sampler dump
         }
 
 

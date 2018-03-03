@@ -11,6 +11,7 @@ import time
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
+from scs_ndir.exception.ndir_exception import NDIRException
 from scs_ndir.gas.ndir import NDIR
 
 
@@ -31,8 +32,22 @@ try:
     print("status: %s" % status)
     print("-")
 
-    status = ndir.cmd_fail()
-    print("FAIL!")
+    try:
+        print("*** unrecognised command...")
+        response = ndir.cmd('xx', 0.001, 0.0, 0)
+        print(response)
+    except NDIRException as ex:
+        print(ex)
+
+    print("-")
+
+    try:
+        print("*** unrecognised command with return count...")
+        response = ndir.cmd('xx', 0.001, 0.0, 2)
+        print(response)
+    except NDIRException as ex:
+        print(ex)
+
     print("-")
 
     time.sleep(NDIR.RECOVERY_TIME)      # TODO: tune the time

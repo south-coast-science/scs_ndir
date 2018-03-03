@@ -500,16 +500,14 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_fail(self):
+    def cmd(self, name, response_time, execution_time, return_count):
+        command = NDIRCmd(name, response_time, execution_time, return_count)
+
         try:
             self.obtain_lock()
 
-            # TODO: datum for insufficient bytes sent
-
-            cmd = NDIRCmd.find('mr')
-            cmd.return_count = 0            # should return two bytes - ignore these to cause SPI fail
-
-            self._transact(cmd)
+            self._transact(command)
+            time.sleep(execution_time)
 
         finally:
             self.release_lock()
@@ -600,6 +598,8 @@ class NDIR(object):
             # ACK / NACK...
             response = self.__spi.read_bytes(1)
 
+            # print("response 1: %s" % str(response), file=sys.stderr)
+
             if response[0] == 0:
                 raise NDIRException('None received', response[0], cmd, (param_group_1, param_group_2))
 
@@ -617,7 +617,7 @@ class NDIR(object):
             time.sleep(self.__PARAM_DELAY)
 
             response = self.__spi.read_bytes(cmd.return_count)
-            # print("response: %s" % str(response), file=sys.stderr)
+            # print("response 2: %s" % str(response), file=sys.stderr)
 
             return response[0] if cmd.return_count == 1 else response
 
