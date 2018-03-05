@@ -16,7 +16,14 @@ class CmdNDIRLamp(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { 1 | 0 } [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -r ON | -l LEVEL } [-v]", version="%prog 1.0")
+
+        # compulsory...
+        self.__parser.add_option("--level", "-l", type="int", nargs=1, action="store", dest="level",
+                                 help="temporarily set lamp voltage")
+
+        self.__parser.add_option("--run", "-r", type="int", nargs=1, action="store", dest="run",
+                                 help="run (1) or stop (0) the lamp")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -28,7 +35,10 @@ class CmdNDIRLamp(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.run is None:
+        if self.level is None and self.run is None:
+            return False
+
+        if self.run is not None and self.run != 0 and self.run != 1:
             return False
 
         return True
@@ -37,17 +47,14 @@ class CmdNDIRLamp(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def level(self):
+        return self.__opts.level
+
+
+    @property
     def run(self):
-        if len(self.__args) > 0:
-            try:
-                return bool(int(self.__args[0]))
-            except RuntimeError:
-                return None
+        return self.__opts.run
 
-        return None
-
-
-    # ----------------------------------------------------------------------------------------------------------------
 
     @property
     def verbose(self):
@@ -66,4 +73,5 @@ class CmdNDIRLamp(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRLamp:{run:%d, verbose:%s, args:%s}" % (self.run, self.verbose, self.args)
+        return "CmdNDIRLamp:{level:%d, run:%d, verbose:%s, args:%s}" % \
+               (self.level, self.run, self.verbose, self.args)

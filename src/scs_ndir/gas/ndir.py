@@ -77,6 +77,7 @@ class NDIR(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # power...
 
     def power_on(self):
         if not self.__io.ndir_power:           # active low
@@ -91,19 +92,6 @@ class NDIR(object):
             return
 
         self.__io.ndir_power = IO.HIGH
-
-
-    def lamp(self, on):
-        try:
-            self.obtain_lock()
-
-            on_byte = 1 if on else 0
-
-            cmd = NDIRCmd.find('lr')
-            self._transact(cmd, (on_byte,))
-
-        finally:
-            self.release_lock()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -252,6 +240,36 @@ class NDIR(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # lamp...
+
+    def lamp_run(self, on):
+        try:
+            self.obtain_lock()
+
+            on_byte = 1 if on else 0
+
+            cmd = NDIRCmd.find('lr')
+            self._transact(cmd, (on_byte,))
+
+        finally:
+            self.release_lock()
+
+
+    def lamp_level(self, level):
+        try:
+            self.obtain_lock()
+
+            level_bytes = Datum.encode_unsigned_int(level)
+
+            cmd = NDIRCmd.find('ll')
+            self._transact(cmd, level_bytes)
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # low-level commands...
 
     def cmd_sample_mode(self, single_shot):
         try:

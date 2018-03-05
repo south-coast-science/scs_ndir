@@ -38,6 +38,7 @@ class NDIRCmd(JSONable):
             'ew': NDIRCmd('ew', 0.001, 0.010, 0),               # EEPROM write
 
             'lr': NDIRCmd('lr', 0.001, 0.000, 0),               # lamp run
+            'll': NDIRCmd('ll', 0.001, 0.000, 0),               # lamp level
 
             'ir': NDIRCmd('ir', 0.001, 0.000, 2),               # input raw
             'iv': NDIRCmd('iv', 0.001, 0.000, 4),               # input voltage
