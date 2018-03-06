@@ -34,7 +34,7 @@ class NDIRCalib(PersistentJSONable):
     classdocs
     """
     CALIB_IAQ = '{"ndir-serial": 0, "board-serial": 0, "sensor": 0, ' \
-                '"lamp-voltage": 5.0, "lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
+                '"lamp-voltage": 4.5, "lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
                 '"zero": 31.0, "span": -0.292553, "linear-b": 0.000325, "linear-c": 0.9363, ' \
                 '"temp-beta-o": 0.00001, "temp-alpha": 0.00056, "temp-beta-a": 0.00001, "t-cal": 1.0}'
 
@@ -44,8 +44,6 @@ class NDIRCalib(PersistentJSONable):
     SENSOR_COMBUSTION =              2          # 0 to 200,000 ppm (20%)
     SENSOR_INDUSTRIAL =              3          # 0 to 1,000,000 ppm (100%)
 
-    # TODO: lamp voltage points?
-
     # identity...
     INDEX_NDIR_SERIAL =              0          # unsigned long         SET IN CALIBRATION
     INDEX_BOARD_SERIAL =             1          # unsigned long
@@ -53,7 +51,7 @@ class NDIRCalib(PersistentJSONable):
     # common fields...
     INDEX_SENSOR =                   2          # unsigned int          SET IN CALIBRATION
 
-    INDEX_LAMP_VOLTAGE =             3          # unsigned int
+    INDEX_LAMP_VOLTAGE =             3          # float
 
     INDEX_LAMP_PERIOD =              4          # unsigned int
     INDEX_MAX_DEFERRAL =             5          # unsigned int
@@ -140,7 +138,7 @@ class NDIRCalib(PersistentJSONable):
         # common fields...
         self.__sensor = Datum.int(sensor)
 
-        self.__lamp_voltage = Datum.int(lamp_voltage)
+        self.__lamp_voltage = Datum.float(lamp_voltage, 1)
 
         self.__lamp_period = Datum.int(lamp_period)
         self.__max_deferral = Datum.int(max_deferral)

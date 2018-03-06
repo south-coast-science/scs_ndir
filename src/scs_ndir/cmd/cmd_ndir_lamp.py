@@ -16,10 +16,10 @@ class CmdNDIRLamp(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -r ON | -l LEVEL } [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -r ON | -l VOLTAGE } [-v]", version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--level", "-l", type="int", nargs=1, action="store", dest="level",
+        self.__parser.add_option("--level", "-l", type="float", nargs=1, action="store", dest="level",
                                  help="temporarily set lamp voltage")
 
         self.__parser.add_option("--run", "-r", type="int", nargs=1, action="store", dest="run",
@@ -48,7 +48,7 @@ class CmdNDIRLamp(object):
 
     @property
     def level(self):
-        return self.__opts.level
+        return None if self.__opts.level is None else round(self.__opts.level, 1)
 
 
     @property
@@ -73,5 +73,5 @@ class CmdNDIRLamp(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRLamp:{level:%d, run:%d, verbose:%s, args:%s}" % \
+        return "CmdNDIRLamp:{level:%s, run:%s, verbose:%s, args:%s}" % \
                (self.level, self.run, self.verbose, self.args)

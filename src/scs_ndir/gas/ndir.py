@@ -179,7 +179,7 @@ class NDIR(object):
             # common fields...
             self._eeprom_w_unsigned_int(NDIRCalib.INDEX_SENSOR, calib.sensor)
 
-            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
+            self._eeprom_w_float(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
 
             self._eeprom_w_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
             self._eeprom_w_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL, calib.max_deferral)
@@ -213,7 +213,7 @@ class NDIR(object):
             # common fields...
             sensor = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_SENSOR)
 
-            lamp_voltage = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE)
+            lamp_voltage = self._eeprom_r_float(NDIRCalib.INDEX_LAMP_VOLTAGE)
 
             lamp_period = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
             max_deferral = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL)
@@ -255,14 +255,14 @@ class NDIR(object):
             self.release_lock()
 
 
-    def lamp_level(self, level):
+    def lamp_level(self, voltage):
         try:
             self.obtain_lock()
 
-            level_bytes = Datum.encode_unsigned_int(level)
+            voltage_bytes = Datum.encode_float(voltage)
 
             cmd = NDIRCmd.find('ll')
-            self._transact(cmd, level_bytes)
+            self._transact(cmd, voltage_bytes)
 
         finally:
             self.release_lock()
