@@ -16,7 +16,7 @@ class CmdNDIRCalib(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -d | -s NAME VALUE}] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ -d | -s PATH VALUE}] [-v]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--default", "-d", action="store_true", dest="default",
@@ -52,7 +52,7 @@ class CmdNDIRCalib(object):
 
 
     @property
-    def name(self):
+    def path(self):
         if self.set():
             return self.__opts.set[0]
 

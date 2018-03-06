@@ -35,7 +35,8 @@ class NDIRCmd(JSONable):
             'wr': NDIRCmd('wr', 0.001, 2.500, 0),               # watchdog reset
 
             'er': NDIRCmd('er', 0.001, 0.000, None),            # EEPROM read
-            'ew': NDIRCmd('ew', 0.001, 0.010, 0),               # EEPROM write
+            'ew': NDIRCmd('ew', 0.005, 0.010, 0),               # EEPROM write
+            'ez': NDIRCmd('ez', 0.005, 0.010, 0),               # EEPROM zero
 
             'lr': NDIRCmd('lr', 0.001, 0.000, 0),               # lamp run
             'll': NDIRCmd('ll', 0.001, 0.000, 0),               # lamp level
