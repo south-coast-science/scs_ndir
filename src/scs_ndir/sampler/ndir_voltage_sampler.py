@@ -5,6 +5,7 @@ Created on 17 Feb 2018
 """
 
 from scs_core.data.localized_datetime import LocalizedDatetime
+
 from scs_core.sample.gases_sample import GasesSample
 from scs_core.sampler.sampler import Sampler
 
@@ -20,13 +21,13 @@ class NDIRVoltageSampler(Sampler):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, runner, system_id, ndir):
+    def __init__(self, runner, tag, ndir):
         """
         Constructor
         """
         Sampler.__init__(self, runner)
 
-        self.__tag = system_id.message_tag()
+        self.__tag = tag
         self.__ndir = ndir
 
 

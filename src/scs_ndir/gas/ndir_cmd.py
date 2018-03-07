@@ -34,10 +34,12 @@ class NDIRCmd(JSONable):
             'wc': NDIRCmd('wc', 0.001, 0.000, 0),               # watchdog clear
             'wr': NDIRCmd('wr', 0.001, 2.500, 0),               # watchdog reset
 
-            'er': NDIRCmd('er', 0.001, 0.000, None),            # EEPROM read
-            'ew': NDIRCmd('ew', 0.001, 0.010, 0),               # EEPROM write
+            'cr': NDIRCmd('cr', 0.001, 0.000, None),            # calib read
+            'cw': NDIRCmd('cw', 0.005, 0.010, 0),               # calib write
+            'cl': NDIRCmd('cl', 0.010, 2.200, 0),               # calib load
 
             'lr': NDIRCmd('lr', 0.001, 0.000, 0),               # lamp run
+            'll': NDIRCmd('ll', 0.001, 0.000, 0),               # lamp level
 
             'ir': NDIRCmd('ir', 0.001, 0.000, 2),               # input raw
             'iv': NDIRCmd('iv', 0.001, 0.000, 4),               # input voltage
@@ -55,8 +57,7 @@ class NDIRCmd(JSONable):
             'sg': NDIRCmd('sg', 0.010, 0.000, 12),              # sampler gas
 
             'sw': NDIRCmd('sw', 0.003, 0.000, 600),             # sampler window
-            'sd': NDIRCmd('sd', 0.001, 0.000, 16),              # sampler dump
-
+            'sd': NDIRCmd('sd', 0.001, 0.000, 4),               # sampler dump
         }
 
 

@@ -19,7 +19,7 @@ from scs_host.lock.lock import Lock
 
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.gas.ndir_calib import NDIRCalib
+from scs_ndir.gas.ndir_calib import NDIRCalib, NDIRRangeCalib
 from scs_ndir.gas.ndir_cmd import NDIRCmd
 from scs_ndir.gas.ndir_status import NDIRStatus
 from scs_ndir.gas.ndir_uptime import NDIRUptime
@@ -77,6 +77,7 @@ class NDIR(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # power...
 
     def power_on(self):
         if not self.__io.ndir_power:           # active low
@@ -101,7 +102,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('sg')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             cnc = Datum.decode_float(response[0:4])
             cnc_igl = Datum.decode_float(response[4:8])
@@ -122,12 +123,12 @@ class NDIR(object):
 
             # version ident...
             cmd = NDIRCmd.find('vi')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             id = ''.join([chr(byte) for byte in response]).strip()
 
             # version tag...
             cmd = NDIRCmd.find('vt')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             tag = ''.join([chr(byte) for byte in response]).strip()
 
             version = NDIRVersion(id, NDIRTag.construct_from_jdict(tag))
@@ -144,17 +145,17 @@ class NDIR(object):
 
             # restart status...
             cmd = NDIRCmd.find('ws')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             watchdog_reset = bool(response)
 
             # input voltage...
             cmd = NDIRCmd.find('iv')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             pwr_in = Datum.decode_float(response)
 
             # uptime...
             cmd = NDIRCmd.find('up')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             seconds = Datum.decode_unsigned_long(response)
 
             status = NDIRStatus(watchdog_reset, pwr_in, NDIRUptime(seconds))
@@ -167,6 +168,152 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def store_calib(self, calib):
+        try:
+            self.obtain_lock()
+
+            # identity...
+            self._calib_w_unsigned_long(0, NDIRCalib.INDEX_NDIR_SERIAL, calib.ndir_serial)
+            self._calib_w_unsigned_long(0, NDIRCalib.INDEX_BOARD_SERIAL, calib.board_serial)
+
+            self._calib_w_unsigned_int(0, NDIRCalib.INDEX_SELECTED_RANGE, calib.selected_range)
+
+            # common fields...
+            self._calib_w_float(0, NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
+
+            self._calib_w_unsigned_int(0, NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
+            self._calib_w_unsigned_int(0, NDIRCalib.INDEX_MAX_DEFERRAL, calib.max_deferral)
+            self._calib_w_unsigned_int(0, NDIRCalib.INDEX_MIN_DEFERRAL, calib.min_deferral)
+
+            # range calibrations...
+            self._store_range_calib(NDIRCalib.RANGE_IAQ, calib.range_iaq)
+            self._store_range_calib(NDIRCalib.RANGE_SAFETY, calib.range_safety)
+            self._store_range_calib(NDIRCalib.RANGE_COMBUSTION, calib.range_combustion)
+            self._store_range_calib(NDIRCalib.RANGE_INDUSTRIAL, calib.range_industrial)
+
+        finally:
+            self.release_lock()
+
+
+    def _store_range_calib(self, block, calib):
+        # range check...
+        if calib is None:
+            self._calib_w_unsigned_int(block, NDIRRangeCalib.INDEX_RANGE_IS_SET, 0)
+            return
+
+        self._calib_w_unsigned_int(block, NDIRRangeCalib.INDEX_RANGE_IS_SET, 1)
+
+        # range fields...
+        self._calib_w_float(block, NDIRRangeCalib.INDEX_ZERO, calib.zero)
+        self._calib_w_float(block, NDIRRangeCalib.INDEX_SPAN, calib.span)
+
+        self._calib_w_float(block, NDIRRangeCalib.INDEX_LINEAR_B, calib.linear_b)
+        self._calib_w_float(block, NDIRRangeCalib.INDEX_LINEAR_C, calib.linear_c)
+
+        self._calib_w_float(block, NDIRRangeCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
+        self._calib_w_float(block, NDIRRangeCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
+        self._calib_w_float(block, NDIRRangeCalib.INDEX_TEMP_BETA_A, calib.temp_beta_a)
+
+        self._calib_w_float(block, NDIRRangeCalib.INDEX_T_CAL, calib.t_cal)
+
+
+    def retrieve_calib(self):
+        try:
+            self.obtain_lock()
+
+            # identity...
+            ndir_serial = self._calib_r_unsigned_long(0, NDIRCalib.INDEX_NDIR_SERIAL)
+            board_serial = self._calib_r_unsigned_long(0, NDIRCalib.INDEX_BOARD_SERIAL)
+
+            selected_range = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_SELECTED_RANGE)
+
+            # common fields...
+            lamp_voltage = self._calib_r_float(0, NDIRCalib.INDEX_LAMP_VOLTAGE)
+
+            lamp_period = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_LAMP_PERIOD)
+            max_deferral = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_MAX_DEFERRAL)
+            min_deferral = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_MIN_DEFERRAL)
+
+            # range calibrations...
+            range_iaq = self._retrieve_range_calib(NDIRCalib.RANGE_IAQ)
+            range_safety = self._retrieve_range_calib(NDIRCalib.RANGE_SAFETY)
+            range_combustion = self._retrieve_range_calib(NDIRCalib.RANGE_COMBUSTION)
+            range_industrial = self._retrieve_range_calib(NDIRCalib.RANGE_INDUSTRIAL)
+
+            return NDIRCalib(ndir_serial, board_serial, selected_range,
+                             lamp_voltage, lamp_period, max_deferral, min_deferral,
+                             range_iaq, range_safety, range_combustion, range_industrial)
+
+        finally:
+            self.release_lock()
+
+
+    def _retrieve_range_calib(self, block):
+        # range check...
+        if not self._calib_r_unsigned_int(block, NDIRRangeCalib.INDEX_RANGE_IS_SET):
+            return None
+
+        # range fields...
+        zero = self._calib_r_float(block, NDIRRangeCalib.INDEX_ZERO)
+        span = self._calib_r_float(block, NDIRRangeCalib.INDEX_SPAN)
+
+        linear_b = self._calib_r_float(block, NDIRRangeCalib.INDEX_LINEAR_B)
+        linear_c = self._calib_r_float(block, NDIRRangeCalib.INDEX_LINEAR_C)
+
+        temp_beta_o = self._calib_r_float(block, NDIRRangeCalib.INDEX_TEMP_BETA_O)
+        temp_alpha = self._calib_r_float(block, NDIRRangeCalib.INDEX_TEMP_ALPHA)
+        temp_beta_a = self._calib_r_float(block, NDIRRangeCalib.INDEX_TEMP_BETA_A)
+
+        t_cal = self._calib_r_float(block, NDIRRangeCalib.INDEX_T_CAL)
+
+        return NDIRRangeCalib(zero, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a, t_cal)
+
+
+    def reload_calib(self):
+        try:
+            self.obtain_lock()
+
+            cmd = NDIRCmd.find('cl')
+            self._transact(cmd)
+
+            time.sleep(cmd.execution_time)
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # lamp...
+
+    def lamp_run(self, on):
+        try:
+            self.obtain_lock()
+
+            on_byte = 1 if on else 0
+
+            cmd = NDIRCmd.find('lr')
+            self._transact(cmd, (on_byte,))
+
+        finally:
+            self.release_lock()
+
+
+    def lamp_level(self, voltage):
+        try:
+            self.obtain_lock()
+
+            voltage_bytes = Datum.encode_float(voltage)
+
+            cmd = NDIRCmd.find('ll')
+            self._transact(cmd, voltage_bytes)
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # low-level commands...
+
     def cmd_sample_mode(self, single_shot):
         try:
             self.obtain_lock()
@@ -174,7 +321,7 @@ class NDIR(object):
             mode_byte = 1 if single_shot else 0
 
             cmd = NDIRCmd.find('sm')
-            self._execute(cmd, (mode_byte, ))
+            self._transact(cmd, (mode_byte, ))
 
             time.sleep(cmd.execution_time)
 
@@ -188,7 +335,7 @@ class NDIR(object):
 
             # report...
             cmd = NDIRCmd.find('sr')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             pile_ref_amplitude = Datum.decode_unsigned_int(response[0:2])
             pile_act_amplitude = Datum.decode_unsigned_int(response[2:4])
@@ -206,7 +353,7 @@ class NDIR(object):
 
             # report...
             cmd = NDIRCmd.find('sv')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             pile_ref_amplitude = Datum.decode_float(response[0:4])
             pile_act_amplitude = Datum.decode_float(response[4:8])
@@ -224,7 +371,7 @@ class NDIR(object):
 
             # playback...
             cmd = NDIRCmd.find('sw')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             values = []
 
@@ -247,7 +394,7 @@ class NDIR(object):
 
             # report...
             cmd = NDIRCmd.find('sd')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             single_shot = response[0]
             is_running = response[1]
@@ -261,100 +408,12 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def store_eeprom_calib(self, calib):
-        try:
-            self.obtain_lock()
-
-            # identity...
-            self._eeprom_w_unsigned_long(NDIRCalib.INDEX_NDIR_SERIAL, calib.ndir_serial)
-            self._eeprom_w_unsigned_long(NDIRCalib.INDEX_BOARD_SERIAL, calib.board_serial)
-
-            # common fields...
-            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_SENSOR, calib.sensor)
-
-            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
-
-            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
-            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL, calib.max_deferral)
-            self._eeprom_w_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL, calib.min_deferral)
-
-            # range fields...
-            self._eeprom_w_float(NDIRCalib.INDEX_ZERO, calib.zero)
-            self._eeprom_w_float(NDIRCalib.INDEX_SPAN, calib.span)
-
-            self._eeprom_w_float(NDIRCalib.INDEX_LINEAR_B, calib.linear_b)
-            self._eeprom_w_float(NDIRCalib.INDEX_LINEAR_C, calib.linear_c)
-
-            self._eeprom_w_float(NDIRCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
-            self._eeprom_w_float(NDIRCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
-            self._eeprom_w_float(NDIRCalib.INDEX_TEMP_BETA_A, calib.temp_beta_a)
-
-            self._eeprom_w_float(NDIRCalib.INDEX_T_CAL, calib.t_cal)
-
-        finally:
-            self.release_lock()
-
-
-    def retrieve_eeprom_calib(self):
-        try:
-            self.obtain_lock()
-
-            # identity...
-            ndir_serial = self._eeprom_r_unsigned_long(NDIRCalib.INDEX_NDIR_SERIAL)
-            board_serial = self._eeprom_r_unsigned_long(NDIRCalib.INDEX_BOARD_SERIAL)
-
-            # common fields...
-            sensor = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_SENSOR)
-
-            lamp_voltage = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_LAMP_VOLTAGE)
-
-            lamp_period = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_LAMP_PERIOD)
-            max_deferral = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_MAX_DEFERRAL)
-            min_deferral = self._eeprom_r_unsigned_int(NDIRCalib.INDEX_MIN_DEFERRAL)
-
-            # range fields...
-            zero = self._eeprom_r_float(NDIRCalib.INDEX_ZERO)
-            span = self._eeprom_r_float(NDIRCalib.INDEX_SPAN)
-
-            linear_b = self._eeprom_r_float(NDIRCalib.INDEX_LINEAR_B)
-            linear_c = self._eeprom_r_float(NDIRCalib.INDEX_LINEAR_C)
-
-            temp_beta_o = self._eeprom_r_float(NDIRCalib.INDEX_TEMP_BETA_O)
-            temp_alpha = self._eeprom_r_float(NDIRCalib.INDEX_TEMP_ALPHA)
-            temp_beta_a = self._eeprom_r_float(NDIRCalib.INDEX_TEMP_BETA_A)
-
-            t_cal = self._eeprom_r_float(NDIRCalib.INDEX_T_CAL)
-
-            return NDIRCalib(ndir_serial, board_serial, sensor, lamp_voltage, lamp_period, max_deferral, min_deferral,
-                             zero, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a, t_cal)
-
-        finally:
-            self.release_lock()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def cmd_lamp_run(self, on):
-        try:
-            self.obtain_lock()
-
-            on_byte = 1 if on else 0
-
-            cmd = NDIRCmd.find('lr')
-            self._execute(cmd, (on_byte,))
-
-        finally:
-            self.release_lock()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def cmd_measure_calibrate(self):
         try:
             self.obtain_lock()
 
             cmd = NDIRCmd.find('mc')
-            self._execute(cmd)
+            self._transact(cmd)
 
             time.sleep(cmd.execution_time)
 
@@ -367,7 +426,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('mr')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             pile_ref_value = Datum.decode_unsigned_int(response[0:2])
             pile_act_value = Datum.decode_unsigned_int(response[2:4])
@@ -384,7 +443,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('mv')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             pile_ref_voltage = Datum.decode_float(response[0:4])
             pile_act_voltage = Datum.decode_float(response[4:8])
@@ -413,7 +472,7 @@ class NDIR(object):
             param_bytes.extend(count_bytes)
 
             cmd = NDIRCmd.find('rs')
-            self._execute(cmd, param_bytes)
+            self._transact(cmd, param_bytes)
 
             # wait...
             time.sleep(cmd.execution_time + (deferral / 1000))
@@ -422,7 +481,7 @@ class NDIR(object):
             cmd = NDIRCmd.find('rp')
             cmd.return_count = count * 6
 
-            response = self._execute(cmd)
+            response = self._transact(cmd)
 
             values = []
 
@@ -446,7 +505,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('ir')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             v_in_value = Datum.decode_unsigned_int(response)
 
             return v_in_value
@@ -460,7 +519,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('iv')
-            response = self._execute(cmd)
+            response = self._transact(cmd)
             v_in_voltage = Datum.decode_float(response)
 
             return v_in_voltage
@@ -476,7 +535,7 @@ class NDIR(object):
             self.obtain_lock()
 
             cmd = NDIRCmd.find('wc')
-            self._execute(cmd)
+            self._transact(cmd)
 
         finally:
             self.release_lock()
@@ -488,13 +547,13 @@ class NDIR(object):
 
             # force reset...
             cmd = NDIRCmd.find('wr')
-            self._execute(cmd)
+            self._transact(cmd)
 
             time.sleep(cmd.execution_time)
 
             # clear status...
             cmd = NDIRCmd.find('wc')
-            self._execute(cmd)
+            self._transact(cmd)
 
         finally:
             self.release_lock()
@@ -502,16 +561,14 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def cmd_fail(self):
+    def cmd(self, name, response_time, execution_time, return_count):
+        command = NDIRCmd(name, response_time, execution_time, return_count)
+
         try:
             self.obtain_lock()
 
-            # TODO: datum for insufficient bytes sent
-
-            cmd = NDIRCmd.find('mr')
-            cmd.return_count = 0            # should return two bytes - ignore these to cause SPI fail
-
-            self._execute(cmd)
+            self._transact(command)
+            time.sleep(execution_time)
 
         finally:
             self.release_lock()
@@ -519,66 +576,66 @@ class NDIR(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def _eeprom_r_unsigned_int(self, index):
-        cmd = NDIRCmd.find('er')
+    def _calib_r_unsigned_int(self, block, index):
+        cmd = NDIRCmd.find('cr')
         cmd.return_count = 2
 
-        response = self._execute(cmd, (index,))
+        response = self._transact(cmd, (block, index))
         value = Datum.decode_unsigned_int(response)
 
         return value
 
 
-    def _eeprom_w_unsigned_int(self, index, value):
-        cmd = NDIRCmd.find('ew')
+    def _calib_w_unsigned_int(self, block, index, value):
+        cmd = NDIRCmd.find('cw')
 
         value_bytes = Datum.encode_unsigned_int(value)
-        self._execute(cmd, (index,), value_bytes)
+        self._transact(cmd, (block, index), value_bytes)
 
         time.sleep(cmd.execution_time)
 
 
-    def _eeprom_r_unsigned_long(self, index):
-        cmd = NDIRCmd.find('er')
+    def _calib_r_unsigned_long(self, block, index):
+        cmd = NDIRCmd.find('cr')
         cmd.return_count = 4
 
-        response = self._execute(cmd, (index,))
+        response = self._transact(cmd, (block, index))
         value = Datum.decode_unsigned_long(response)
 
         return value
 
 
-    def _eeprom_w_unsigned_long(self, index, value):
-        cmd = NDIRCmd.find('ew')
+    def _calib_w_unsigned_long(self, block, index, value):
+        cmd = NDIRCmd.find('cw')
 
         value_bytes = Datum.encode_unsigned_long(value)
-        self._execute(cmd, (index,), value_bytes)
+        self._transact(cmd, (block, index), value_bytes)
 
         time.sleep(cmd.execution_time)
 
 
-    def _eeprom_r_float(self, index):
-        cmd = NDIRCmd.find('er')
+    def _calib_r_float(self, block, index):
+        cmd = NDIRCmd.find('cr')
         cmd.return_count = 4
 
-        response = self._execute(cmd, (index,))
+        response = self._transact(cmd, (block, index))
         value = Datum.decode_float(response)
 
         return value
 
 
-    def _eeprom_w_float(self, index, value):
-        cmd = NDIRCmd.find('ew')
+    def _calib_w_float(self, block, index, value):
+        cmd = NDIRCmd.find('cw')
 
         value_bytes = Datum.encode_float(value)
-        self._execute(cmd, (index,), value_bytes)
+        self._transact(cmd, (block, index), value_bytes)
 
         time.sleep(cmd.execution_time)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def _execute(self, cmd, param_group_1=None, param_group_2=None):
+    def _transact(self, cmd, param_group_1=None, param_group_2=None):
         # print("cmd: %s param_group_1:%s param_group_2:%s" %
         #       (cmd, str(param_group_1), str(param_group_2)), file=sys.stderr)
 
@@ -602,6 +659,8 @@ class NDIR(object):
             # ACK / NACK...
             response = self.__spi.read_bytes(1)
 
+            # print("response 1: %s" % str(response), file=sys.stderr)
+
             if response[0] == 0:
                 raise NDIRException('None received', response[0], cmd, (param_group_1, param_group_2))
 
@@ -619,7 +678,8 @@ class NDIR(object):
             time.sleep(self.__PARAM_DELAY)
 
             response = self.__spi.read_bytes(cmd.return_count)
-            # print("response: %s" % str(response), file=sys.stderr)
+
+            # print("response 2: %s" % str(response), file=sys.stderr)
 
             return response[0] if cmd.return_count == 1 else response
 

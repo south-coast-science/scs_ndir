@@ -41,26 +41,7 @@ class NDIRMonitor(SynchronisedProcess):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-
-    def run(self):
-        try:
-            timer = IntervalTimer(NDIR.SAMPLE_INTERVAL)
-
-            while timer.true():
-                sample = self.__ndir.sample()
-
-                self.__averaging.append(sample)
-                average = self.__averaging.compute()
-
-                # report...
-                with self._lock:
-                    average.as_list(self._value)
-
-        except KeyboardInterrupt:
-            pass
-
-
-    # ----------------------------------------------------------------------------------------------------------------
+    # SynchronisedProcess implementation...
 
     def start(self):
         try:
@@ -84,6 +65,31 @@ class NDIRMonitor(SynchronisedProcess):
 
         except LockTimeout:
             pass
+
+
+    def run(self):
+        try:
+            timer = IntervalTimer(NDIR.SAMPLE_INTERVAL)
+
+            while timer.true():
+                sample = self.__ndir.sample()
+
+                self.__averaging.append(sample)
+                average = self.__averaging.compute()
+
+                # report...
+                with self._lock:
+                    average.as_list(self._value)
+
+        except KeyboardInterrupt:
+            pass
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # data retrieval for client process...
+
+    def firmware(self):
+        return self.__ndir.version()
 
 
     def sample(self):

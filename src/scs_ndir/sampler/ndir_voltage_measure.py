@@ -5,6 +5,7 @@ Created on 17 Feb 2018
 """
 
 from scs_core.data.localized_datetime import LocalizedDatetime
+
 from scs_core.sampler.sampler import Sampler
 
 from scs_ndir.datum.ndir_measure_voltage_datum import NDIRMeasureVoltageDatum

@@ -23,17 +23,18 @@ scs_ndir/
 
 
 command line example:
-./ndir_eeprom.py -s min-deferral 740
+./ndir_calib.py -s min-deferral 740
 """
 
 import sys
 
 from scs_core.data.json import JSONify
+from scs_core.data.path_dict import PathDict
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.cmd.cmd_ndir_eeprom import CmdNDIREEPROM
+from scs_ndir.cmd.cmd_ndir_calib import CmdNDIRCalib
 from scs_ndir.exception.ndir_exception import NDIRException
 
 from scs_ndir.gas.ndir import NDIR
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdNDIREEPROM()
+    cmd = CmdNDIRCalib()
 
     if cmd.verbose:
         print(cmd, file=sys.stderr)
@@ -64,27 +65,41 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        calib = ndir.retrieve_eeprom_calib()
-        jdict = calib.as_json()
+        if cmd.default:
+            calib = NDIRCalib.default()
 
-        if cmd.set():
+            # save...
+            ndir.store_calib(calib)
+
+        elif cmd.restart:
+            ndir.reload_calib()
+
+        elif cmd.set():
+            # retrieve...
+            calib = ndir.retrieve_calib()
+            dictionary = PathDict.construct_from_jstr(JSONify.dumps(calib))
+
             # validate...
-            if cmd.name not in jdict:
-                print("ndir_eeprom: name not known: %s" % cmd.name, file=sys.stderr)
+            if not dictionary.has_path(cmd.path):
+                print("ndir_calib: field name not known: %s" % cmd.path, file=sys.stderr)
                 exit(2)
 
             # set...
-            jdict[cmd.name] = cmd.value
-            calib = NDIRCalib.construct_from_jdict(jdict)
+            dictionary.append(cmd.path, cmd.value)
+            calib = NDIRCalib.construct_from_jdict(dictionary.as_json())
 
-            # datum...
-            jdict = calib.as_json()
-            if jdict[cmd.name] is None:
-                print("ndir_eeprom: value not acceptable: %s" % cmd.value, file=sys.stderr)
+            # validate...
+            dictionary = PathDict.construct_from_jstr(JSONify.dumps(calib))
+
+            if dictionary.node(cmd.path) is None:
+                print("ndir_calib: field value not acceptable: %s" % cmd.value, file=sys.stderr)
                 exit(2)
 
             # save...
-            ndir.store_eeprom_calib(calib)
+            ndir.store_calib(calib)
+
+        # confirm...
+        calib = ndir.retrieve_calib()
 
         # report...
         print(JSONify.dumps(calib))
