@@ -31,10 +31,16 @@ class NDIRCalib(PersistentJSONable):
     """
     classdocs
     """
-    CALIB_IAQ = '{"ndir-serial": 0, "board-serial": 0, "selected-range": 1, ' \
-                '"lamp-voltage": 4.5, "lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
-                '"range-iaq": {"zero": 1.6073, "span": -0.292553, "linear-b": 0.000325, "linear-c": 0.9363, ' \
-                '"temp-beta-o": 0.00001, "temp-alpha": 0.00056, "temp-beta-a": 0.00001, "t-cal": 36.0}}'
+    CALIB_IAQ = '{"ndir-serial": 12701440, "board-serial": 2000001, "selected-range": 1, ' \
+                '"lamp-voltage": 4.0, "lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
+                '"range-iaq": {"zero": 1.6073, "span": 0.21, "linear-b": 0.000325, "linear-c": 0.9363, ' \
+                '"temp-beta-o": 1e-05, "temp-alpha": 0.00052, "temp-beta-a": 1e-05, "t-cal": 36.0}, ' \
+                '"range-safety": null, "range-combustion": null, "range-industrial": null}'
+
+    CALIB_IAQ2 = '{"ndir-serial": 0, "board-serial": 0, "selected-range": 1, ' \
+                 '"lamp-voltage": 4.5, "lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
+                 '"range-iaq": {"zero": 1.6073, "span": -0.292553, "linear-b": 0.000325, "linear-c": 0.9363, ' \
+                 '"temp-beta-o": 0.00001, "temp-alpha": 0.00056, "temp-beta-a": 0.00001, "t-cal": 36.0}}'
 
     # ranges...
     RANGE_IAQ =                     1          # 0 to 5,000 ppm

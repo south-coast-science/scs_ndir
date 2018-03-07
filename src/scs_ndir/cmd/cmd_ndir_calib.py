@@ -16,7 +16,7 @@ class CmdNDIRCalib(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -d | -s PATH VALUE}] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ -d | -s PATH VALUE | -r }] [-v]", version="%prog 1.0")
 
         # optional...
         self.__parser.add_option("--default", "-d", action="store_true", dest="default",
@@ -24,6 +24,9 @@ class CmdNDIRCalib(object):
 
         self.__parser.add_option("--set", "-s", type="string", nargs=2, action="store", dest="set",
                                  help="set the named field to VALUE")
+
+        self.__parser.add_option("--restart", "-r", action="store_true", dest="restart",
+                                 help="restart sampling with updated values")
 
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
@@ -34,7 +37,18 @@ class CmdNDIRCalib(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self):
-        if self.default is not None and self.__opts.set is not None:
+        param_count = 0
+
+        if self.default is not None:
+            param_count += 1
+
+        if self.__opts.set is not None:
+            param_count += 1
+
+        if self.restart is not None:
+            param_count += 1
+
+        if param_count > 1:
             return False
 
         return True
@@ -68,6 +82,11 @@ class CmdNDIRCalib(object):
 
 
     @property
+    def restart(self):
+        return self.__opts.restart
+
+
+    @property
     def verbose(self):
         return self.__opts.verbose
 
@@ -84,5 +103,5 @@ class CmdNDIRCalib(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRCalib:{default:%s, set:%s, verbose:%s, args:%s}" % \
-               (self.default, self.__opts.set, self.verbose, self.args)
+        return "CmdNDIRCalib:{default:%s, set:%s, restart:%s, verbose:%s, args:%s}" % \
+               (self.default, self.__opts.set, self.restart, self.verbose, self.args)

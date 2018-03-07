@@ -71,6 +71,8 @@ if __name__ == '__main__':
             # save...
             ndir.store_calib(calib)
 
+        elif cmd.restart:
+            ndir.reload_calib()
 
         elif cmd.set():
             # retrieve...
@@ -78,7 +80,7 @@ if __name__ == '__main__':
             dictionary = PathDict.construct_from_jstr(JSONify.dumps(calib))
 
             # validate...
-            if dictionary.has_path(cmd.path):
+            if not dictionary.has_path(cmd.path):
                 print("ndir_calib: field name not known: %s" % cmd.path, file=sys.stderr)
                 exit(2)
 
@@ -96,8 +98,8 @@ if __name__ == '__main__':
             # save...
             ndir.store_calib(calib)
 
-        else:
-            calib = ndir.retrieve_calib()
+        # confirm...
+        calib = ndir.retrieve_calib()
 
         # report...
         print(JSONify.dumps(calib))

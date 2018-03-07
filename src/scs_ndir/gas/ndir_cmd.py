@@ -34,9 +34,9 @@ class NDIRCmd(JSONable):
             'wc': NDIRCmd('wc', 0.001, 0.000, 0),               # watchdog clear
             'wr': NDIRCmd('wr', 0.001, 2.500, 0),               # watchdog reset
 
-            'er': NDIRCmd('er', 0.001, 0.000, None),            # EEPROM read
-            'ew': NDIRCmd('ew', 0.005, 0.010, 0),               # EEPROM write
-            'ez': NDIRCmd('ez', 0.005, 0.010, 0),               # EEPROM zero
+            'cr': NDIRCmd('cr', 0.001, 0.000, None),            # calib read
+            'cw': NDIRCmd('cw', 0.005, 0.010, 0),               # calib write
+            'cl': NDIRCmd('cl', 0.010, 2.200, 0),               # calib load
 
             'lr': NDIRCmd('lr', 0.001, 0.000, 0),               # lamp run
             'll': NDIRCmd('ll', 0.001, 0.000, 0),               # lamp level
