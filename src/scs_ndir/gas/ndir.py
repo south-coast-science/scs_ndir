@@ -167,6 +167,7 @@ class NDIR(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # calib...
 
     def store_calib(self, calib):
         try:
@@ -560,6 +561,7 @@ class NDIR(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # arbitrary command, used for test purposes...
 
     def cmd(self, name, response_time, execution_time, return_count):
         command = NDIRCmd(name, response_time, execution_time, return_count)
@@ -575,6 +577,7 @@ class NDIR(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # low-level calib functions...
 
     def _calib_r_unsigned_int(self, block, index):
         cmd = NDIRCmd.find('cr')
@@ -634,6 +637,7 @@ class NDIR(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # SPI interactions...
 
     def _transact(self, cmd, param_group_1=None, param_group_2=None):
         # print("cmd: %s param_group_1:%s param_group_2:%s" %
