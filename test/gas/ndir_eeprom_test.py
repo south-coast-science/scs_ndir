@@ -41,7 +41,7 @@ try:
 
     print("new...")
     calib = ndir.retrieve_calib()
-    print("new calib: %s" % calib)
+    print("calib: %s" % calib)
 
 
 except KeyboardInterrupt:

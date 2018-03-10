@@ -12,7 +12,7 @@ example JSON:
 {"ndir-serial": 12601304, "board-serial": 2, "sensor": 0, "lamp-voltage": 5, "lamp-period": 333,
 "max-deferral": 160, "min-deferral": 340, "zero": 1.0, "span": -0.292553,
 "linear-b": 0.000325, "linear-c": 0.9363,
-"temp-beta-o": 1e-05, "temp-alpha": 0.00056, "temp-beta-a": 1e-05,
+"beta-o": 1e-05, "alpha": 0.00056, "beta-a": 1e-05,
 "t-cal": 1.0}
 """
 
@@ -31,22 +31,18 @@ class NDIRCalib(PersistentJSONable):
     """
     classdocs
     """
-    CALIB_IAQ = '{"ndir-serial": 12701440, "board-serial": 2000001, "selected-range": 1, ' \
-                '"lamp-voltage": 4.0, "lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
-                '"range-iaq": {"zero": 1.6073, "span": 0.21, "linear-b": 0.000325, "linear-c": 0.9363, ' \
-                '"temp-beta-o": 1e-05, "temp-alpha": 0.00052, "temp-beta-a": 1e-05, "t-cal": 36.0}, ' \
-                '"range-safety": null, "range-combustion": null, "range-industrial": null}'
-
-    CALIB_IAQ2 = '{"ndir-serial": 0, "board-serial": 0, "selected-range": 1, ' \
-                 '"lamp-voltage": 4.5, "lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
-                 '"range-iaq": {"zero": 1.6073, "span": -0.292553, "linear-b": 0.000325, "linear-c": 0.9363, ' \
-                 '"temp-beta-o": 0.00001, "temp-alpha": 0.00056, "temp-beta-a": 0.00001, "t-cal": 36.0}}'
+    CALIB_IAQ = '{"ndir-serial": 12701439, "board-serial": 2000001, "selected-range": 1, "lamp-voltage": 4.5, ' \
+                '"lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
+                '"range-iaq": {"zero": 1.1765, "span": 0.2203, "linear-b": 0.000325, "linear-c": 0.9363, ' \
+                '"alpha-low": 0.00042, "alpha-high": 0.00042, "beta-a": 1e-05, "beta-o": 1e-05, "t-cal": 34.0}, ' \
+                '"range-safety": null, "range-combustion": null, "range-industrial": null, "range-custom": null}'
 
     # ranges...
     RANGE_IAQ =                     1          # 0 to 5,000 ppm
     RANGE_SAFETY =                  2          # 0 to 5% (50,000 ppm)
     RANGE_COMBUSTION =              3          # 0 to 20% (200,000 ppm)
     RANGE_INDUSTRIAL =              4          # 0 to 100% (1,000,000 ppm)
+    RANGE_CUSTOM =                  5          # 0 to customer-specified
 
     # identity...
     INDEX_NDIR_SERIAL =             0          # unsigned long         SET IN CALIBRATION
@@ -101,17 +97,18 @@ class NDIRCalib(PersistentJSONable):
         range_safety = NDIRRangeCalib.construct_from_jdict(jdict.get('range-safety'))
         range_combustion = NDIRRangeCalib.construct_from_jdict(jdict.get('range-combustion'))
         range_industrial = NDIRRangeCalib.construct_from_jdict(jdict.get('range-industrial'))
+        range_custom = NDIRRangeCalib.construct_from_jdict(jdict.get('range-custom'))
 
         return NDIRCalib(ndir_serial, board_serial, selected_range,
                          lamp_voltage, lamp_period, max_deferral, min_deferral,
-                         range_iaq, range_safety, range_combustion, range_industrial)
+                         range_iaq, range_safety, range_combustion, range_industrial, range_custom)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, ndir_serial, board_serial, selected_range,
                  lamp_voltage, lamp_period, max_deferral, min_deferral,
-                 range_iaq, range_safety, range_combustion, range_industrial):
+                 range_iaq, range_safety, range_combustion, range_industrial, range_custom):
         """
         Constructor
         """
@@ -135,6 +132,7 @@ class NDIRCalib(PersistentJSONable):
         self.__range_safety = range_safety
         self.__range_combustion = range_combustion
         self.__range_industrial = range_industrial
+        self.__range_custom = range_custom
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -201,6 +199,11 @@ class NDIRCalib(PersistentJSONable):
         return self.__range_industrial
 
 
+    @property
+    def range_custom(self):
+        return self.__range_custom
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self):
@@ -224,6 +227,7 @@ class NDIRCalib(PersistentJSONable):
         jdict['range-safety'] = self.range_safety
         jdict['range-combustion'] = self.range_combustion
         jdict['range-industrial'] = self.range_industrial
+        jdict['range-custom'] = self.range_custom
 
         return jdict
 
@@ -233,10 +237,10 @@ class NDIRCalib(PersistentJSONable):
     def __str__(self, *args, **kwargs):
         return "NDIRCalib:{ndir_serial:%s, board_serial:%s, selected_range:%s, " \
                "lamp_voltage:%s, lamp_period:%s, max_deferral:%s, min_deferral:%s, " \
-               "range_iaq:%s, range_safety:%s, range_combustion:%s, range_industrial:%s}" %  \
-               (self.ndir_serial, self.board_serial, self.selected_range, self.lamp_voltage,
-                self.lamp_period, self.max_deferral, self.min_deferral,
-                self.range_iaq, self.range_safety, self.range_combustion, self.range_industrial)
+               "range_iaq:%s, range_safety:%s, range_combustion:%s, range_industrial:%s, range_custom:%s}" %  \
+               (self.ndir_serial, self.board_serial, self.selected_range,
+                self.lamp_voltage, self.lamp_period, self.max_deferral, self.min_deferral,
+                self.range_iaq, self.range_safety, self.range_combustion, self.range_industrial, self.range_custom)
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -246,20 +250,22 @@ class NDIRRangeCalib(JSONable):
     classdocs
     """
 
-    INDEX_RANGE_IS_SET =            0          # bool
+    INDEX_RANGE_IS_SET =        0          # bool
 
     # range fields...
-    INDEX_ZERO =                    1          # float                 SET IN CALIBRATION
-    INDEX_SPAN =                    2          # float                 SET IN CALIBRATION
+    INDEX_ZERO =                1          # float                 SET IN CALIBRATION
+    INDEX_SPAN =                2          # float                 SET IN CALIBRATION
 
-    INDEX_LINEAR_B =                3          # float                 SET IN CALIBRATION
-    INDEX_LINEAR_C =                4          # float                 SET IN CALIBRATION
+    INDEX_LINEAR_B =            3          # float                 SET IN CALIBRATION
+    INDEX_LINEAR_C =            4          # float                 SET IN CALIBRATION
 
-    INDEX_TEMP_BETA_O =             5          # float                 SET IN CALIBRATION
-    INDEX_TEMP_ALPHA =              6          # float                 SET IN CALIBRATION
-    INDEX_TEMP_BETA_A =             7          # float                 SET IN CALIBRATION
+    INDEX_ALPHA_LOW =           5          # float                 SET IN CALIBRATION
+    INDEX_ALPHA_HIGH =          6          # float                 SET IN CALIBRATION
 
-    INDEX_T_CAL =                   8          # float                 SET IN CALIBRATION
+    INDEX_BETA_A =              7          # float                 SET IN CALIBRATION
+    INDEX_BETA_O =              8          # float                 SET IN CALIBRATION
+
+    INDEX_T_CAL =               9          # float                 SET IN CALIBRATION
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -276,18 +282,20 @@ class NDIRRangeCalib(JSONable):
         linear_b = jdict.get('linear-b')
         linear_c = jdict.get('linear-c')
 
-        temp_beta_o = jdict.get('temp-beta-o')
-        temp_alpha = jdict.get('temp-alpha')
-        temp_beta_a = jdict.get('temp-beta-a')
+        alpha_low = jdict.get('alpha-low')
+        alpha_high = jdict.get('alpha-high')
+
+        beta_a = jdict.get('beta-a')
+        beta_o = jdict.get('beta-o')
 
         t_cal = jdict.get('t-cal')
 
-        return NDIRRangeCalib(zero, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a, t_cal)
+        return NDIRRangeCalib(zero, span, linear_b, linear_c, alpha_low, alpha_high, beta_a, beta_o, t_cal)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, zero, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a, t_cal):
+    def __init__(self, zero, span, linear_b, linear_c, alpha_low, alpha_high, beta_a, beta_o, t_cal):
         """
         Constructor
         """
@@ -300,9 +308,11 @@ class NDIRRangeCalib(JSONable):
         self.__linear_b = Datum.float(linear_b, 6)
         self.__linear_c = Datum.float(linear_c, 6)
 
-        self.__temp_beta_o = Datum.float(temp_beta_o, 6)
-        self.__temp_alpha = Datum.float(temp_alpha, 6)
-        self.__temp_beta_a = Datum.float(temp_beta_a, 6)
+        self.__alpha_low = Datum.float(alpha_low, 6)
+        self.__alpha_high = Datum.float(alpha_high, 6)
+
+        self.__beta_a = Datum.float(beta_a, 6)
+        self.__beta_o = Datum.float(beta_o, 6)
 
         self.__t_cal = Datum.float(t_cal, 6)
 
@@ -331,18 +341,23 @@ class NDIRRangeCalib(JSONable):
 
 
     @property
-    def temp_beta_o(self):
-        return self.__temp_beta_o
+    def alpha_low(self):
+        return self.__alpha_low
 
 
     @property
-    def temp_alpha(self):
-        return self.__temp_alpha
+    def alpha_high(self):
+        return self.__alpha_high
 
 
     @property
-    def temp_beta_a(self):
-        return self.__temp_beta_a
+    def beta_a(self):
+        return self.__beta_a
+
+
+    @property
+    def beta_o(self):
+        return self.__beta_o
 
 
     @property
@@ -362,9 +377,11 @@ class NDIRRangeCalib(JSONable):
         jdict['linear-b'] = self.linear_b
         jdict['linear-c'] = self.linear_c
 
-        jdict['temp-beta-o'] = self.temp_beta_o
-        jdict['temp-alpha'] = self.temp_alpha
-        jdict['temp-beta-a'] = self.temp_beta_a
+        jdict['alpha-low'] = self.alpha_low
+        jdict['alpha-high'] = self.alpha_high
+
+        jdict['beta-a'] = self.beta_a
+        jdict['beta-o'] = self.beta_o
 
         jdict['t-cal'] = self.t_cal
 
@@ -375,6 +392,6 @@ class NDIRRangeCalib(JSONable):
 
     def __str__(self, *args, **kwargs):
         return "NDIRRangeCalib:{zero:%s, span:%s, linear_b:%s, linear_c:%s, " \
-               "temp_beta_o:%s, temp_alpha:%s, temp_beta_a:%s, t_cal:%s}" %  \
+               "alpha_low:%s, alpha_high:%s, beta_a:%s, beta_o:%s, t_cal:%s}" %  \
                (self.zero, self.span, self.linear_b, self.linear_c,
-                self.temp_beta_o, self.temp_alpha, self.temp_beta_a, self.t_cal)
+                self.alpha_low, self.alpha_high, self.beta_a, self.beta_o, self.t_cal)

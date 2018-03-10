@@ -35,8 +35,6 @@ class NDIR(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     SAMPLE_INTERVAL =                   1.0             # seconds between sampling
-    RECOVERY_TIME =                     1.0             # seconds between bad SPI interaction and MCU recovery
-    RESET_QUARANTINE =                  8.0             # seconds between reset and stable readings
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -191,31 +189,34 @@ class NDIR(object):
             self._store_range_calib(NDIRCalib.RANGE_SAFETY, calib.range_safety)
             self._store_range_calib(NDIRCalib.RANGE_COMBUSTION, calib.range_combustion)
             self._store_range_calib(NDIRCalib.RANGE_INDUSTRIAL, calib.range_industrial)
+            self._store_range_calib(NDIRCalib.RANGE_CUSTOM, calib.range_custom)
 
         finally:
             self.release_lock()
 
 
-    def _store_range_calib(self, block, calib):
+    def _store_range_calib(self, rng, calib):
         # range check...
         if calib is None:
-            self._calib_w_unsigned_int(block, NDIRRangeCalib.INDEX_RANGE_IS_SET, 0)
+            self._calib_w_unsigned_int(rng, NDIRRangeCalib.INDEX_RANGE_IS_SET, 0)
             return
 
-        self._calib_w_unsigned_int(block, NDIRRangeCalib.INDEX_RANGE_IS_SET, 1)
+        self._calib_w_unsigned_int(rng, NDIRRangeCalib.INDEX_RANGE_IS_SET, 1)
 
         # range fields...
-        self._calib_w_float(block, NDIRRangeCalib.INDEX_ZERO, calib.zero)
-        self._calib_w_float(block, NDIRRangeCalib.INDEX_SPAN, calib.span)
+        self._calib_w_float(rng, NDIRRangeCalib.INDEX_ZERO, calib.zero)
+        self._calib_w_float(rng, NDIRRangeCalib.INDEX_SPAN, calib.span)
 
-        self._calib_w_float(block, NDIRRangeCalib.INDEX_LINEAR_B, calib.linear_b)
-        self._calib_w_float(block, NDIRRangeCalib.INDEX_LINEAR_C, calib.linear_c)
+        self._calib_w_float(rng, NDIRRangeCalib.INDEX_LINEAR_B, calib.linear_b)
+        self._calib_w_float(rng, NDIRRangeCalib.INDEX_LINEAR_C, calib.linear_c)
 
-        self._calib_w_float(block, NDIRRangeCalib.INDEX_TEMP_BETA_O, calib.temp_beta_o)
-        self._calib_w_float(block, NDIRRangeCalib.INDEX_TEMP_ALPHA, calib.temp_alpha)
-        self._calib_w_float(block, NDIRRangeCalib.INDEX_TEMP_BETA_A, calib.temp_beta_a)
+        self._calib_w_float(rng, NDIRRangeCalib.INDEX_ALPHA_LOW, calib.alpha_low)
+        self._calib_w_float(rng, NDIRRangeCalib.INDEX_ALPHA_HIGH, calib.alpha_high)
 
-        self._calib_w_float(block, NDIRRangeCalib.INDEX_T_CAL, calib.t_cal)
+        self._calib_w_float(rng, NDIRRangeCalib.INDEX_BETA_A, calib.beta_a)
+        self._calib_w_float(rng, NDIRRangeCalib.INDEX_BETA_O, calib.beta_o)
+
+        self._calib_w_float(rng, NDIRRangeCalib.INDEX_T_CAL, calib.t_cal)
 
 
     def retrieve_calib(self):
@@ -240,34 +241,37 @@ class NDIR(object):
             range_safety = self._retrieve_range_calib(NDIRCalib.RANGE_SAFETY)
             range_combustion = self._retrieve_range_calib(NDIRCalib.RANGE_COMBUSTION)
             range_industrial = self._retrieve_range_calib(NDIRCalib.RANGE_INDUSTRIAL)
+            range_custom = self._retrieve_range_calib(NDIRCalib.RANGE_CUSTOM)
 
             return NDIRCalib(ndir_serial, board_serial, selected_range,
                              lamp_voltage, lamp_period, max_deferral, min_deferral,
-                             range_iaq, range_safety, range_combustion, range_industrial)
+                             range_iaq, range_safety, range_combustion, range_industrial, range_custom)
 
         finally:
             self.release_lock()
 
 
-    def _retrieve_range_calib(self, block):
+    def _retrieve_range_calib(self, rnge):
         # range check...
-        if not self._calib_r_unsigned_int(block, NDIRRangeCalib.INDEX_RANGE_IS_SET):
+        if not self._calib_r_unsigned_int(rnge, NDIRRangeCalib.INDEX_RANGE_IS_SET):
             return None
 
         # range fields...
-        zero = self._calib_r_float(block, NDIRRangeCalib.INDEX_ZERO)
-        span = self._calib_r_float(block, NDIRRangeCalib.INDEX_SPAN)
+        zero = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_ZERO)
+        span = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_SPAN)
 
-        linear_b = self._calib_r_float(block, NDIRRangeCalib.INDEX_LINEAR_B)
-        linear_c = self._calib_r_float(block, NDIRRangeCalib.INDEX_LINEAR_C)
+        linear_b = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_LINEAR_B)
+        linear_c = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_LINEAR_C)
 
-        temp_beta_o = self._calib_r_float(block, NDIRRangeCalib.INDEX_TEMP_BETA_O)
-        temp_alpha = self._calib_r_float(block, NDIRRangeCalib.INDEX_TEMP_ALPHA)
-        temp_beta_a = self._calib_r_float(block, NDIRRangeCalib.INDEX_TEMP_BETA_A)
+        alpha_low = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_ALPHA_LOW)
+        alpha_high = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_ALPHA_HIGH)
 
-        t_cal = self._calib_r_float(block, NDIRRangeCalib.INDEX_T_CAL)
+        beta_a = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_BETA_A)
+        beta_o = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_BETA_O)
 
-        return NDIRRangeCalib(zero, span, linear_b, linear_c, temp_beta_o, temp_alpha, temp_beta_a, t_cal)
+        t_cal = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_T_CAL)
+
+        return NDIRRangeCalib(zero, span, linear_b, linear_c, alpha_low, alpha_high, beta_a, beta_o, t_cal)
 
 
     def reload_calib(self):
