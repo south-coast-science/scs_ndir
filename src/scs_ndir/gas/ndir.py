@@ -370,29 +370,6 @@ class NDIR(object):
             self.release_lock()
 
 
-    def cmd_sample_window(self):
-        try:
-            self.obtain_lock()
-
-            # playback...
-            cmd = NDIRCmd.find('sw')
-            response = self._transact(cmd)
-
-            values = []
-
-            for i in range(0, cmd.return_count, 6):
-                pile_ref = Datum.decode_unsigned_int(response[i:i + 2])
-                pile_act = Datum.decode_unsigned_int(response[i + 2:i + 4])
-                thermistor = Datum.decode_unsigned_int(response[i + 4:i + 6])
-
-                values.append((pile_ref, pile_act, thermistor))
-
-            return values
-
-        finally:
-            self.release_lock()
-
-
     def cmd_sample_dump(self):
         try:
             self.obtain_lock()
@@ -480,7 +457,7 @@ class NDIR(object):
             self._transact(cmd, param_bytes)
 
             # wait...
-            time.sleep(cmd.execution_time + (deferral / 1000))
+            time.sleep(cmd.execution_time + (((interval * count) + deferral) / 1000))
 
             # playback...
             cmd = NDIRCmd.find('rp')

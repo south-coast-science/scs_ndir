@@ -10,6 +10,8 @@ from scs_core.data.datum import Datum
 from scs_core.data.json import JSONable
 
 
+# TODO: cmd execution times are based on lamp cycle - but what is the lamp cycle time??
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class NDIRCmd(JSONable):
@@ -48,7 +50,7 @@ class NDIRCmd(JSONable):
             'mr': NDIRCmd('mr', 0.001, 0.000, 6),               # measure raw
             'mv': NDIRCmd('mv', 0.001, 0.000, 12),              # measure voltage
 
-            'rs': NDIRCmd('rs', 0.001, 2.200, 0),               # recorder start
+            'rs': NDIRCmd('rs', 0.001, 2.200, 0),               # recorder start TODO: time depends on period /count
             'rp': NDIRCmd('rp', 0.001, 0.000, None),            # recorder play
 
             'sm': NDIRCmd('sm', 0.001, 2.200, 0),               # sampler mode
@@ -56,7 +58,6 @@ class NDIRCmd(JSONable):
             'sv': NDIRCmd('sv', 0.001, 0.000, 12),              # sampler voltage
             'sg': NDIRCmd('sg', 0.010, 0.000, 12),              # sampler gas
 
-            'sw': NDIRCmd('sw', 0.003, 0.000, 600),             # sampler window
             'sd': NDIRCmd('sd', 0.001, 0.000, 4),               # sampler dump
         }
 

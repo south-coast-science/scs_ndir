@@ -50,7 +50,7 @@ try:
 
     print("-")
 
-    time.sleep(NDIR.RECOVERY_TIME)      # TODO: tune the time
+    time.sleep(1.0)      # TODO: tune the time
 
     status = ndir.status()
     print("status: %s" % status)

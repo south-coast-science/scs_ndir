@@ -36,7 +36,6 @@ from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
 from scs_ndir.cmd.cmd_ndir_sampler import CmdNDIRSampler
-from scs_ndir.datum.ndir_window_datum import NDIRWindowDatum
 from scs_ndir.exception.ndir_exception import NDIRException
 
 from scs_ndir.gas.ndir import NDIR
@@ -81,16 +80,6 @@ if __name__ == '__main__':
         if cmd.mode is not None:
             # set run mode...
             ndir.cmd_sample_mode(cmd.mode == 0)
-
-        elif cmd.window is not None:
-            # retrieve latest sample window...
-            calib = ndir.retrieve_calib()
-            samples = ndir.cmd_sample_window()
-
-            for i in range(len(samples)):
-                rec = calib.min_deferral + i + 1
-                datum = NDIRWindowDatum.construct_from_sample(rec, samples[i])
-                print(JSONify.dumps(datum))
 
         elif cmd.dump is not None:
             # dump state of the sampler module...
