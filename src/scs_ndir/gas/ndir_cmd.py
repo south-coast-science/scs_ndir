@@ -50,7 +50,7 @@ class NDIRCmd(JSONable):
             'mr': NDIRCmd('mr', 0.001, 0.000, 6),               # measure raw
             'mv': NDIRCmd('mv', 0.001, 0.000, 12),              # measure voltage
 
-            'rs': NDIRCmd('rs', 0.001, 2.100, 0),               # recorder start TODO: time depends on period /count
+            'rs': NDIRCmd('rs', 0.001, 1.100, 0),               # recorder start (time depends on period /count)
             'rp': NDIRCmd('rp', 0.001, 0.000, None),            # recorder play
 
             'sm': NDIRCmd('sm', 0.001, 2.200, 0),               # sampler mode
