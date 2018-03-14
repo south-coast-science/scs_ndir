@@ -252,25 +252,25 @@ class NDIR(object):
             self.release_lock()
 
 
-    def _retrieve_range_calib(self, rnge):
+    def _retrieve_range_calib(self, rng):
         # range check...
-        if not self._calib_r_unsigned_int(rnge, NDIRRangeCalib.INDEX_RANGE_IS_SET):
+        if not self._calib_r_unsigned_int(rng, NDIRRangeCalib.INDEX_RANGE_IS_SET):
             return None
 
         # range fields...
-        zero = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_ZERO)
-        span = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_SPAN)
+        zero = self._calib_r_float(rng, NDIRRangeCalib.INDEX_ZERO)
+        span = self._calib_r_float(rng, NDIRRangeCalib.INDEX_SPAN)
 
-        linear_b = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_LINEAR_B)
-        linear_c = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_LINEAR_C)
+        linear_b = self._calib_r_float(rng, NDIRRangeCalib.INDEX_LINEAR_B)
+        linear_c = self._calib_r_float(rng, NDIRRangeCalib.INDEX_LINEAR_C)
 
-        alpha_low = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_ALPHA_LOW)
-        alpha_high = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_ALPHA_HIGH)
+        alpha_low = self._calib_r_float(rng, NDIRRangeCalib.INDEX_ALPHA_LOW)
+        alpha_high = self._calib_r_float(rng, NDIRRangeCalib.INDEX_ALPHA_HIGH)
 
-        beta_a = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_BETA_A)
-        beta_o = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_BETA_O)
+        beta_a = self._calib_r_float(rng, NDIRRangeCalib.INDEX_BETA_A)
+        beta_o = self._calib_r_float(rng, NDIRRangeCalib.INDEX_BETA_O)
 
-        t_cal = self._calib_r_float(rnge, NDIRRangeCalib.INDEX_T_CAL)
+        t_cal = self._calib_r_float(rng, NDIRRangeCalib.INDEX_T_CAL)
 
         return NDIRRangeCalib(zero, span, linear_b, linear_c, alpha_low, alpha_high, beta_a, beta_o, t_cal)
 
