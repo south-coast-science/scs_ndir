@@ -47,6 +47,7 @@ class NDIR(object):
     __RESPONSE_ACK =                    0x01
     __RESPONSE_NACK =                   0x02
     __RESPONSE_BUSY =                   0x03
+    __RESPONSE_NONE =                   (0x00, 0xff)
 
     __SPI_CLOCK =                       488000
     __SPI_MODE =                        1
@@ -649,7 +650,7 @@ class NDIR(object):
 
             # print("response 1: %s" % str(response), file=sys.stderr)
 
-            if response[0] == 0 or response[0] == 0xff:
+            if response[0] in self.__RESPONSE_NONE:
                 raise NDIRException('None received', response[0], cmd, (param_group_1, param_group_2))
 
             if response[0] == self.__RESPONSE_NACK:
