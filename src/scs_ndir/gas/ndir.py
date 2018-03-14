@@ -4,7 +4,7 @@ Created on 11 Dec 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
-# import sys
+import sys
 import time
 
 from scs_core.data.datum import Datum
@@ -457,7 +457,10 @@ class NDIR(object):
             self._transact(cmd, param_bytes)
 
             # wait...
-            time.sleep(cmd.execution_time + (((interval * count) + deferral) / 1000))
+            execution_time = cmd.execution_time + (((interval * count) + deferral) / 1000)
+            print("execution time: %s" % execution_time, file=sys.stderr)
+
+            time.sleep(execution_time)
 
             # playback...
             cmd = NDIRCmd.find('rp')
