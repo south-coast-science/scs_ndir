@@ -649,7 +649,7 @@ class NDIR(object):
 
             # print("response 1: %s" % str(response), file=sys.stderr)
 
-            if response[0] == 0:
+            if response[0] == 0 or response[0] == 0xff:
                 raise NDIRException('None received', response[0], cmd, (param_group_1, param_group_2))
 
             if response[0] == self.__RESPONSE_NACK:
