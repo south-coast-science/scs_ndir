@@ -12,11 +12,12 @@ from collections import OrderedDict
 
 from scs_core.data.json import JSONify
 
+from scs_core.gas.ndir_version import NDIRVersion
+
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.ndir import NDIR
-from scs_ndir.gas.ndir_status import NDIRStatus
+from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -24,27 +25,27 @@ from scs_ndir.gas.ndir_status import NDIRStatus
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRv1(Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir)
     print("-")
 
     ndir.power_on()
 
-    status = ndir.status()
-    print("status: %s" % status)
+    version = ndir.version()
+    print("version: %s" % version)
     print("-")
 
-    jstr = JSONify.dumps(status)
+    jstr = JSONify.dumps(version)
     print(jstr)
     print("-")
 
     jdict = json.loads(jstr, object_pairs_hook=OrderedDict)
 
-    status = NDIRStatus.construct_from_jdict(jdict)
-    print("status: %s" % status)
+    version = NDIRVersion.construct_from_jdict(jdict)
+    print("version: %s" % version)
     print("-")
 
-    jstr = JSONify.dumps(status)
+    jstr = JSONify.dumps(version)
     print(jstr)
     print("-")
 

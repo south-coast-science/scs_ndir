@@ -38,7 +38,7 @@ from scs_host.sys.host import Host
 from scs_ndir.cmd.cmd_ndir_sampler import CmdNDIRSampler
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.gas.ndir import NDIR
+from scs_ndir.ndir_conf import NDIRConf
 
 from scs_ndir.sampler.ndir_sampler import NDIRSampler
 from scs_ndir.sampler.ndir_voltage_sampler import NDIRVoltageSampler
@@ -64,14 +64,16 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        I2C.open(Host.I2C_SENSORS)
-
         # SystemID...
         system_id = SystemID.load(Host)
         tag = None if system_id is None else system_id.message_tag()
 
         # NDIR...
-        ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
+        I2C.open(Host.I2C_SENSORS)
+
+        conf =  NDIRConf.load(Host)
+        ndir = conf.ndir(Host)
+
         ndir.power_on()
 
         # ------------------------------------------------------------------------------------------------------------

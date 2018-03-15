@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 
 """
-Created on 6 Jan 2018
+Created on 29 Jan 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-"""
 
-from scs_core.data.json import JSONify
+Warning: ndir_calib_test.py must be run first!
+"""
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.ndir import NDIR
+from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
+from scs_ndir.gas.spi_ndir_v1.ndir_calib import NDIRCalib
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -19,7 +20,7 @@ from scs_ndir.gas.ndir import NDIR
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRv1(Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir)
     print("-")
 
@@ -27,26 +28,21 @@ try:
 
     status = ndir.status()
     print("status: %s" % status)
+    print("=")
+
+    print("current...")
+    calib = ndir.retrieve_calib()
+    print("calib: %s" % calib)
+
+    calib = NDIRCalib.load(Host)
+
+    ndir.store_calib(calib)
     print("-")
 
-    jstr = JSONify.dumps(status)
-    print(jstr)
-    print("-")
+    print("new...")
+    calib = ndir.retrieve_calib()
+    print("calib: %s" % calib)
 
-    ndir.cmd_reset()
-    print("NDIR RESET")
-    print("-")
-
-    status = ndir.status()
-    print("status: %s" % status)
-    print("-")
-
-    jstr = JSONify.dumps(status)
-    print(jstr)
-    print("-")
-
-except ValueError as ex:
-    print("ValueError: %s" % ex)
 
 except KeyboardInterrupt:
     print("")

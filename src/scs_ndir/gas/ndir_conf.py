@@ -4,22 +4,23 @@ Created on 28 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 example JSON:
-{"model": "Prototype1", "avg-period": 10}
+{"model": "SPINDIRv1", "tally": 10}
 """
 
 import os
 
 from collections import OrderedDict
 
-from scs_core.data.json import PersistentJSONable
+from scs_core.gas.ndir_conf import NDIRConf as AbstractNDIRConf
+from scs_core.gas.ndir_monitor import NDIRMonitor
 
-from scs_ndir.gas.ndir import NDIR
-from scs_ndir.gas.ndir_monitor import NDIRMonitor
+from scs_ndir.gas.spi_ndir_v1.ndir_calib import NDIRCalib as SPINDIRv1Calib
+from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class NDIRConf(PersistentJSONable):
+class NDIRConf(AbstractNDIRConf):
     """
     classdocs
     """
@@ -59,12 +60,21 @@ class NDIRConf(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def ndir_monitor(self, host):
+        return NDIRMonitor(self.ndir(host), self)
+
+
+    def ndir(self, host):
         if self.model is None:
             raise ValueError('unknown model: %s' % self.model)
 
-        ndir = NDIR(host.ndir_spi_bus(), host.ndir_spi_device())
+        return SPINDIRv1(host.ndir_spi_bus(), host.ndir_spi_device())
 
-        return NDIRMonitor(ndir, self)
+
+    def calib_class(self):
+        if self.model is None:
+            raise ValueError('unknown model: %s' % self.model)
+
+        return SPINDIRv1Calib
 
 
     # ----------------------------------------------------------------------------------------------------------------
