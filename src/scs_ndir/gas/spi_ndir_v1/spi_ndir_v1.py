@@ -4,7 +4,7 @@ Created on 11 Dec 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
-import sys
+# import sys
 import time
 
 from scs_core.data.datum import Datum
@@ -462,7 +462,7 @@ class SPINDIRv1(NDIR):
 
             # wait...
             execution_time = cmd.execution_time + (((interval * count) + deferral) / 1000)
-            print("execution time: %s" % execution_time, file=sys.stderr)
+            # print("execution time: %s" % execution_time, file=sys.stderr)
 
             time.sleep(execution_time)
 

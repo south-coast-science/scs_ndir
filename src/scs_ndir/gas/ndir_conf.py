@@ -10,7 +10,6 @@ example JSON:
 import os
 
 from scs_core.gas.ndir_conf import NDIRConf as AbstractNDIRConf
-from scs_core.gas.ndir_monitor import NDIRMonitor
 
 from scs_ndir.gas.spi_ndir_v1.ndir_calib import NDIRCalib as SPINDIRv1Calib
 from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
@@ -51,11 +50,13 @@ class NDIRConf(AbstractNDIRConf):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # abstract NDIRConf implementation...
+    # AbstractNDIRConf implementation...
 
     def ndir(self, host):
         if self.model is None:
             raise ValueError('unknown model: %s' % self.model)
+
+        # TODO: check against a list of supported devices
 
         return SPINDIRv1(host.ndir_spi_bus(), host.ndir_spi_device())
 
