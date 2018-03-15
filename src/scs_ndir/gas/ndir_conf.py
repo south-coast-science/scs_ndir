@@ -9,8 +9,6 @@ example JSON:
 
 import os
 
-from collections import OrderedDict
-
 from scs_core.gas.ndir_conf import NDIRConf as AbstractNDIRConf
 from scs_core.gas.ndir_monitor import NDIRMonitor
 
@@ -25,11 +23,9 @@ class NDIRConf(AbstractNDIRConf):
     classdocs
     """
 
-    __FILENAME = "ndir_conf.json"
-
     @classmethod
     def filename(cls, host):
-        return os.path.join(host.conf_dir(), cls.__FILENAME)
+        return os.path.join(host.conf_dir(), cls._FILENAME)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -51,17 +47,11 @@ class NDIRConf(AbstractNDIRConf):
         """
         Constructor
         """
-        super().__init__()
-
-        self.__model = model
-        self.__tally = tally
+        super().__init__(model, tally)
 
 
     # ----------------------------------------------------------------------------------------------------------------
-
-    def ndir_monitor(self, host):
-        return NDIRMonitor(self.ndir(host), self)
-
+    # abstract NDIRConf implementation...
 
     def ndir(self, host):
         if self.model is None:
@@ -70,37 +60,10 @@ class NDIRConf(AbstractNDIRConf):
         return SPINDIRv1(host.ndir_spi_bus(), host.ndir_spi_device())
 
 
+    # ----------------------------------------------------------------------------------------------------------------
+
     def calib_class(self):
         if self.model is None:
             raise ValueError('unknown model: %s' % self.model)
 
         return SPINDIRv1Calib
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def model(self):
-        return self.__model
-
-
-    @property
-    def tally(self):
-        return self.__tally
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def as_json(self):
-        jdict = OrderedDict()
-
-        jdict['model'] = self.model
-        jdict['tally'] = self.tally
-
-        return jdict
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __str__(self, *args, **kwargs):
-        return "NDIRConf:{model:%s, tally:%s}" %  (self.model, self.tally)
