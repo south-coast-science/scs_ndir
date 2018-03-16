@@ -10,9 +10,11 @@ from scs_core.data.datum import Datum
 from scs_core.data.json import JSONable
 
 
+# TODO: cmd execution times are based on lamp cycle - but what is the lamp cycle time??
+
 # --------------------------------------------------------------------------------------------------------------------
 
-class NDIRCmd(JSONable):
+class SPINDIRv1Cmd(JSONable):
     """
     classdocs
     """
@@ -25,39 +27,38 @@ class NDIRCmd(JSONable):
     @classmethod
     def init(cls):
         cls.__COMMANDS = {
-            'vi': NDIRCmd('vi', 0.001, 0.000, 40),              # version ident
-            'vt': NDIRCmd('vt', 0.001, 0.000, 11),              # version tag
+            'vi': SPINDIRv1Cmd('vi', 0.001, 0.000, 40),              # version ident
+            'vt': SPINDIRv1Cmd('vt', 0.001, 0.000, 11),              # version tag
 
-            'up': NDIRCmd('up', 0.001, 0.000, 4),               # uptime
+            'up': SPINDIRv1Cmd('up', 0.001, 0.000, 4),               # uptime
 
-            'ws': NDIRCmd('ws', 0.001, 0.000, 1),               # watchdog status
-            'wc': NDIRCmd('wc', 0.001, 0.000, 0),               # watchdog clear
-            'wr': NDIRCmd('wr', 0.001, 2.500, 0),               # watchdog reset
+            'ws': SPINDIRv1Cmd('ws', 0.001, 0.000, 1),               # watchdog status
+            'wc': SPINDIRv1Cmd('wc', 0.001, 0.000, 0),               # watchdog clear
+            'wr': SPINDIRv1Cmd('wr', 0.001, 2.500, 0),               # watchdog reset
 
-            'cr': NDIRCmd('cr', 0.001, 0.000, None),            # calib read
-            'cw': NDIRCmd('cw', 0.005, 0.010, 0),               # calib write
-            'cl': NDIRCmd('cl', 0.010, 2.200, 0),               # calib load
+            'cr': SPINDIRv1Cmd('cr', 0.001, 0.000, None),            # calib read
+            'cw': SPINDIRv1Cmd('cw', 0.005, 0.010, 0),               # calib write
+            'cl': SPINDIRv1Cmd('cl', 0.010, 2.200, 0),               # calib load
 
-            'lr': NDIRCmd('lr', 0.001, 0.000, 0),               # lamp run
-            'll': NDIRCmd('ll', 0.001, 0.000, 0),               # lamp level
+            'lr': SPINDIRv1Cmd('lr', 0.001, 0.000, 0),               # lamp run
+            'll': SPINDIRv1Cmd('ll', 0.001, 0.000, 0),               # lamp level
 
-            'ir': NDIRCmd('ir', 0.001, 0.000, 2),               # input raw
-            'iv': NDIRCmd('iv', 0.001, 0.000, 4),               # input voltage
+            'ir': SPINDIRv1Cmd('ir', 0.001, 0.000, 2),               # input raw
+            'iv': SPINDIRv1Cmd('iv', 0.001, 0.000, 4),               # input voltage
 
-            'mc': NDIRCmd('mc', 0.001, 1.000, 0),               # measure calibrate
-            'mr': NDIRCmd('mr', 0.001, 0.000, 6),               # measure raw
-            'mv': NDIRCmd('mv', 0.001, 0.000, 12),              # measure voltage
+            'mc': SPINDIRv1Cmd('mc', 0.001, 1.000, 0),               # measure calibrate
+            'mr': SPINDIRv1Cmd('mr', 0.001, 0.000, 6),               # measure raw
+            'mv': SPINDIRv1Cmd('mv', 0.001, 0.000, 12),              # measure voltage
 
-            'rs': NDIRCmd('rs', 0.001, 2.200, 0),               # recorder start
-            'rp': NDIRCmd('rp', 0.001, 0.000, None),            # recorder play
+            'rs': SPINDIRv1Cmd('rs', 0.001, 1.100, 0),               # recorder start (time depends on period /count)
+            'rp': SPINDIRv1Cmd('rp', 0.001, 0.000, None),            # recorder play
 
-            'sm': NDIRCmd('sm', 0.001, 2.200, 0),               # sampler mode
-            'sr': NDIRCmd('sr', 0.001, 0.000, 6),               # sampler raw
-            'sv': NDIRCmd('sv', 0.001, 0.000, 12),              # sampler voltage
-            'sg': NDIRCmd('sg', 0.010, 0.000, 12),              # sampler gas
+            'sm': SPINDIRv1Cmd('sm', 0.001, 2.200, 0),               # sampler mode
+            'sr': SPINDIRv1Cmd('sr', 0.001, 0.000, 6),               # sampler raw
+            'sv': SPINDIRv1Cmd('sv', 0.001, 0.000, 12),              # sampler voltage
+            'sg': SPINDIRv1Cmd('sg', 0.010, 0.000, 12),              # sampler gas
 
-            'sw': NDIRCmd('sw', 0.003, 0.000, 600),             # sampler window
-            'sd': NDIRCmd('sd', 0.001, 0.000, 4),               # sampler dump
+            'sd': SPINDIRv1Cmd('sd', 0.001, 0.000, 4),               # sampler dump
         }
 
 

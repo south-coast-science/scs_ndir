@@ -11,7 +11,7 @@ import sys
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.ndir import NDIR
+from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ scan_single_shot = True
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRv1(Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir, file=sys.stderr)
     print("-", file=sys.stderr)
 

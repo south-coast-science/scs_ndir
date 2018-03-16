@@ -36,10 +36,9 @@ from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
 from scs_ndir.cmd.cmd_ndir_sampler import CmdNDIRSampler
-from scs_ndir.datum.ndir_window_datum import NDIRWindowDatum
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.gas.ndir import NDIR
+from scs_ndir.ndir_conf import NDIRConf
 
 from scs_ndir.sampler.ndir_sampler import NDIRSampler
 from scs_ndir.sampler.ndir_voltage_sampler import NDIRVoltageSampler
@@ -65,14 +64,16 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        I2C.open(Host.I2C_SENSORS)
-
         # SystemID...
         system_id = SystemID.load(Host)
         tag = None if system_id is None else system_id.message_tag()
 
         # NDIR...
-        ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
+        I2C.open(Host.I2C_SENSORS)
+
+        conf =  NDIRConf.load(Host)
+        ndir = conf.ndir(Host)
+
         ndir.power_on()
 
         # ------------------------------------------------------------------------------------------------------------
@@ -81,16 +82,6 @@ if __name__ == '__main__':
         if cmd.mode is not None:
             # set run mode...
             ndir.cmd_sample_mode(cmd.mode == 0)
-
-        elif cmd.window is not None:
-            # retrieve latest sample window...
-            calib = ndir.retrieve_calib()
-            samples = ndir.cmd_sample_window()
-
-            for i in range(len(samples)):
-                rec = calib.min_deferral + i + 1
-                datum = NDIRWindowDatum.construct_from_sample(rec, samples[i])
-                print(JSONify.dumps(datum))
 
         elif cmd.dump is not None:
             # dump state of the sampler module...

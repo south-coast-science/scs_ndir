@@ -37,7 +37,7 @@ from scs_host.sys.host import Host
 from scs_ndir.cmd.cmd_ndir_measure import CmdNDIRMeasure
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.gas.ndir import NDIR
+from scs_ndir.ndir_conf import NDIRConf
 from scs_ndir.sampler.ndir_voltage_measure import NDIRVoltageMeasure
 
 
@@ -63,7 +63,9 @@ if __name__ == '__main__':
 
         I2C.open(Host.I2C_SENSORS)
 
-        ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
+        conf =  NDIRConf.load(Host)
+        ndir = conf.ndir(Host)
+
         ndir.power_on()
 
         # ------------------------------------------------------------------------------------------------------------

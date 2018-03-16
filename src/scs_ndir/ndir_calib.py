@@ -23,7 +23,7 @@ scs_ndir/
 
 
 command line example:
-./ndir_calib.py -s min-deferral 740
+./ndir_calib.py -s lamp-period 1000
 """
 
 import sys
@@ -37,8 +37,7 @@ from scs_host.sys.host import Host
 from scs_ndir.cmd.cmd_ndir_calib import CmdNDIRCalib
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.gas.ndir import NDIR
-from scs_ndir.gas.ndir_calib import NDIRCalib
+from scs_ndir.ndir_conf import NDIRConf
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -59,14 +58,17 @@ if __name__ == '__main__':
 
         I2C.open(Host.I2C_SENSORS)
 
-        ndir = NDIR(Host.ndir_spi_bus(), Host.ndir_spi_device())
+        conf =  NDIRConf.load(Host)
+        calib_class = conf.calib_class()
+        ndir = conf.ndir(Host)
+
         ndir.power_on()
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
         if cmd.default:
-            calib = NDIRCalib.default()
+            calib = calib_class.default()
 
             # save...
             ndir.store_calib(calib)
@@ -86,7 +88,7 @@ if __name__ == '__main__':
 
             # set...
             dictionary.append(cmd.path, cmd.value)
-            calib = NDIRCalib.construct_from_jdict(dictionary.as_json())
+            calib = calib_class.construct_from_jdict(dictionary.as_json())
 
             # validate...
             dictionary = PathDict.construct_from_jstr(JSONify.dumps(calib))
