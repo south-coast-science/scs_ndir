@@ -58,7 +58,7 @@ class SPINDIRv1Cmd(JSONable):
             'sv': SPINDIRv1Cmd('sv', 0.001, 0.000, 12),              # sampler voltage
             'sg': SPINDIRv1Cmd('sg', 0.010, 0.000, 12),              # sampler gas
 
-            'sd': SPINDIRv1Cmd('sd', 0.001, 0.000, 4),               # sampler dump
+            'so': SPINDIRv1Cmd('so', 0.001, 0.000, 8),               # sampler offsets
         }
 
 

@@ -83,13 +83,13 @@ if __name__ == '__main__':
             # set run mode...
             ndir.cmd_sample_mode(cmd.mode == 0)
 
-        elif cmd.dump is not None:
-            # dump state of the sampler module...
-            single_shot, is_running, index = ndir.cmd_sample_dump()
+        elif cmd.offsets is not None:
+            min_ref_offset, min_act_offset, max_ref_offset, max_act_offset = ndir.cmd_sample_offsets()
 
-            print("single_shot: %s" % single_shot)
-            print("is_running: %s" % is_running)
-            print("index: %s" % index)
+            print("min_ref_offset: %s" % min_ref_offset)
+            print("min_act_offset: %s" % min_act_offset)
+            print("max_ref_offset: %s" % max_ref_offset)
+            print("max_act_offset: %s" % max_act_offset)
 
         else:
             # run sampling...

@@ -374,19 +374,20 @@ class SPINDIRv1(NDIR):
             self.release_lock()
 
 
-    def cmd_sample_dump(self):
+    def cmd_sample_offsets(self):
         try:
             self.obtain_lock()
 
             # report...
-            cmd = SPINDIRv1Cmd.find('sd')
+            cmd = SPINDIRv1Cmd.find('so')
             response = self._transact(cmd)
 
-            single_shot = response[0]
-            is_running = response[1]
-            index = Datum.decode_unsigned_int(response[2:4])
+            min_ref_offset = Datum.decode_unsigned_int(response[0:2])
+            min_act_offset = Datum.decode_unsigned_int(response[2:4])
+            max_ref_offset = Datum.decode_unsigned_int(response[4:6])
+            max_act_offset = Datum.decode_unsigned_int(response[6:8])
 
-            return single_shot, is_running, index
+            return min_ref_offset, min_act_offset, max_ref_offset, max_act_offset
 
         finally:
             self.release_lock()
