@@ -39,8 +39,6 @@ class NDIRVoltageSampler(Sampler):
         sample = self.__ndir.cmd_sample_voltage()
         co2_datum = NDIRSampleVoltageDatum.construct_from_sample(sample)
 
-        print(sample)
-
         return GasesSample(self.__tag, rec, co2_datum, None, None)
 
 

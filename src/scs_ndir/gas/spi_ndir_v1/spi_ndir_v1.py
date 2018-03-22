@@ -368,6 +368,9 @@ class SPINDIRv1(NDIR):
             pile_act_amplitude = Datum.decode_float(response[4:8])
             thermistor_average = Datum.decode_float(response[8:12])
 
+            # print("pile_ref_amplitude: %s pile_act_amplitude: %s thermistor_average: %s" % \
+            #       (pile_ref_amplitude, pile_act_amplitude, thermistor_average))
+
             return pile_ref_amplitude, pile_act_amplitude, thermistor_average
 
         finally:
