@@ -16,7 +16,7 @@ class CmdNDIRSampler(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -m { 1 | 0 } | [-i INTERVAL [-n SAMPLES] [-r]] | -d }"
+        self.__parser = optparse.OptionParser(usage="%prog { -m { 1 | 0 } | [-i INTERVAL [-n SAMPLES] [-r]] | -o }"
                                                     "[-v]", version="%prog 1.0")
 
         # compulsory...
@@ -32,8 +32,8 @@ class CmdNDIRSampler(object):
         self.__parser.add_option("--raw", "-r", action="store_true", dest="raw", default=False,
                                  help="report voltages instead of concentrations")
 
-        self.__parser.add_option("--dump", "-d", action="store_true", dest="dump",
-                                 help="dump the sampler state")
+        self.__parser.add_option("--offsets", "-o", action="store_true", dest="offsets",
+                                 help="get the latest min / max offsets")
 
         # optional...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
@@ -53,7 +53,7 @@ class CmdNDIRSampler(object):
         if self.__opts.interval is not None:
             param_count += 1
 
-        if self.__opts.dump is not None:
+        if self.__opts.offsets is not None:
             param_count += 1
 
         if param_count > 1:
@@ -88,8 +88,8 @@ class CmdNDIRSampler(object):
 
 
     @property
-    def dump(self):
-        return self.__opts.dump
+    def offsets(self):
+        return self.__opts.offsets
 
 
     @property
@@ -109,5 +109,5 @@ class CmdNDIRSampler(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRSampler:{mode:%s, interval:%s, samples:%s, raw:%s, dump:%s, verbose:%s, args:%s}" % \
-               (self.mode, self.interval, self.samples, self.dump, self.raw, self.verbose, self.args)
+        return "CmdNDIRSampler:{mode:%s, interval:%s, samples:%s, raw:%s, offsets:%s, verbose:%s, args:%s}" % \
+               (self.mode, self.interval, self.samples, self.offsets, self.raw, self.verbose, self.args)

@@ -51,9 +51,9 @@ class NDIRSampleVoltageDatum(JSONable):
         """
         Constructor
         """
-        self.__pile_ref_ampl = Datum.float(pile_ref_ampl, 4)
-        self.__pile_act_ampl = Datum.float(pile_act_ampl, 4)
-        self.__thermistor_avg = Datum.float(thermistor_avg, 4)
+        self.__pile_ref_ampl = Datum.float(pile_ref_ampl, 6)
+        self.__pile_act_ampl = Datum.float(pile_act_ampl, 6)
+        self.__thermistor_avg = Datum.float(thermistor_avg, 6)
 
 
     def __eq__(self, other):
