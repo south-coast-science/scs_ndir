@@ -47,10 +47,13 @@ try:
     print("rec, pile_ref, pile_act, thermistor")
 
     for _ in timer.range(sample_count):
-        pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.cmd_measure()
+        pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.cmd_measure_raw()
         elapsed_time = time.time() - start_time
 
-        print("%0.3f, %0.4f, %0.4f, %0.4f" % (elapsed_time, pile_ref_voltage, pile_act_voltage, thermistor_voltage))
+        # fluked_thermistor = thermistor_voltage - 65536
+
+        # print("%0.3f, %0.4f, %0.4f, %0.4f" % (elapsed_time, pile_ref_voltage, pile_act_voltage, thermistor_voltage))
+        print("%0.3f, %s, %s, %s" % (elapsed_time, pile_ref_voltage, pile_act_voltage, thermistor_voltage))
         sys.stdout.flush()
 
     # ndir.power_off()
