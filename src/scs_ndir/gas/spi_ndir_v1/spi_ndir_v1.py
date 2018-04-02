@@ -4,7 +4,6 @@ Created on 11 Dec 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
-# import sys
 import time
 
 from scs_core.data.datum import Datum
@@ -472,16 +471,16 @@ class SPINDIRv1(NDIR):
 
             # playback...
             cmd = SPINDIRv1Cmd.find('rp')
-            cmd.return_count = count * 6
+            cmd.return_count = count * 10
 
             response = self._transact(cmd)
 
             values = []
 
-            for i in range(0, cmd.return_count, 6):
+            for i in range(0, cmd.return_count, 10):
                 timestamp = Datum.decode_unsigned_int(response[i:i + 2])
-                pile_ref = Datum.decode_unsigned_int(response[i + 2:i + 4])
-                pile_act = Datum.decode_unsigned_int(response[i + 4:i + 6])
+                pile_ref = Datum.decode_unsigned_long(response[i + 2:i + 6])
+                pile_act = Datum.decode_unsigned_long(response[i + 6:i + 10])
 
                 values.append((timestamp, pile_ref, pile_act))
 
@@ -682,7 +681,7 @@ class SPINDIRv1(NDIR):
 
 
     def __xfer(self, values):
-        request = []                        # convert tuple to array
+        request = []                      # convert tuple to array
         request.extend(values)
 
         self.__spi.xfer(request)
