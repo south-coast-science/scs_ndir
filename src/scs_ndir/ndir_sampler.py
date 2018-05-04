@@ -66,6 +66,7 @@ if __name__ == '__main__':
 
         # SystemID...
         system_id = SystemID.load(Host)
+
         tag = None if system_id is None else system_id.message_tag()
 
         # NDIR...
