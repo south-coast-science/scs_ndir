@@ -4,6 +4,7 @@ Created on 11 Dec 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
+# import sys
 import time
 
 from scs_core.data.datum import Datum
