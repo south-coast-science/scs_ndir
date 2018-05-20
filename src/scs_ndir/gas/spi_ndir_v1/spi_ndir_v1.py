@@ -480,8 +480,8 @@ class SPINDIRv1(NDIR):
 
             for i in range(0, cmd.return_count, 10):
                 timestamp = Datum.decode_unsigned_int(response[i:i + 2])
-                pile_ref = Datum.decode_unsigned_long(response[i + 2:i + 6])
-                pile_act = Datum.decode_unsigned_long(response[i + 6:i + 10])
+                pile_ref = Datum.decode_long(response[i + 2:i + 6])
+                pile_act = Datum.decode_long(response[i + 6:i + 10])
 
                 values.append((timestamp, pile_ref, pile_act))
 
