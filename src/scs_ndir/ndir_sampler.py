@@ -87,17 +87,38 @@ if __name__ == '__main__':
         elif cmd.offsets is not None:
             min_ref_offset, min_act_offset, max_ref_offset, max_act_offset = ndir.cmd_sample_offsets()
 
+            ref_offset_span = min_ref_offset - max_ref_offset if min_ref_offset > max_ref_offset else \
+                max_ref_offset - min_ref_offset
+
+            act_offset_span = min_act_offset - max_act_offset if min_act_offset > max_act_offset else \
+                max_act_offset - min_act_offset
+
             print("min_ref_offset: %s" % min_ref_offset)
-            print("min_act_offset: %s" % min_act_offset)
             print("max_ref_offset: %s" % max_ref_offset)
+            print("ref_offset_span: %s" % ref_offset_span)
+            print("-")
+
+            print("min_act_offset: %s" % min_act_offset)
             print("max_act_offset: %s" % max_act_offset)
+            print("act_offset_span: %s" % act_offset_span)
+            print("-")
+
+            print("min_offset_diff: %s" % abs(min_ref_offset - min_act_offset))
+            print("max_offset_diff: %s" % abs(max_ref_offset - max_act_offset))
+            print("-")
 
         else:
             # run sampling...
+            first_sample = True
+
             runner = TimedRunner(cmd.interval, cmd.samples)
             sampler = NDIRVoltageSampler(runner, tag, ndir) if cmd.raw else NDIRSampler(runner, tag, ndir)
 
             for sample in sampler.samples():
+                if first_sample:
+                    first_sample = False
+                    continue
+
                 print(JSONify.dumps(sample))
                 sys.stdout.flush()
 
