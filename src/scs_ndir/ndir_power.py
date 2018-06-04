@@ -53,7 +53,7 @@ if __name__ == '__main__':
         exit(1)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("ndir_power: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -63,6 +63,10 @@ if __name__ == '__main__':
 
         conf =  NDIRConf.load(Host)
         ndir = conf.ndir(Host)
+
+        if cmd.verbose:
+            print("ndir_power: %s" % ndir, file=sys.stderr)
+            sys.stderr.flush()
 
         # ------------------------------------------------------------------------------------------------------------
         # run...

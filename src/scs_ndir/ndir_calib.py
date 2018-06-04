@@ -50,7 +50,7 @@ if __name__ == '__main__':
     cmd = CmdNDIRCalib()
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("ndir_calib: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -62,10 +62,14 @@ if __name__ == '__main__':
         calib_class = conf.calib_class()
         ndir = conf.ndir(Host)
 
-        ndir.power_on()
+        if cmd.verbose:
+            print("ndir_calib: %s" % ndir, file=sys.stderr)
+            sys.stderr.flush()
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
+
+        ndir.power_on()
 
         if cmd.default:
             calib = calib_class.default()

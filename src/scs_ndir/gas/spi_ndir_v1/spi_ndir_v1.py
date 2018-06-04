@@ -682,10 +682,7 @@ class SPINDIRv1(NDIR):
 
 
     def __xfer(self, values):
-        request = []                      # convert tuple to array
-        request.extend(values)
-
-        self.__spi.xfer(request)
+        self.__spi.xfer(list(values))
 
 
     # ----------------------------------------------------------------------------------------------------------------
