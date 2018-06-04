@@ -10,7 +10,7 @@ http://www.alphasense.com/WEB1213/wp-content/uploads/2014/12/AAN_201-06.pdf
 
 example JSON:
 {"ndir-serial": 12601304, "board-serial": 2, "sensor": 0, "lamp-voltage": 5, "lamp-period": 333,
-"max-deferral": 160, "min-deferral": 340, "zero": 1.0, "span": -0.292553,
+"sample-start": 0, "sample-end": 330, "zero": 1.0, "span": -0.292553,
 "linear-b": 0.000325, "linear-c": 0.9363,
 "beta-o": 1e-05, "alpha": 0.00056, "beta-a": 1e-05,
 "t-cal": 1.0}
@@ -32,7 +32,7 @@ class NDIRCalib(PersistentJSONable):
     classdocs
     """
     CALIB_IAQ = '{"ndir-serial": 12701439, "board-serial": 2000001, "selected-range": 1, "lamp-voltage": 4.5, ' \
-                '"lamp-period": 333, "max-deferral": 160, "min-deferral": 340, ' \
+                '"lamp-period": 333, "sample-start": 0, "sample-end": 330, ' \
                 '"range-iaq": {"zero": 1.1765, "span": 0.2203, "linear-b": 0.000325, "linear-c": 0.9363, ' \
                 '"alpha-low": 0.00042, "alpha-high": 0.00042, "beta-a": 1e-05, "beta-o": 1e-05, "t-cal": 34.0}, ' \
                 '"range-safety": null, "range-combustion": null, "range-industrial": null, "range-custom": null}'
@@ -54,8 +54,8 @@ class NDIRCalib(PersistentJSONable):
     INDEX_LAMP_VOLTAGE =            3          # float
 
     INDEX_LAMP_PERIOD =             4          # unsigned int
-    INDEX_MAX_DEFERRAL =            5          # unsigned int
-    INDEX_MIN_DEFERRAL =            6          # unsigned int
+    INDEX_SAMPLE_START =            5          # unsigned int
+    INDEX_SAMPLE_END =              6          # unsigned int
 
 
     __FILENAME = "ndir_calib.json"
@@ -89,8 +89,8 @@ class NDIRCalib(PersistentJSONable):
         lamp_voltage = jdict.get('lamp-voltage')
 
         lamp_period = jdict.get('lamp-period')
-        max_deferral = jdict.get('max-deferral')
-        min_deferral = jdict.get('min-deferral')
+        sample_start = jdict.get('sample-start')
+        sample_end = jdict.get('sample-end')
 
         # range calibrations...
         range_iaq = NDIRRangeCalib.construct_from_jdict(jdict.get('range-iaq'))
@@ -100,14 +100,14 @@ class NDIRCalib(PersistentJSONable):
         range_custom = NDIRRangeCalib.construct_from_jdict(jdict.get('range-custom'))
 
         return NDIRCalib(ndir_serial, board_serial, selected_range,
-                         lamp_voltage, lamp_period, max_deferral, min_deferral,
+                         lamp_voltage, lamp_period, sample_start, sample_end,
                          range_iaq, range_safety, range_combustion, range_industrial, range_custom)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, ndir_serial, board_serial, selected_range,
-                 lamp_voltage, lamp_period, max_deferral, min_deferral,
+                 lamp_voltage, lamp_period, sample_start, sample_end,
                  range_iaq, range_safety, range_combustion, range_industrial, range_custom):
         """
         Constructor
@@ -124,8 +124,8 @@ class NDIRCalib(PersistentJSONable):
         self.__lamp_voltage = Datum.float(lamp_voltage, 1)
 
         self.__lamp_period = Datum.int(lamp_period)
-        self.__max_deferral = Datum.int(max_deferral)
-        self.__min_deferral = Datum.int(min_deferral)
+        self.__sample_start = Datum.int(sample_start)
+        self.__sample_end = Datum.int(sample_end)
 
         # range calibrations...
         self.__range_iaq = range_iaq
@@ -167,13 +167,13 @@ class NDIRCalib(PersistentJSONable):
 
 
     @property
-    def max_deferral(self):
-        return self.__max_deferral
+    def sample_start(self):
+        return self.__sample_start
 
 
     @property
-    def min_deferral(self):
-        return self.__min_deferral
+    def sample_end(self):
+        return self.__sample_end
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -219,8 +219,8 @@ class NDIRCalib(PersistentJSONable):
         jdict['lamp-voltage'] = self.lamp_voltage
 
         jdict['lamp-period'] = self.lamp_period
-        jdict['max-deferral'] = self.max_deferral
-        jdict['min-deferral'] = self.min_deferral
+        jdict['sample-start'] = self.sample_start
+        jdict['sample-end'] = self.sample_end
 
         # range calibrations...
         jdict['range-iaq'] = self.range_iaq
@@ -236,10 +236,10 @@ class NDIRCalib(PersistentJSONable):
 
     def __str__(self, *args, **kwargs):
         return "NDIRCalib:{ndir_serial:%s, board_serial:%s, selected_range:%s, " \
-               "lamp_voltage:%s, lamp_period:%s, max_deferral:%s, min_deferral:%s, " \
+               "lamp_voltage:%s, lamp_period:%s, sample_start:%s, sample_end:%s, " \
                "range_iaq:%s, range_safety:%s, range_combustion:%s, range_industrial:%s, range_custom:%s}" %  \
                (self.ndir_serial, self.board_serial, self.selected_range,
-                self.lamp_voltage, self.lamp_period, self.max_deferral, self.min_deferral,
+                self.lamp_voltage, self.lamp_period, self.sample_start, self.sample_end,
                 self.range_iaq, self.range_safety, self.range_combustion, self.range_industrial, self.range_custom)
 
 

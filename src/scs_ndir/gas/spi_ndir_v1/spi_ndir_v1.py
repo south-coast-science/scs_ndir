@@ -185,8 +185,8 @@ class SPINDIRv1(NDIR):
             self._calib_w_float(0, NDIRCalib.INDEX_LAMP_VOLTAGE, calib.lamp_voltage)
 
             self._calib_w_unsigned_int(0, NDIRCalib.INDEX_LAMP_PERIOD, calib.lamp_period)
-            self._calib_w_unsigned_int(0, NDIRCalib.INDEX_MAX_DEFERRAL, calib.max_deferral)
-            self._calib_w_unsigned_int(0, NDIRCalib.INDEX_MIN_DEFERRAL, calib.min_deferral)
+            self._calib_w_unsigned_int(0, NDIRCalib.INDEX_SAMPLE_START, calib.sample_start)
+            self._calib_w_unsigned_int(0, NDIRCalib.INDEX_SAMPLE_END, calib.sample_end)
 
             # range calibrations...
             self._store_range_calib(NDIRCalib.RANGE_IAQ, calib.range_iaq)
@@ -237,8 +237,8 @@ class SPINDIRv1(NDIR):
             lamp_voltage = self._calib_r_float(0, NDIRCalib.INDEX_LAMP_VOLTAGE)
 
             lamp_period = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_LAMP_PERIOD)
-            max_deferral = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_MAX_DEFERRAL)
-            min_deferral = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_MIN_DEFERRAL)
+            sample_start = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_SAMPLE_START)
+            sample_end = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_SAMPLE_END)
 
             # range calibrations...
             range_iaq = self._retrieve_range_calib(NDIRCalib.RANGE_IAQ)
@@ -248,7 +248,7 @@ class SPINDIRv1(NDIR):
             range_custom = self._retrieve_range_calib(NDIRCalib.RANGE_CUSTOM)
 
             return NDIRCalib(ndir_serial, board_serial, selected_range,
-                             lamp_voltage, lamp_period, max_deferral, min_deferral,
+                             lamp_voltage, lamp_period, sample_start, sample_end,
                              range_iaq, range_safety, range_combustion, range_industrial, range_custom)
 
         finally:
