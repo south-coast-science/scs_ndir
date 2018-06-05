@@ -6,24 +6,42 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The ndir_calib utility is used to read or set a wide range of parameters that are stored on the EEPROM on the NDIR
+SPI board. Parameters fall into two groups:
+
+* Common: ndir-serial, board-serial, selected-range, lamp-voltage, lamp-period, sample-start, and sample-end
+* Range-specific: zero, span, linear-b, linear-c, alpha-low, alpha-high, beta-a, beta-o, and t-cal
+
+Up to five ranges can be specified:
+
+1. range-iaq
+2. range-safety
+3. range-combustion
+4. range-industrial
+5. range-custom
+
+The range settings to be used are specified by the selected-range field, which must be set to an integer between 1 and
+5.
+
+An initial group of settings can be written to the EEPROM using the "default" -d flag.
+
+Note that changes to the EEPROM only take effect when the NDIR board is reset.
+
+SYNOPSIS
+ndir_calib.py [{ -d | -s PATH VALUE | -r }] [-v]
 
 EXAMPLES
-xx
-
-FILES
-~/SCS/aws/
+./ndir_calib.py -s range-iaq.zero 0.644
 
 DOCUMENT EXAMPLE
-xx
+{"ndir-serial": 12701439, "board-serial": 2000001, "selected-range": 1, "lamp-voltage": 4.5, "lamp-period": 1000,
+"sample-start": 0, "sample-end": 990, "range-iaq": {"zero": 0.644, "span": 0.2203,
+"linear-b": 0.000325, "linear-c": 0.9363, "alpha-low": 0.00042, "alpha-high": 0.00042,
+"beta-a": 1e-05, "beta-o": 1e-05, "t-cal": 34.0}, "range-safety": null, "range-combustion": null,
+"range-industrial": null, "range-custom": null}
 
 SEE ALSO
-scs_ndir/
-
-
-
-command line example:
-./ndir_calib.py -s lamp-period 1000
+scs_ndir/ndir_reset
 """
 
 import sys

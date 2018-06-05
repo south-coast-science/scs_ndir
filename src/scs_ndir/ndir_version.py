@@ -8,22 +8,17 @@ Created on 17 Feb 2018
 DESCRIPTION
 The XX utility is used to .
 
-EXAMPLES
-xx
+SYNOPSIS
+ndir_version.py [-v]
 
-FILES
-~/SCS/aws/
+EXAMPLES
+./ndir_version.py
 
 DOCUMENT EXAMPLE
-xx
+{"id": "Alphasense SPI NDIR Type 2 (VaLVo)", "tag": "2.2.4"}
 
 SEE ALSO
-scs_ndir/
-
-
-
-command line example:
-./ndir_version.py
+scs_ndir/ndir_status
 """
 
 import sys

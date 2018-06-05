@@ -8,22 +8,18 @@ Created on 17 Feb 2018
 DESCRIPTION
 The XX utility is used to .
 
-EXAMPLES
-xx
+SYNOPSIS
+ndir_recorder.py -i INTERVAL -n SAMPLES [-d DEFERRAL] [-v]
 
-FILES
-~/SCS/aws/
+EXAMPLES
+./ndir_recorder.py -i 4 -n 250
 
 DOCUMENT EXAMPLE
-xx
+{"rec": 5, "pile-ref": 10146, "pile-act": 6231}
 
 SEE ALSO
-scs_ndir/
-
-
-
-command line example:
-./ndir_recorder.py
+scs_ndir/ndir_measure
+scs_ndir/ndir_sampler
 """
 
 import sys

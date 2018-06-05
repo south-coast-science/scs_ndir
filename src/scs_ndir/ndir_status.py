@@ -8,22 +8,17 @@ Created on 17 Feb 2018
 DESCRIPTION
 The XX utility is used to .
 
-EXAMPLES
-xx
+SYNOPSIS
+ndir_status.py [-v]
 
-FILES
-~/SCS/aws/
+EXAMPLES
+./ndir_status.py
 
 DOCUMENT EXAMPLE
-xx
+{"w-rst": false, "pwr-in": 4.6, "up": {"period": "00-00:08:58.000"}}
 
 SEE ALSO
-scs_ndir/
-
-
-
-command line example:
-./ndir_status.py
+scs_ndir/ndir_version
 """
 
 import sys

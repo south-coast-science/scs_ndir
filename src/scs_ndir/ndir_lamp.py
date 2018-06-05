@@ -8,21 +8,10 @@ Created on 17 Feb 2018
 DESCRIPTION
 The XX utility is used to .
 
+SYNOPSIS
+ndir_lamp.py { -r ON | -l VOLTAGE } [-v]
+
 EXAMPLES
-xx
-
-FILES
-~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
-
-SEE ALSO
-scs_ndir/
-
-
-
-command line example:
 ./ndir_lamp.py -v 0
 """
 

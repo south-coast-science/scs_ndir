@@ -8,22 +8,14 @@ Created on 17 Feb 2018
 DESCRIPTION
 The XX utility is used to .
 
+SYNOPSIS
+ndir_power.py { 1 | 0 } [-v]
+
 EXAMPLES
-xx
-
-FILES
-~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
+./ndir_power.py -v 0
 
 SEE ALSO
-scs_ndir/
-
-
-
-command line example:
-./ndir_power.py -v 0
+scs_ndir/ndir_reset
 """
 
 import sys

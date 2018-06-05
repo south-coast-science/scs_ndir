@@ -8,22 +8,14 @@ Created on 17 Feb 2018
 DESCRIPTION
 The XX utility is used to .
 
+SYNOPSIS
+ndir_reset.py [-v]
+
 EXAMPLES
-xx
-
-FILES
-~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
+./ndir_reset.py
 
 SEE ALSO
-scs_ndir/
-
-
-
-command line example:
-./ndir_reset.py
+scs_ndir/ndir_power
 """
 
 import sys
