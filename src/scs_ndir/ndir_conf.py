@@ -5,13 +5,23 @@ Created on 21 Jun 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-Creates or deletes NDIRConf document.
+DESCRIPTION
+The XX utility is used to .
 
-document example:
+SYNOPSIS
+ndir_conf.py [{ [-m MODEL] [-t AVERAGING_TALLY] | -d }] [-v]
+
+EXAMPLES
+./ndir_conf.py -m SPINDIRv1 -t 1
+
+FILES
+~/SCS/conf/ndir_conf.json
+
+DOCUMENT EXAMPLE
 {"model": "SPINDIRv1", "tally": 10}
 
-command line example:
-./ndir_conf.py -m SPINDIRv1 -t 1
+SEE ALSO
+scs_mfr/ndir_conf
 """
 
 import sys
@@ -38,7 +48,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("ndir_conf: %s" % cmd, file=sys.stderr)
         sys.stderr.flush()
 
 

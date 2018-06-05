@@ -8,21 +8,10 @@ Created on 17 Feb 2018
 DESCRIPTION
 The XX utility is used to .
 
+SYNOPSIS
+ndir_lamp.py { -r ON | -l VOLTAGE } [-v]
+
 EXAMPLES
-xx
-
-FILES
-~/SCS/aws/
-
-DOCUMENT EXAMPLE
-xx
-
-SEE ALSO
-scs_ndir/
-
-
-
-command line example:
 ./ndir_lamp.py -v 0
 """
 
@@ -53,7 +42,7 @@ if __name__ == '__main__':
         exit(1)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("ndir_lamp: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -64,10 +53,14 @@ if __name__ == '__main__':
         conf =  NDIRConf.load(Host)
         ndir = conf.ndir(Host)
 
-        ndir.power_on()
+        if cmd.verbose:
+            print("ndir_lamp: %s" % ndir, file=sys.stderr)
+            sys.stderr.flush()
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
+
+        ndir.power_on()
 
         if cmd.level is not None:
             ndir.lamp_level(cmd.level)

@@ -8,22 +8,18 @@ Created on 17 Feb 2018
 DESCRIPTION
 The XX utility is used to .
 
-EXAMPLES
-xx
+SYNOPSIS
+ndir_measure.py [-i INTERVAL [-n SAMPLES]] [-v]
 
-FILES
-~/SCS/aws/
+EXAMPLES
+./ndir_measure.py -v -i 0.01
 
 DOCUMENT EXAMPLE
-xx
+{"rec": "2018-06-04T15:50:20.513+00:00", "pile-ref": 2.4197, "pile-act": 2.8766, "therm": 0.9082}
 
 SEE ALSO
-scs_ndir/
-
-
-
-command line example:
-./ndir_measure.py -v -i 0.01
+scs_ndir/ndir_sampler
+scs_ndir/ndir_recorder
 """
 
 import sys
@@ -55,7 +51,7 @@ if __name__ == '__main__':
         exit(1)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("ndir_measure: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -66,10 +62,14 @@ if __name__ == '__main__':
         conf =  NDIRConf.load(Host)
         ndir = conf.ndir(Host)
 
-        ndir.power_on()
+        if cmd.verbose:
+            print("ndir_measure: %s" % ndir, file=sys.stderr)
+            sys.stderr.flush()
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
+
+        ndir.power_on()
 
         runner = TimedRunner(cmd.interval, cmd.samples)
         sampler = NDIRVoltageMeasure(runner, ndir)

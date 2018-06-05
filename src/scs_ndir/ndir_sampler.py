@@ -8,22 +8,23 @@ Created on 17 Feb 2018
 DESCRIPTION
 The XX utility is used to .
 
+SYNOPSIS
+ndir_sampler.py { -m { 1 | 0 } | [-i INTERVAL [-n SAMPLES] [-r]] | -o }[-v]
+
 EXAMPLES
-xx
+./ndir_sampler.py -v -i 1.0
 
-FILES
-~/SCS/aws/
+DOCUMENT EXAMPLES
+{"tag": "scs-be2-3", "rec": "2018-06-04T15:53:34.939+00:00",
+"val": {"CO2": {"pile-ref-ampl": 1.9527, "pile-act-ampl": 3.2046, "therm-avg": 0.9128, "pile-ratio": 1.641112}}}
 
-DOCUMENT EXAMPLE
-xx
+{"tag": "scs-be2-3", "rec": "2018-06-04T15:53:27.966+00:00",
+"val": {"CO2": {"tmp": 36.5, "cnc-raw": 432.1, "cnc": 468.2}}}
+
 
 SEE ALSO
-scs_ndir/
-
-
-
-command line example:
-./ndir_sampler.py -v -i 1.0
+scs_ndir/ndir_measure
+scs_ndir/ndir_recorder
 """
 
 import sys
@@ -58,7 +59,7 @@ if __name__ == '__main__':
         exit(1)
 
     if cmd.verbose:
-        print(cmd, file=sys.stderr)
+        print("ndir_sampler: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -75,10 +76,14 @@ if __name__ == '__main__':
         conf =  NDIRConf.load(Host)
         ndir = conf.ndir(Host)
 
-        ndir.power_on()
+        if cmd.verbose:
+            print("ndir_sampler: %s" % ndir, file=sys.stderr)
+            sys.stderr.flush()
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
+
+        ndir.power_on()
 
         if cmd.mode is not None:
             # set run mode...
