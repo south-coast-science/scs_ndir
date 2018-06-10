@@ -25,6 +25,8 @@ from scs_core.data.datum import Datum
 from scs_core.data.json import JSONable, PersistentJSONable
 
 
+# TODO: should not be PersistentJSONable. Use hard-coded string only.
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class NDIRCalib(PersistentJSONable):
