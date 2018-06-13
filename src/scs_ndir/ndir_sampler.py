@@ -6,21 +6,34 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The ndir_sampler utility is used to report CO2 concentrations.
+
+Additional functions are provided: the ndir_sampler can report amplitude voltages, maxima and minima time offsets,
+and can change the sampling mode from single-shot to continuous.
+
+When running in continuous mode, the NDIR microcontroller generates a new sample at an interval set by the lamp
+period, based on the relative Pile REF and Pile ACT amplitudes, and a THERMISTOR average. The host can interrogate the
+NDIR microcontroller at any time to obtain the most recent value.
+
+Returned values are voltages when the -r (raw) flag is set, otherwise the values are gas concentrations.
+
+NDIR microcontroller sampling is normally run in continuous mode. Sampling must be set to single-shot mode in order for
+the ndir_measure and ndir_recorder utilities to operate.
+
+When in single-shot mode, the -o (offset) mode can be used to find the time offset of REF and ACT maxima and minima.
 
 SYNOPSIS
-ndir_sampler.py { -m { 1 | 0 } | [-i INTERVAL [-n SAMPLES] [-r]] | -o }[-v]
+ndir_sampler.py { -m { 1 | 0 } | [-i INTERVAL [-n SAMPLES] [-r]] | -o } [-v]
 
 EXAMPLES
 ./ndir_sampler.py -v -i 1.0
 
-DOCUMENT EXAMPLES
+DOCUMENT EXAMPLES - OUTPUT
 {"tag": "scs-be2-3", "rec": "2018-06-04T15:53:34.939+00:00",
-"val": {"CO2": {"pile-ref-ampl": 1.9527, "pile-act-ampl": 3.2046, "therm-avg": 0.9128, "pile-ratio": 1.641112}}}
+"val": {"CO2": {"pile-ref-ampl": 1.9527, "pile-act-ampl": 3.2046, "therm-avg": 0.9128}}}
 
 {"tag": "scs-be2-3", "rec": "2018-06-04T15:53:27.966+00:00",
 "val": {"CO2": {"tmp": 36.5, "cnc-raw": 432.1, "cnc": 468.2}}}
-
 
 SEE ALSO
 scs_ndir/ndir_measure

@@ -6,7 +6,7 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The ndir_version utility is used to report on the NDIR board hardware and firmware versions.
 
 SYNOPSIS
 ndir_version.py [-v]
@@ -14,7 +14,7 @@ ndir_version.py [-v]
 EXAMPLES
 ./ndir_version.py
 
-DOCUMENT EXAMPLE
+DOCUMENT EXAMPLE - OUTPUT
 {"id": "Alphasense SPI NDIR Type 2 (VaLVo)", "tag": "2.2.4"}
 
 SEE ALSO

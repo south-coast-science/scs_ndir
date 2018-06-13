@@ -6,7 +6,21 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The ndir_recorder utility is used to interrogate the millisecond-level sampling performance of the NDIR board at the
+highest-possible sample rate.
+
+The NDIR microcontroller can store up to 250 Pile REF, Pile ACT and THERMISTOR samples. The microcontroller samples all
+three signals every millisecond. The ndir_recorder utility commands recording to begin on the next lamp rising edge,
+and stop recording after a given number of recorded values. When recording is complete, the utility recovers the
+stored values.
+
+Returned values are raw ADC values.
+
+Command parameters specify interval and total. For example, an interval of 4 and a total of 250 provides one second
+of data, at 4 millisecond intervals. A further parameter specifies the time from the rising lamp edge until recording
+starts (default 0 milliseconds).
+
+Note that the NDIR sampler must be in single-shot mode for the ndir_recorder utility to be able to operate.
 
 SYNOPSIS
 ndir_recorder.py -i INTERVAL -n SAMPLES [-d DEFERRAL] [-v]
@@ -14,7 +28,7 @@ ndir_recorder.py -i INTERVAL -n SAMPLES [-d DEFERRAL] [-v]
 EXAMPLES
 ./ndir_recorder.py -i 4 -n 250
 
-DOCUMENT EXAMPLE
+DOCUMENT EXAMPLE - OUTPUT
 {"rec": 5, "pile-ref": 10146, "pile-act": 6231}
 
 SEE ALSO

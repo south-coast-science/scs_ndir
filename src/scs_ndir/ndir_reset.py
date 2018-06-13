@@ -6,7 +6,9 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The ndir_reset utility is used to force a system reset on the NDIR microcontroller.
+
+On performing a reset, calibration values are reloaded and the lamp is set to run.
 
 SYNOPSIS
 ndir_reset.py [-v]
@@ -15,6 +17,8 @@ EXAMPLES
 ./ndir_reset.py
 
 SEE ALSO
+scs_ndir/ndir_calib
+scs_ndir/ndir_lamp
 scs_ndir/ndir_power
 """
 

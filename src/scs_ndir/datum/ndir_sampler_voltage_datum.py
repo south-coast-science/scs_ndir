@@ -4,8 +4,7 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 document example:
-{"rec": "2018-02-20T12:51:34.181+00:00", "pile-ref-ampl": 2.1037, "pile-act-ampl": 2.0615, "therm-avg": 0.9931,
-"pile-ratio": 0.9799}
+{"rec": "2018-02-20T12:51:34.181+00:00", "pile-ref-ampl": 2.1037, "pile-act-ampl": 2.0615, "therm-avg": 0.9931}
 """
 
 from collections import OrderedDict
@@ -80,13 +79,6 @@ class NDIRSampleVoltageDatum(JSONable):
         jdict['pile-ref-ampl'] = self.pile_ref_ampl
         jdict['pile-act-ampl'] = self.pile_act_ampl
         jdict['therm-avg'] = self.thermistor_avg
-
-        try:
-            ratio = self.pile_act_ampl / self.pile_ref_ampl
-        except ZeroDivisionError:
-            ratio = None
-
-        jdict['pile-ratio'] = Datum.float(ratio, 6)
 
         return jdict
 

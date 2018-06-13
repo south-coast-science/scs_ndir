@@ -6,7 +6,8 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The ndir_status utility is used to report on the NDIR microcontroller operation, startup condition, and input
+power voltage.
 
 SYNOPSIS
 ndir_status.py [-v]
@@ -14,7 +15,7 @@ ndir_status.py [-v]
 EXAMPLES
 ./ndir_status.py
 
-DOCUMENT EXAMPLE
+DOCUMENT EXAMPLE - OUTPUT
 {"w-rst": false, "pwr-in": 4.6, "up": {"period": "00-00:08:58.000"}}
 
 SEE ALSO

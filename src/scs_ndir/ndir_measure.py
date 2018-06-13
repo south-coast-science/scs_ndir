@@ -6,7 +6,16 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The ndir_measure utility is used to interrogate the millisecond-level sampling performance of the NDIR board for
+any period of time.
+
+Sampling is performed on a round-trip basis - a single sample is requested, and the resulting values returned to the
+host. This process limits the rate to 10 millisecond intervals but, because no microcontroller storage is required,
+any volume of data can be obtained.
+
+Returned values are voltages.
+
+Note that the NDIR sampler must be in single-shot mode for the ndir_measure utility to be able to operate.
 
 SYNOPSIS
 ndir_measure.py [-i INTERVAL [-n SAMPLES]] [-v]
@@ -14,7 +23,7 @@ ndir_measure.py [-i INTERVAL [-n SAMPLES]] [-v]
 EXAMPLES
 ./ndir_measure.py -v -i 0.01
 
-DOCUMENT EXAMPLE
+DOCUMENT EXAMPLE - OUTPUT
 {"rec": "2018-06-04T15:50:20.513+00:00", "pile-ref": 2.4197, "pile-act": 2.8766, "therm": 0.9082}
 
 SEE ALSO
