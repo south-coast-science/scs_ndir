@@ -1,5 +1,5 @@
 # scs_ndir
-Calibration, control and environmental sampling tools for the Alphasense SPI IRC-AT NDIR board
+Calibration, control and environmental sampling tools for the Alphasense IRC-AT NDIR SPI board
 
 _Contains command line utilities and library classes._
 
