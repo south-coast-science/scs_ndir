@@ -6,7 +6,9 @@ Created on 21 Jun 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The ndir_conf utility is used to specify whether an NDIR board is present and if so, which model is provided.
+
+Currently, the only model supported is SPINDIRv1.
 
 SYNOPSIS
 ndir_conf.py [{ [-m MODEL] [-t AVERAGING_TALLY] | -d }] [-v]

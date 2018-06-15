@@ -21,7 +21,7 @@ class CmdNDIRSampler(object):
 
         # compulsory...
         self.__parser.add_option("--mode", "-m", type="int", nargs=1, action="store", dest="mode",
-                                 help="run continuous (1) or single-shot (0)")
+                                 help="run continuously (1) or single-shot (0)")
 
         self.__parser.add_option("--interval", "-i", type="float", nargs=1, action="store", dest="interval",
                                  help="sampling interval in seconds")

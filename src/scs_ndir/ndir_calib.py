@@ -9,8 +9,8 @@ DESCRIPTION
 The ndir_calib utility is used to read or set a wide range of parameters that are stored on the EEPROM on the NDIR
 SPI board. Parameters fall into two groups:
 
-* Common: ndir-serial, board-serial, selected-range, lamp-voltage, lamp-period, sample-start, and sample-end
-* Range-specific: zero, span, linear-b, linear-c, alpha-low, alpha-high, beta-a, beta-o, and t-cal
+* Common to all ranges - ndir-serial, board-serial, selected-range, lamp-voltage, lamp-period, sample-start, sample-end
+* Range-specific - zero, span, linear-b, linear-c, alpha-low, alpha-high, beta-a, beta-o, and t-cal
 
 Up to five range sets can be specified:
 
@@ -22,7 +22,7 @@ Up to five range sets can be specified:
 
 The range set to be used is specified by the selected-range field, which must be set to an integer between 1 and 5.
 
-An initial group of settings can be written to the EEPROM using the "default" -d flag. The default settings will not
+An initial group of settings can be written to the EEPROM using the -d flag (default). The default settings will not
 provide an accurate calibration, but will enable the NDIR board to operate.
 
 Note that changes to the EEPROM only take effect when the NDIR board is reset.
@@ -31,6 +31,7 @@ SYNOPSIS
 ndir_calib.py [{ -d | -s PATH VALUE | -r }] [-v]
 
 EXAMPLES
+./ndir_calib.py -s selected-range 1
 ./ndir_calib.py -s range-iaq.zero 0.644
 
 DOCUMENT EXAMPLE

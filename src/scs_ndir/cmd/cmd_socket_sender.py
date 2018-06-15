@@ -20,7 +20,7 @@ class CmdSocketSender(object):
 
         # optional
         self.__parser.add_option("--port", "-p", type="int", nargs=1, action="store", default=2000, dest="port",
-                                 help="socket port [default 2000]")
+                                 help="socket port (default 2000)")
 
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo stdin to stdout")

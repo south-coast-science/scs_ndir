@@ -6,7 +6,11 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The ndir_lamp utility is used to command the lamp to oscillate on and off, or to remain off.
+
+Note that ff the lamp is switched off, it will only retain this state until the NDIR board is reset or power cycled.
+
+On future versions of the NDIR board, the ndir_lamp utility may also be used to set the lamp voltage.
 
 SYNOPSIS
 ndir_lamp.py { -r ON | -l VOLTAGE } [-v]

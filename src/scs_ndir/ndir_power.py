@@ -6,7 +6,10 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The XX utility is used to .
+The ndir_power utility is used to apply or remove power from the NDIR board.
+
+Note that all other utilities in the scs_ndir package begin by applying power to the NDIR board (if it is not already
+powered) and leave power applied on termination.
 
 SYNOPSIS
 ndir_power.py { 1 | 0 } [-v]
