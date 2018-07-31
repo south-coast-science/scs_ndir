@@ -1,5 +1,5 @@
 """
-Created on 17 Feb 2018
+Created on 31 Jul 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
@@ -7,12 +7,12 @@ Created on 17 Feb 2018
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.sampler.sampler import Sampler
 
-from scs_ndir.datum.ndir_measure_voltage_datum import NDIRMeasureVoltageDatum
+from scs_ndir.datum.ndir_pressure_datum import NDIRPressureDatum
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class NDIRVoltageMeasure(Sampler):
+class NDIRPressureSampler(Sampler):
     """
     classdocs
     """
@@ -32,12 +32,12 @@ class NDIRVoltageMeasure(Sampler):
 
     def sample(self):
         rec = LocalizedDatetime.now()
-        sample = self.__ndir.cmd_measure()
+        p_a = self.__ndir.pressure()
 
-        return NDIRMeasureVoltageDatum.construct_from_sample(rec, sample)
+        return NDIRPressureDatum(rec, p_a)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRVoltageMeasure:{runner:%s, ndir:%s}" % (self.runner, self.__ndir)
+        return "NDIRPressureSampler:{runner:%s, ndir:%s}" % (self.runner, self.__ndir)

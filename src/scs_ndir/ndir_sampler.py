@@ -111,6 +111,8 @@ if __name__ == '__main__':
             act_offset_span = min_act_offset - max_act_offset if min_act_offset > max_act_offset else \
                 max_act_offset - min_act_offset
 
+            # TODO: create a datum class for offsets
+
             print("min_ref_offset: %s" % min_ref_offset)
             print("max_ref_offset: %s" % max_ref_offset)
             print("ref_offset_span: %s" % ref_offset_span)
@@ -127,16 +129,10 @@ if __name__ == '__main__':
 
         else:
             # run sampling...
-            first_sample = True
-
             runner = TimedRunner(cmd.interval, cmd.samples)
             sampler = NDIRVoltageSampler(runner, tag, ndir) if cmd.raw else NDIRSampler(runner, tag, ndir)
 
             for sample in sampler.samples():
-                if first_sample:
-                    first_sample = False
-                    continue
-
                 print(JSONify.dumps(sample))
                 sys.stdout.flush()
 

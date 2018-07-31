@@ -139,6 +139,24 @@ class SPINDIRv1(NDIR):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # barometric pressure...
+
+    def pressure(self):
+        try:
+            self.obtain_lock()
+
+            cmd = SPINDIRv1Cmd.find('sp')
+            response = self._transact(cmd)
+
+            p_a = Datum.decode_float(response[0:4])
+
+            return round(p_a, 1)
+
+        finally:
+            self.release_lock()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
     # status...
 
     def status(self):
