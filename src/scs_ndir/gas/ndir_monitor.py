@@ -17,8 +17,6 @@ from scs_core.sync.synchronised_process import SynchronisedProcess
 from scs_host.lock.lock_timeout import LockTimeout
 
 
-# TODO: this is only required if continuous sampling is required (for example, because of low-pass filter requirements)
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class NDIRMonitor(SynchronisedProcess):
