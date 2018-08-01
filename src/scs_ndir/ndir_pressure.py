@@ -1,35 +1,34 @@
 #!/usr/bin/env python3
 
 """
-Created on 17 Feb 2018
+Created on 31 Jul 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The ndir_power utility is used to apply or remove power from the NDIR board.
-
-Note that all other utilities in the scs_ndir package begin by applying power to the NDIR board (if it is not already
-powered) and leave power applied on termination.
+The ndir_pressure utility is used to
 
 SYNOPSIS
-ndir_power.py { 1 | 0 } [-v]
+ndir_pressure.py [-i INTERVAL [-n SAMPLES]] [-v]
 
 EXAMPLES
-./ndir_power.py -v 0
+./ndir_pressure.py -i 2 -n 10
 
-SEE ALSO
-scs_ndir/ndir_reset
+DOCUMENT EXAMPLE - OUTPUT
+{"rec": "2018-07-31T15:32:37.117+00:00", "pA": 101.6}
 """
 
 import sys
 
 from scs_core.data.json import JSONify
+from scs_core.sync.timed_runner import TimedRunner
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.cmd.cmd_ndir_power import CmdNDIRPower
+from scs_ndir.cmd.cmd_ndir_pressure import CmdNDIRPressure
 from scs_ndir.exception.ndir_exception import NDIRException
+from scs_ndir.sampler.ndir_pressure_sampler import NDIRPressureSampler
 
 from scs_ndir.ndir_conf import NDIRConf
 
@@ -41,14 +40,14 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------
     # cmd...
 
-    cmd = CmdNDIRPower()
+    cmd = CmdNDIRPressure()
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
         exit(2)
 
     if cmd.verbose:
-        print("ndir_power: %s" % cmd, file=sys.stderr)
+        print("ndir_pressure: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -59,17 +58,16 @@ if __name__ == '__main__':
         conf =  NDIRConf.load(Host)
         ndir = conf.ndir(Host)
 
-        if cmd.verbose:
-            print("ndir_power: %s" % ndir, file=sys.stderr)
-            sys.stderr.flush()
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        if cmd.power:
-            ndir.power_on()
-        else:
-            ndir.power_off()
+        runner = TimedRunner(cmd.interval, cmd.samples)
+        sampler = NDIRPressureSampler(runner, ndir)
+
+        for sample in sampler.samples():
+            print(JSONify.dumps(sample))
+            sys.stdout.flush()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -78,9 +76,6 @@ if __name__ == '__main__':
     except NDIRException as ex:
         jstr = JSONify.dumps(ex)
         print(jstr, file=sys.stderr)
-
-    except KeyboardInterrupt:
-        print("")
 
     finally:
         I2C.close()

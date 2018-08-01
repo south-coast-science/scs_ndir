@@ -35,7 +35,7 @@ class SPINDIRv1(NDIR):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    SAMPLE_INTERVAL =                   1.0             # seconds between sampling
+    SAMPLE_INTERVAL =                   1.0             # seconds between on-board sampling
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -64,6 +64,11 @@ class SPINDIRv1(NDIR):
     @classmethod
     def release_lock(cls):
         Lock.release(cls.__name__)
+
+
+    @classmethod
+    def sample_interval(cls):
+        return cls.SAMPLE_INTERVAL
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -133,9 +138,22 @@ class SPINDIRv1(NDIR):
             self.release_lock()
 
 
-    @classmethod
-    def sample_interval(cls):
-        return cls.SAMPLE_INTERVAL
+    # ----------------------------------------------------------------------------------------------------------------
+    # barometric pressure...
+
+    def pressure(self):
+        try:
+            self.obtain_lock()
+
+            cmd = SPINDIRv1Cmd.find('sp')
+            response = self._transact(cmd)
+
+            p_a = Datum.decode_float(response[0:4])
+
+            return round(p_a, 1)
+
+        finally:
+            self.release_lock()
 
 
     # ----------------------------------------------------------------------------------------------------------------
