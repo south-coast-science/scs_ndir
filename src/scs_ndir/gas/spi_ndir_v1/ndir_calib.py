@@ -33,8 +33,8 @@ class NDIRCalib(PersistentJSONable):
     """
     classdocs
     """
-    CALIB_IAQ = '{"ndir-serial": 12701439, "board-serial": 2000001, "selected-range": 1, "lamp-voltage": 4.5, ' \
-                '"lamp-period": 333, "sample-start": 0, "sample-end": 330, ' \
+    CALIB_IAQ = '{"ndir-serial": 12701439, "board-serial": 5000001, "selected-range": 1, "lamp-voltage": 4.5, ' \
+                '"lamp-period": 1000, "sample-start": 10, "sample-end": 990, ' \
                 '"range-iaq": {"zero": 1.1765, "span": 0.2203, "linear-b": 0.000325, "linear-c": 0.9363, ' \
                 '"alpha-low": 0.00042, "alpha-high": 0.00042, "beta-a": 1e-05, "beta-o": 1e-05, "t-cal": 34.0}, ' \
                 '"range-safety": null, "range-combustion": null, "range-industrial": null, "range-custom": null}'

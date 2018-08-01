@@ -35,7 +35,7 @@ class SPINDIRv1(NDIR):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    SAMPLE_INTERVAL =                   1.0             # seconds between sampling
+    SAMPLE_INTERVAL =                   1.0             # seconds between on-board sampling
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -64,6 +64,11 @@ class SPINDIRv1(NDIR):
     @classmethod
     def release_lock(cls):
         Lock.release(cls.__name__)
+
+
+    @classmethod
+    def sample_interval(cls):
+        return cls.SAMPLE_INTERVAL
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -131,11 +136,6 @@ class SPINDIRv1(NDIR):
 
         finally:
             self.release_lock()
-
-
-    @classmethod
-    def sample_interval(cls):
-        return cls.SAMPLE_INTERVAL
 
 
     # ----------------------------------------------------------------------------------------------------------------

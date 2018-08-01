@@ -33,6 +33,7 @@ DOCUMENT EXAMPLE - OUTPUT
 
 SEE ALSO
 scs_ndir/ndir_measure
+scs_ndir/ndir_run_mode
 scs_ndir/ndir_sampler
 """
 
@@ -61,7 +62,7 @@ if __name__ == '__main__':
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
-        exit(1)
+        exit(2)
 
     if cmd.verbose:
         print("ndir_recorder: %s" % cmd, file=sys.stderr)

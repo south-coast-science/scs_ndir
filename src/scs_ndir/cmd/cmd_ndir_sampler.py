@@ -16,13 +16,10 @@ class CmdNDIRSampler(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -m { 1 | 0 } | [-i INTERVAL [-n SAMPLES] [-r]] | -o }"
-                                                    "[-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { [-i INTERVAL [-n SAMPLES] [-r]] | -o } [-v]",
+                                              version="%prog 1.0")
 
         # compulsory...
-        self.__parser.add_option("--mode", "-m", type="int", nargs=1, action="store", dest="mode",
-                                 help="run continuously (1) or single-shot (0)")
-
         self.__parser.add_option("--interval", "-i", type="float", nargs=1, action="store", dest="interval",
                                  help="sampling interval in seconds")
 
@@ -47,9 +44,6 @@ class CmdNDIRSampler(object):
     def is_valid(self):
         param_count = 0
 
-        if self.__opts.mode is not None:
-            param_count += 1
-
         if self.__opts.interval is not None:
             param_count += 1
 
@@ -66,11 +60,6 @@ class CmdNDIRSampler(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def mode(self):
-        return self.__opts.mode
-
 
     @property
     def interval(self):
@@ -109,5 +98,5 @@ class CmdNDIRSampler(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRSampler:{mode:%s, interval:%s, samples:%s, raw:%s, offsets:%s, verbose:%s, args:%s}" % \
-               (self.mode, self.interval, self.samples, self.offsets, self.raw, self.verbose, self.args)
+        return "CmdNDIRSampler:{interval:%s, samples:%s, raw:%s, offsets:%s, verbose:%s, args:%s}" % \
+               (self.interval, self.samples, self.offsets, self.raw, self.verbose, self.args)

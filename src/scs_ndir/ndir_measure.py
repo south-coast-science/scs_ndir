@@ -27,6 +27,7 @@ DOCUMENT EXAMPLE - OUTPUT
 {"rec": "2018-06-04T15:50:20.513+00:00", "pile-ref": 2.4197, "pile-act": 2.8766, "therm": 0.9082}
 
 SEE ALSO
+scs_ndir/ndir_run_mode
 scs_ndir/ndir_sampler
 scs_ndir/ndir_recorder
 """
@@ -57,7 +58,7 @@ if __name__ == '__main__':
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
-        exit(1)
+        exit(2)
 
     if cmd.verbose:
         print("ndir_measure: %s" % cmd, file=sys.stderr)

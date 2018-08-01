@@ -17,9 +17,6 @@ NDIR microcontroller at any time to obtain the most recent value.
 
 Returned values are voltages when the -r (raw) flag is set, otherwise the values are gas concentrations.
 
-NDIR microcontroller sampling is normally run in continuous mode. Sampling must be set to single-shot mode in order for
-the ndir_measure and ndir_recorder utilities to operate.
-
 When in single-shot mode, the -o (offset) mode can be used to find the time offset of REF and ACT maxima and minima.
 
 SYNOPSIS
@@ -38,6 +35,7 @@ DOCUMENT EXAMPLES - OUTPUT
 SEE ALSO
 scs_ndir/ndir_measure
 scs_ndir/ndir_recorder
+scs_ndir/ndir_run_mode
 """
 
 import sys
@@ -50,6 +48,7 @@ from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
 from scs_ndir.cmd.cmd_ndir_sampler import CmdNDIRSampler
+from scs_ndir.datum.ndir_offset_datum import NDIROffsetDatum
 from scs_ndir.exception.ndir_exception import NDIRException
 
 from scs_ndir.ndir_conf import NDIRConf
@@ -69,7 +68,7 @@ if __name__ == '__main__':
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
-        exit(1)
+        exit(2)
 
     if cmd.verbose:
         print("ndir_sampler: %s" % cmd, file=sys.stderr)
@@ -98,37 +97,13 @@ if __name__ == '__main__':
 
         ndir.power_on()
 
-        if cmd.mode is not None:
-            # set run mode...
-            ndir.cmd_sample_mode(cmd.mode == 0)
+        if cmd.offsets is not None:
+            datum = NDIROffsetDatum.construct_from_sample(ndir.cmd_sample_offsets())
 
-        elif cmd.offsets is not None:
-            min_ref_offset, min_act_offset, max_ref_offset, max_act_offset = ndir.cmd_sample_offsets()
-
-            ref_offset_span = min_ref_offset - max_ref_offset if min_ref_offset > max_ref_offset else \
-                max_ref_offset - min_ref_offset
-
-            act_offset_span = min_act_offset - max_act_offset if min_act_offset > max_act_offset else \
-                max_act_offset - min_act_offset
-
-            # TODO: create a datum class for offsets
-
-            print("min_ref_offset: %s" % min_ref_offset)
-            print("max_ref_offset: %s" % max_ref_offset)
-            print("ref_offset_span: %s" % ref_offset_span)
-            print("-")
-
-            print("min_act_offset: %s" % min_act_offset)
-            print("max_act_offset: %s" % max_act_offset)
-            print("act_offset_span: %s" % act_offset_span)
-            print("-")
-
-            print("min_offset_diff: %s" % abs(min_ref_offset - min_act_offset))
-            print("max_offset_diff: %s" % abs(max_ref_offset - max_act_offset))
-            print("-")
+            print(JSONify.dumps(datum))
+            sys.stdout.flush()
 
         else:
-            # run sampling...
             runner = TimedRunner(cmd.interval, cmd.samples)
             sampler = NDIRVoltageSampler(runner, tag, ndir) if cmd.raw else NDIRSampler(runner, tag, ndir)
 

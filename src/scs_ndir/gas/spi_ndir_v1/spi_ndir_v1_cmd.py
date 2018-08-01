@@ -10,8 +10,6 @@ from scs_core.data.datum import Datum
 from scs_core.data.json import JSONable
 
 
-# TODO: cmd execution times are based on lamp cycle - but what is the lamp cycle time??
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class SPINDIRv1Cmd(JSONable):
@@ -36,8 +34,8 @@ class SPINDIRv1Cmd(JSONable):
             'wc': SPINDIRv1Cmd('wc', 0.001, 0.000, 0),              # watchdog clear
             'wr': SPINDIRv1Cmd('wr', 0.001, 2.500, 0),              # watchdog reset
 
-            'cr': SPINDIRv1Cmd('cr', 0.001, 0.000, None),           # calib read
-            'cw': SPINDIRv1Cmd('cw', 0.002, 0.010, 0),              # calib write
+            'cr': SPINDIRv1Cmd('cr', 0.002, 0.000, None),           # calib read
+            'cw': SPINDIRv1Cmd('cw', 0.004, 0.010, 0),              # calib write
             'cl': SPINDIRv1Cmd('cl', 0.010, 2.200, 0),              # calib load
 
             'lr': SPINDIRv1Cmd('lr', 0.001, 0.000, 0),              # lamp run

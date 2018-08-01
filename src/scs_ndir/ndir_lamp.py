@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     if not cmd.is_valid():
         cmd.print_help(sys.stderr)
-        exit(1)
+        exit(2)
 
     if cmd.verbose:
         print("ndir_lamp: %s" % cmd, file=sys.stderr)
