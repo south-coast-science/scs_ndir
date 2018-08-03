@@ -11,6 +11,8 @@ The ndir_power utility is used to apply or remove power from the NDIR board.
 Note that all other utilities in the scs_ndir package begin by applying power to the NDIR board (if it is not already
 powered) and leave power applied on termination.
 
+The ndir_power utility has no effect when used with Raspberry Pi DFE boards.
+
 SYNOPSIS
 ndir_power.py { 1 | 0 } [-v]
 

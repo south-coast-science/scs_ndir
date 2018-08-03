@@ -15,7 +15,8 @@ any volume of data can be obtained.
 
 Returned values are voltages.
 
-Note that the NDIR sampler must be in single-shot mode for the ndir_measure utility to be able to operate.
+Note that the NDIR must be in single-shot run mode for the ndir_measure utility to be able to operate. This is set
+using the ndir_run utility.
 
 SYNOPSIS
 ndir_measure.py [-i INTERVAL [-n SAMPLES]] [-v]
@@ -27,7 +28,7 @@ DOCUMENT EXAMPLE - OUTPUT
 {"rec": "2018-06-04T15:50:20.513+00:00", "pile-ref": 2.4197, "pile-act": 2.8766, "therm": 0.9082}
 
 SEE ALSO
-scs_ndir/ndir_run_mode
+scs_ndir/ndir_run
 scs_ndir/ndir_sampler
 scs_ndir/ndir_recorder
 """

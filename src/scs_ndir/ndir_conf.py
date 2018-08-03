@@ -7,22 +7,27 @@ Created on 21 Jun 2017
 
 DESCRIPTION
 The ndir_conf utility is used to specify whether an NDIR board is present and if so, which model is provided.
+Currently, the only model supported is v1.
 
-Currently, the only model supported is SPINDIRv1.
+The tally count specifies the number of consecutive samples used to perform averaging. Averaging is not performed by
+any of the utilities in this package, but is performed by the scs_dev/gases_sampler utility.
+
+This utility is also included in the scs_mfr package.
 
 SYNOPSIS
 ndir_conf.py [{ [-m MODEL] [-t AVERAGING_TALLY] | -d }] [-v]
 
 EXAMPLES
-./ndir_conf.py -m SPINDIRv1 -t 1
+./ndir_conf.py -m v1 -t 1
 
 FILES
 ~/SCS/conf/ndir_conf.json
 
 DOCUMENT EXAMPLE
-{"model": "SPINDIRv1", "tally": 10}
+{"model": "v1", "tally": 10}
 
 SEE ALSO
+scs_dev/gases_sampler
 scs_mfr/ndir_conf
 """
 

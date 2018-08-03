@@ -25,8 +25,6 @@ The range set to be used is specified by the selected-range field, which must be
 An initial group of settings can be written to the EEPROM using the -d flag (default). The default settings will not
 provide an accurate calibration, but will enable the NDIR board to operate.
 
-Note that changes to the EEPROM only take effect when the NDIR board is reset.
-
 SYNOPSIS
 ndir_calib.py [{ -d | -s PATH VALUE | -r }] [-v]
 
@@ -36,7 +34,7 @@ EXAMPLES
 
 DOCUMENT EXAMPLE
 {"ndir-serial": 12701439, "board-serial": 2000001, "selected-range": 1, "lamp-voltage": 4.5, "lamp-period": 1000,
-"sample-start": 0, "sample-end": 990, "range-iaq": {"zero": 0.644, "span": 0.2203,
+"sample-start": 10, "sample-end": 990, "range-iaq": {"zero": 0.644, "span": 0.2203,
 "linear-b": 0.000325, "linear-c": 0.9363, "alpha-low": 0.00042, "alpha-high": 0.00042,
 "beta-a": 1e-05, "beta-o": 1e-05, "t-cal": 34.0}, "range-safety": null, "range-combustion": null,
 "range-industrial": null, "range-custom": null}
