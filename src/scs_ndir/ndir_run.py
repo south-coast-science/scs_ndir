@@ -6,20 +6,21 @@ Created on 1 Aug 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 DESCRIPTION
-The ndir_run_mode utility is used to
+The ndir_run utility is used to shift the NDIR microcontroller between continuous sampling and single-shot sampling
+modes.
 
 NDIR microcontroller sampling is normally run in continuous mode. Sampling must be set to single-shot mode in order for
 the ndir_measure and ndir_recorder utilities to operate.
 
-
 SYNOPSIS
-ndir_run_mode.py { -s | -c } [-v]
+ndir_run.py { -s | -c } [-v]
 
 EXAMPLES
-./ndir_run_mode.py -s
+./ndir_run.py -s
 
 SEE ALSO
 scs_ndir/ndir_measure
+scs_ndir/ndir_pressure
 scs_ndir/ndir_recorder
 scs_ndir/ndir_sampler
 """
@@ -50,7 +51,7 @@ if __name__ == '__main__':
         exit(2)
 
     if cmd.verbose:
-        print("ndir_run_mode: %s" % cmd, file=sys.stderr)
+        print("ndir_run: %s" % cmd, file=sys.stderr)
 
     try:
         # ------------------------------------------------------------------------------------------------------------
@@ -62,7 +63,7 @@ if __name__ == '__main__':
         ndir = conf.ndir(Host)
 
         if cmd.verbose:
-            print("ndir_run_mode: %s" % ndir, file=sys.stderr)
+            print("ndir_run: %s" % ndir, file=sys.stderr)
             sys.stderr.flush()
 
         # ------------------------------------------------------------------------------------------------------------

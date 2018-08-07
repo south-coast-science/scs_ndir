@@ -14,13 +14,14 @@ three signals every millisecond. The ndir_recorder utility commands recording to
 and stop recording after a given number of recorded values. When recording is complete, the utility recovers the
 stored values.
 
-Returned values are raw ADC values.
+Returned values are raw ADC counts.
 
 Command parameters specify interval and total. For example, an interval of 4 and a total of 250 provides one second
 of data, at 4 millisecond intervals. A further parameter specifies the time from the rising lamp edge until recording
 starts (default 0 milliseconds).
 
-Note that the NDIR sampler must be in single-shot mode for the ndir_recorder utility to be able to operate.
+Note that the NDIR must be in single-shot run mode for the ndir_recorder utility to be able to operate. This is set
+using the ndir_run utility.
 
 SYNOPSIS
 ndir_recorder.py -i INTERVAL -n SAMPLES [-d DEFERRAL] [-v]
@@ -33,7 +34,7 @@ DOCUMENT EXAMPLE - OUTPUT
 
 SEE ALSO
 scs_ndir/ndir_measure
-scs_ndir/ndir_run_mode
+scs_ndir/ndir_run
 scs_ndir/ndir_sampler
 """
 

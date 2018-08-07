@@ -35,7 +35,7 @@ DOCUMENT EXAMPLES - OUTPUT
 SEE ALSO
 scs_ndir/ndir_measure
 scs_ndir/ndir_recorder
-scs_ndir/ndir_run_mode
+scs_ndir/ndir_run
 """
 
 import sys
