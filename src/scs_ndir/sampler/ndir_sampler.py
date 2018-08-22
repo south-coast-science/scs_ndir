@@ -32,6 +32,8 @@ class NDIRSampler(Sampler):
     # ----------------------------------------------------------------------------------------------------------------
 
     def sample(self):
+        self.__ndir.cmd_sample_mode(True)
+
         rec = LocalizedDatetime.now()
         co2_datum = self.__ndir.sample()
 

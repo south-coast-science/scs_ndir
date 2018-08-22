@@ -51,7 +51,7 @@ class SPINDIRv1Cmd(JSONable):
             'rs': SPINDIRv1Cmd('rs', 0.001, 1.100, 0),              # recorder start (time depends on period /count)
             'rp': SPINDIRv1Cmd('rp', 0.001, 0.000, None),           # recorder play
 
-            'sm': SPINDIRv1Cmd('sm', 0.001, 2.200, 0),              # sampler mode
+            'sm': SPINDIRv1Cmd('sm', 0.001, 2.000, 0),              # sampler mode
             'sr': SPINDIRv1Cmd('sr', 0.001, 0.000, 6),              # sampler raw
             'sv': SPINDIRv1Cmd('sv', 0.001, 0.000, 12),             # sampler voltage
             'sg': SPINDIRv1Cmd('sg', 0.010, 0.000, 12),             # sampler gas

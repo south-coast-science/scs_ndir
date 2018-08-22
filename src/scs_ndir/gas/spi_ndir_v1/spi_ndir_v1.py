@@ -4,7 +4,7 @@ Created on 11 Dec 2017
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
-# import sys
+import sys
 import time
 
 from scs_core.data.datum import Datum
@@ -656,6 +656,8 @@ class SPINDIRv1(NDIR):
         try:
             self.__spi.open()
 
+            start_time = time.time()
+
             # command...
             self.__xfer(cmd.name_bytes())
 
@@ -667,8 +669,13 @@ class SPINDIRv1(NDIR):
                 time.sleep(self.__PARAM_DELAY)
                 self.__xfer(param_group_2)
 
+            elapsed_time = time.time() - start_time
+            # print("elapsed 1: %0.6f" % elapsed_time, file=sys.stderr)
+
             # wait...
             time.sleep(cmd.response_time)
+
+            start_time = time.time()
 
             # ACK / NACK...
             response = self.__spi.read_bytes(1)
@@ -683,6 +690,9 @@ class SPINDIRv1(NDIR):
             if response[0] == self.__RESPONSE_BUSY:
                 raise NDIRException('BUSY received', response[0], cmd, (param_group_1, param_group_2))
 
+            elapsed_time = time.time() - start_time
+            # print("elapsed 2: %0.6f" % elapsed_time, file=sys.stderr)
+
             # return values...
             if cmd.return_count < 1:
                 return
@@ -690,10 +700,30 @@ class SPINDIRv1(NDIR):
             # wait...
             time.sleep(self.__PARAM_DELAY)
 
+            start_time = time.time()
+
             response = self.__spi.read_bytes(cmd.return_count)
             # print("response 2: %s" % str(response), file=sys.stderr)
 
+            elapsed_time = time.time() - start_time
+            # print("elapsed 3: %0.6f" % elapsed_time, file=sys.stderr)
+
             return response[0] if cmd.return_count == 1 else response
+
+        finally:
+            self.__spi.close()
+
+
+    def wait(self):
+        try:
+            self.__spi.open()
+
+            start_time = time.time()
+
+            response = self.__spi.read_bytes(1)
+            elapsed_time = time.time() - start_time
+
+            print("wait: %s: 0x%02x" % (elapsed_time, response[0]))
 
         finally:
             self.__spi.close()
