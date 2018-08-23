@@ -67,7 +67,7 @@ if __name__ == '__main__':
         ndir.power_on()
 
         if cmd.level is not None:
-            ndir.lamp_level(cmd.level)
+            print("lamp level not currently supported", file=sys.stderr)
 
         if cmd.run is not None:
             ndir.lamp_run(cmd.run == 1)

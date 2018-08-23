@@ -15,7 +15,7 @@ from scs_core.sync.interval_timer import IntervalTimer
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
+from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ sample_count = 200              # 10 mS * 1000 = 10 S
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = SPINDIRv1(Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir, file=sys.stderr)
     print("-", file=sys.stderr)
 
@@ -39,7 +39,7 @@ try:
     print("-", file=sys.stderr)
 
     print("calibrating...", file=sys.stderr)
-    ndir.cmd_measure_calibrate()
+    ndir.measure_calibrate()
 
     start_time = time.time()
     timer = IntervalTimer(interval)
@@ -47,7 +47,7 @@ try:
     print("rec, pile_ref, pile_act, thermistor")
 
     for _ in timer.range(sample_count):
-        pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.cmd_measure_raw()
+        pile_ref_voltage, pile_act_voltage, thermistor_voltage = ndir.measure_raw()
         elapsed_time = time.time() - start_time
 
         # fluked_thermistor = thermistor_voltage - 65536

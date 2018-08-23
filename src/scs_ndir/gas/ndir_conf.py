@@ -4,7 +4,7 @@ Created on 28 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 example JSON:
-{"model": "SPINDIRv1", "tally": 10}
+{"model": "SPINDIRx1", "tally": 10}
 """
 
 import os
@@ -13,8 +13,8 @@ from scs_core.gas.ndir_conf import NDIRConf as AbstractNDIRConf
 
 from scs_ndir.gas.ndir_monitor import NDIRMonitor
 
-from scs_ndir.gas.spi_ndir_v1.ndir_calib import NDIRCalib as SPINDIRv1Calib
-from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
+from scs_ndir.gas.spi_ndir_t1_f1.ndir_calib import NDIRCalib as SPINDIRv1Calib
+from scs_ndir.gas.spi_ndir_t1_f1.spi_ndir_t1_f1 import SPINDIRt1f1
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ class NDIRConf(AbstractNDIRConf):
 
         # TODO: check against a list of supported devices
 
-        return SPINDIRv1(host.ndir_spi_bus(), host.ndir_spi_device())
+        return SPINDIRt1f1(host.ndir_spi_bus(), host.ndir_spi_device())
 
 
     def ndir_monitor(self, host):

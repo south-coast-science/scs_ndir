@@ -9,7 +9,8 @@ DESCRIPTION
 The ndir_pressure utility is used to sample the NXP MPL115A2 digital barometer on the NDIR board. The reported value
 is actual pressure, measured in kilopascals.
 
-Note that barometric pressure is not currently used by the data interpretation algorithm on board the NDIR microcontroller.
+Note that barometric pressure is not currently used by the data interpretation algorithm on board the NDIR
+microcontroller.
 
 SYNOPSIS
 ndir_pressure.py [-i INTERVAL [-n SAMPLES]] [-v]
@@ -70,6 +71,10 @@ if __name__ == '__main__':
 
         runner = TimedRunner(cmd.interval, cmd.samples)
         sampler = NDIRPressureSampler(runner, ndir)
+
+        if cmd.verbose:
+            print("ndir_pressure: %s" % sampler, file=sys.stderr)
+            sys.stderr.flush()
 
         for sample in sampler.samples():
             print(JSONify.dumps(sample))

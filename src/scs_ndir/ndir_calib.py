@@ -91,8 +91,6 @@ if __name__ == '__main__':
         if cmd.default:
             calib = calib_class.default()
 
-            print(calib)
-
             # save...
             ndir.store_calib(calib)
 

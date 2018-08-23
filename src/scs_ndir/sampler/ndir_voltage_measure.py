@@ -32,7 +32,7 @@ class NDIRVoltageMeasure(Sampler):
 
     def sample(self):
         rec = LocalizedDatetime.now()
-        sample = self.__ndir.cmd_measure()
+        sample = self.__ndir.measure_voltage()
 
         return NDIRMeasureVoltageDatum.construct_from_sample(rec, sample)
 

@@ -14,7 +14,7 @@ from scs_core.sync.interval_timer import IntervalTimer
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
+from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = SPINDIRv1(Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir, file=sys.stderr)
     print("-", file=sys.stderr)
 
@@ -35,7 +35,7 @@ try:
 
     while timer.true():
         elapsed_time = time.time() - start_time
-        pile_ref_amplitude, pile_act_amplitude, thermistor_avg = ndir.cmd_sample_voltage()
+        pile_ref_amplitude, pile_act_amplitude, thermistor_avg = ndir.get_sample_voltage()
         diff = pile_ref_amplitude - pile_act_amplitude
 
         print("%7.3f, %0.4f, %0.4f, %0.4f, %0.4f" %

@@ -4,6 +4,8 @@ Created on 17 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
+import time
+
 from scs_core.data.localized_datetime import LocalizedDatetime
 
 from scs_core.sample.gases_sample import GasesSample
@@ -30,19 +32,25 @@ class NDIRVoltageSampler(Sampler):
         self.__tag = tag
         self.__ndir = ndir
 
+        self.__interval = self.__ndir.sample_interval() * 2 + 0.5
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def sample(self):
         rec = LocalizedDatetime.now()
 
-        sample = self.__ndir.cmd_sample_voltage()
-        co2_datum = NDIRSampleVoltageDatum.construct_from_sample(sample)
+        self.__ndir.sample()
+        time.sleep(self.__interval)
 
-        return GasesSample(self.__tag, rec, co2_datum, None, None)
+        sample = self.__ndir.get_sample_voltage()
+        voltage_datum = NDIRSampleVoltageDatum.construct_from_sample(sample)
+
+        return GasesSample(self.__tag, rec, voltage_datum, None, None)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRVoltageSampler:{runner:%s, ndir:%s}" % (self.runner, self.__ndir)
+        return "NDIRVoltageSampler:{runner:%s, tag:%s, ndir:%s, interval:%s}" % \
+               (self.runner, self.__tag, self.__ndir, self.__interval)

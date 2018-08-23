@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
         ndir.power_on()
 
-        samples = ndir.cmd_record_raw(cmd.deferral, cmd.interval, cmd.samples)
+        samples = ndir.record_raw(cmd.deferral, cmd.interval, cmd.samples)
 
         for i in range(len(samples)):
             datum = NDIRRecorderDatum.construct_from_sample(samples[i])
