@@ -4,6 +4,8 @@ Created on 28 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
+import time
+
 from collections import OrderedDict
 from multiprocessing import Manager
 
@@ -66,18 +68,17 @@ class NDIRMonitor(SynchronisedProcess):
 
 
     def run(self):
+        sleep_time = self.__ndir.get_sample_interval()
+        timer = IntervalTimer(sleep_time + 0.2)
+
         try:
-            timer = IntervalTimer(self.__ndir.get_sample_interval())
-
             while timer.true():
-                sample = self.__ndir.get_sample_gas()
-
-                if sample is None:
-                    continue
-
                 self.__ndir.sample()
+                time.sleep(sleep_time)
 
-                self.__averaging.append(sample)
+                datum = self.__ndir.get_sample_gas()
+
+                self.__averaging.append(datum)
                 average = self.__averaging.compute()
 
                 # report...
