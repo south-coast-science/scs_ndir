@@ -70,7 +70,12 @@ class NDIRMonitor(SynchronisedProcess):
             timer = IntervalTimer(self.__ndir.sample_interval())
 
             while timer.true():
-                sample = self.__ndir.sample()
+                sample = self.__ndir.get_sample_gas()
+
+                if sample is None:
+                    continue
+
+                self.__ndir.sample()
 
                 self.__averaging.append(sample)
                 average = self.__averaging.compute()
