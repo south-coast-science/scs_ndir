@@ -67,7 +67,7 @@ class SPINDIRx1(NDIR):
 
 
     @classmethod
-    def sample_interval(cls):
+    def get_sample_interval(cls):
         return cls.SAMPLE_INTERVAL
 
 

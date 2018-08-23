@@ -32,7 +32,7 @@ class NDIRVoltageSampler(Sampler):
         self.__tag = tag
         self.__ndir = ndir
 
-        self.__interval = self.__ndir.sample_interval() * 2 + 0.5
+        self.__interval = self.__ndir.get_sample_interval()
 
 
     # ----------------------------------------------------------------------------------------------------------------

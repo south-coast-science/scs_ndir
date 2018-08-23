@@ -29,7 +29,7 @@ class NDIRPressureSampler(Sampler):
 
         self.__ndir = ndir
 
-        self.__interval = self.__ndir.sample_interval()
+        self.__interval = self.__ndir.get_sample_interval()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ class NDIRPressureSampler(Sampler):
     def sample(self):
         rec = LocalizedDatetime.now()
 
-        self.__ndir.sample_perform()
+        self.__ndir.sample()
         time.sleep(self.__interval)
 
         p_a = self.__ndir.get_sample_pressure()

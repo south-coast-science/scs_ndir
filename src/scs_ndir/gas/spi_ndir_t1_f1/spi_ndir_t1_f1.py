@@ -91,10 +91,6 @@ class SPINDIRt1f1(NDIR):
         self.__io.ndir_power = IO.HIGH
 
 
-    def sample(self):
-        self.sample_perform()
-
-
     def version(self):
         try:
             self.obtain_lock()
@@ -117,7 +113,108 @@ class SPINDIRt1f1(NDIR):
             self.release_lock()
 
 
-    def sample_interval(self):
+    # ----------------------------------------------------------------------------------------------------------------
+    # sampling...
+
+    def sample(self):
+        try:
+            self.obtain_lock()
+
+            cmd = SPINDIRt1f1Cmd.find('sp')
+            self._transact(cmd)
+
+        finally:
+            self.release_lock()
+
+
+    def get_sample_gas(self):
+        try:
+            self.obtain_lock()
+
+            cmd = SPINDIRt1f1Cmd.find('sg')
+            response = self._transact(cmd)
+
+            cnc = Datum.decode_float(response[0:4])
+            cnc_igl = Datum.decode_float(response[4:8])
+            temp = Datum.decode_float(response[8:12])
+
+            return NDIRDatum(temp, cnc, cnc_igl)
+
+        finally:
+            self.release_lock()
+
+
+    def get_sample_raw(self):
+        try:
+            self.obtain_lock()
+
+            # report...
+            cmd = SPINDIRt1f1Cmd.find('sr')
+            response = self._transact(cmd)
+
+            pile_ref_amplitude = Datum.decode_unsigned_int(response[0:2])
+            pile_act_amplitude = Datum.decode_unsigned_int(response[2:4])
+            thermistor_average = Datum.decode_unsigned_int(response[4:6])
+
+            return pile_ref_amplitude, pile_act_amplitude, thermistor_average
+
+        finally:
+            self.release_lock()
+
+
+    def get_sample_voltage(self):
+        try:
+            self.obtain_lock()
+
+            # report...
+            cmd = SPINDIRt1f1Cmd.find('sv')
+            response = self._transact(cmd)
+
+            pile_ref_amplitude = Datum.decode_float(response[0:4])
+            pile_act_amplitude = Datum.decode_float(response[4:8])
+            thermistor_average = Datum.decode_float(response[8:12])
+
+            return pile_ref_amplitude, pile_act_amplitude, thermistor_average
+
+        finally:
+            self.release_lock()
+
+
+    def get_sample_offsets(self):
+        try:
+            self.obtain_lock()
+
+            # report...
+            cmd = SPINDIRt1f1Cmd.find('so')
+            response = self._transact(cmd)
+
+            min_ref_offset = Datum.decode_unsigned_int(response[0:2])
+            min_act_offset = Datum.decode_unsigned_int(response[2:4])
+            max_ref_offset = Datum.decode_unsigned_int(response[4:6])
+            max_act_offset = Datum.decode_unsigned_int(response[6:8])
+
+            return min_ref_offset, min_act_offset, max_ref_offset, max_act_offset
+
+        finally:
+            self.release_lock()
+
+
+    def get_sample_pressure(self):
+        try:
+            self.obtain_lock()
+
+            cmd = SPINDIRt1f1Cmd.find('sb')
+            response = self._transact(cmd)
+
+            p_a = Datum.decode_float(response[0:4])
+
+            return round(p_a, 1)
+
+        finally:
+            self.release_lock()
+
+
+    def get_sample_interval(self):
         try:
             self.obtain_lock()
 
@@ -294,107 +391,6 @@ class SPINDIRt1f1(NDIR):
 
             cmd = SPINDIRt1f1Cmd.find('lr')
             self._transact(cmd, (on_byte,))
-
-        finally:
-            self.release_lock()
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-    # low-level commands...
-
-    def sample_perform(self):
-        try:
-            self.obtain_lock()
-
-            cmd = SPINDIRt1f1Cmd.find('sp')
-            self._transact(cmd)
-
-        finally:
-            self.release_lock()
-
-
-    def get_sample_gas(self):
-        try:
-            self.obtain_lock()
-
-            cmd = SPINDIRt1f1Cmd.find('sg')
-            response = self._transact(cmd)
-
-            cnc = Datum.decode_float(response[0:4])
-            cnc_igl = Datum.decode_float(response[4:8])
-            temp = Datum.decode_float(response[8:12])
-
-            return NDIRDatum(temp, cnc, cnc_igl)
-
-        finally:
-            self.release_lock()
-
-
-    def get_sample_raw(self):
-        try:
-            self.obtain_lock()
-
-            # report...
-            cmd = SPINDIRt1f1Cmd.find('sr')
-            response = self._transact(cmd)
-
-            pile_ref_amplitude = Datum.decode_unsigned_int(response[0:2])
-            pile_act_amplitude = Datum.decode_unsigned_int(response[2:4])
-            thermistor_average = Datum.decode_unsigned_int(response[4:6])
-
-            return pile_ref_amplitude, pile_act_amplitude, thermistor_average
-
-        finally:
-            self.release_lock()
-
-
-    def get_sample_voltage(self):
-        try:
-            self.obtain_lock()
-
-            # report...
-            cmd = SPINDIRt1f1Cmd.find('sv')
-            response = self._transact(cmd)
-
-            pile_ref_amplitude = Datum.decode_float(response[0:4])
-            pile_act_amplitude = Datum.decode_float(response[4:8])
-            thermistor_average = Datum.decode_float(response[8:12])
-
-            return pile_ref_amplitude, pile_act_amplitude, thermistor_average
-
-        finally:
-            self.release_lock()
-
-
-    def get_sample_offsets(self):
-        try:
-            self.obtain_lock()
-
-            # report...
-            cmd = SPINDIRt1f1Cmd.find('so')
-            response = self._transact(cmd)
-
-            min_ref_offset = Datum.decode_unsigned_int(response[0:2])
-            min_act_offset = Datum.decode_unsigned_int(response[2:4])
-            max_ref_offset = Datum.decode_unsigned_int(response[4:6])
-            max_act_offset = Datum.decode_unsigned_int(response[6:8])
-
-            return min_ref_offset, min_act_offset, max_ref_offset, max_act_offset
-
-        finally:
-            self.release_lock()
-
-
-    def get_sample_pressure(self):
-        try:
-            self.obtain_lock()
-
-            cmd = SPINDIRt1f1Cmd.find('sb')
-            response = self._transact(cmd)
-
-            p_a = Datum.decode_float(response[0:4])
-
-            return round(p_a, 1)
 
         finally:
             self.release_lock()

@@ -12,16 +12,10 @@ This package is compatible with the following microcontroller firmware:
 https://github.com/south-coast-science/scs_spi_ndir_t1_mcu_f1
 
 example JSON:
-{"ndir-serial": 12601304, "board-serial": 2, "sensor": 0, "lamp-voltage": 5, "lamp-period": 333,
-"sample-start": 0, "sample-end": 330, "zero": 1.0, "span": -0.292553,
-"linear-b": 0.000325, "linear-c": 0.9363,
-"beta-o": 1e-05, "alpha": 0.00056, "beta-a": 1e-05,
-"t-cal": 1.0}
-
 {"ndir-serial": 12700000, "board-serial": 1000000, "selected-range": 1, "lamp-voltage": 4.5,
 "lamp-period": 900, "sample-start": 440, "sample-end": 940,
 "range-iaq": {"zero": 1.1765, "span": 0.2203, "linear-b": 0.000325, "linear-c": 0.9363,
-"alpha-low": 0.00042, "alpha-high": 0.00042, "beta-a": 1e-05, "beta-o": 1e-05, "t-cal": 34.0},
+"alpha-low": 0.00042, "alpha-high": 0.00042, "beta-a": 1e-05, "beta-o": 1e-05, "t-cal": 40.5},
 "range-safety": null, "range-combustion": null, "range-industrial": null, "range-custom": null}
 """
 
@@ -43,7 +37,7 @@ class NDIRCalib(PersistentJSONable):
     CALIB_IAQ = '{"ndir-serial": 12700000, "board-serial": 1000000, "selected-range": 1, "lamp-voltage": 4.5, ' \
                 '"lamp-period": 1000, "sample-start": 400, "sample-end": 990, ' \
                 '"range-iaq": {"zero": 1.1765, "span": 0.2203, "linear-b": 0.000325, "linear-c": 0.9363, ' \
-                '"alpha-low": 0.00042, "alpha-high": 0.00042, "beta-a": 1e-05, "beta-o": 1e-05, "t-cal": 34.0}, ' \
+                '"alpha-low": 0.00042, "alpha-high": 0.00042, "beta-a": 1e-05, "beta-o": 1e-05, "t-cal": 40.5}, ' \
                 '"range-safety": null, "range-combustion": null, "range-industrial": null, "range-custom": null}'
 
     # ranges...

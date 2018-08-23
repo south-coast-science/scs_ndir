@@ -67,7 +67,7 @@ class NDIRMonitor(SynchronisedProcess):
 
     def run(self):
         try:
-            timer = IntervalTimer(self.__ndir.sample_interval())
+            timer = IntervalTimer(self.__ndir.get_sample_interval())
 
             while timer.true():
                 sample = self.__ndir.get_sample_gas()
