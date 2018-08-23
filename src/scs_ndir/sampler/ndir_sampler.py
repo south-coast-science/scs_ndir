@@ -39,7 +39,11 @@ class NDIRSampler(Sampler):
         rec = LocalizedDatetime.now()
 
         self.__ndir.sample()
-        time.sleep(self.__interval)
+
+        try:
+            time.sleep(self.__interval)
+        except KeyboardInterrupt:
+            pass
 
         co2_datum = self.__ndir.get_sample_gas()
 

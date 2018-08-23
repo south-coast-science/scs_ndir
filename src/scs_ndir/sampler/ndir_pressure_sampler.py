@@ -38,7 +38,11 @@ class NDIRPressureSampler(Sampler):
         rec = LocalizedDatetime.now()
 
         self.__ndir.sample()
-        time.sleep(self.__interval)
+
+        try:
+            time.sleep(self.__interval)
+        except KeyboardInterrupt:
+            pass
 
         p_a = self.__ndir.get_sample_pressure()
 
