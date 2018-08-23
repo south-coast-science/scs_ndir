@@ -1,23 +1,25 @@
 """
-Created on 2 Jan 2018
+Created on 22 Aug 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
+This package is compatible with the following microcontroller firmware:
+https://github.com/south-coast-science/scs_spi_ndir_t1_mcu_f1
+
 document example:
-{"w-rst": false, "pwr-in": 4.5, "up": {"period": "00-00:21:04.000"}}
+{"period": "00-00:07:20.000"}
 """
 
 from collections import OrderedDict
 
 from scs_core.data.datum import Datum
 from scs_core.data.json import JSONable
-
-from scs_ndir.gas.spi_ndir_v1.ndir_uptime import NDIRUptime
+from scs_core.data.timedelta import Timedelta
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class NDIRStatus(JSONable):
+class NDIRUptime(JSONable):
     """
     classdocs
     """
@@ -29,24 +31,18 @@ class NDIRStatus(JSONable):
         if not jdict:
             return None
 
-        watchdog_reset = jdict.get('w-rst')
-        power_in = jdict.get('pwr-in')
+        timedelta = Timedelta.construct_from_ps_elapsed_report(jdict.get('period'))
 
-        uptime = NDIRUptime.construct_from_jdict(jdict.get('up'))
-
-        return NDIRStatus(watchdog_reset, power_in, uptime)
+        return NDIRUptime(timedelta.delta.total_seconds())
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, watchdog_reset, power_in, uptime):
+    def __init__(self, seconds):
         """
         Constructor
         """
-        self.__watchdog_reset = watchdog_reset                  # restart because of watchdog timeout       bool
-        self.__power_in = Datum.float(power_in, 1)              # PSU input voltage                         float
-
-        self.__uptime = uptime                                  # Uptime
+        self.__seconds = Datum.int(seconds)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -54,10 +50,7 @@ class NDIRStatus(JSONable):
     def as_json(self):
         jdict = OrderedDict()
 
-        jdict['w-rst'] = self.watchdog_reset
-        jdict['pwr-in'] = self.power_in
-
-        jdict['up'] = self.uptime
+        jdict['period'] = self.timedelta
 
         return jdict
 
@@ -65,22 +58,16 @@ class NDIRStatus(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def watchdog_reset(self):
-        return self.__watchdog_reset
+    def seconds(self):
+        return self.__seconds
 
 
     @property
-    def power_in(self):
-        return self.__power_in
-
-
-    @property
-    def uptime(self):
-        return self.__uptime
+    def timedelta(self):
+        return Timedelta(seconds=self.seconds)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRStatus:{watchdog_reset:%s, power_in:%s, uptime:%s}" % \
-               (self.watchdog_reset, self.power_in, self.uptime)
+        return "NDIRUptime:{seconds:%s}" % self.seconds

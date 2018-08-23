@@ -4,6 +4,8 @@ Created on 21 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
+import time
+
 from scs_core.data.localized_datetime import LocalizedDatetime
 
 from scs_core.sample.gases_sample import GasesSample
@@ -28,14 +30,18 @@ class NDIRSampler(Sampler):
         self.__tag = tag
         self.__ndir = ndir
 
+        self.__interval = self.__ndir.sample_interval()
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def sample(self):
-        self.__ndir.cmd_sample_mode(True)
-
         rec = LocalizedDatetime.now()
-        co2_datum = self.__ndir.sample()
+
+        self.__ndir.sample_perform()
+        time.sleep(self.__interval)
+
+        co2_datum = self.__ndir.get_sample_gas()
 
         return GasesSample(self.__tag, rec, co2_datum, None, None)
 
@@ -43,4 +49,5 @@ class NDIRSampler(Sampler):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRSampler:{runner:%s, tag:%s, ndir:%s}" % (self.runner, self.__tag, self.__ndir)
+        return "NDIRSampler:{runner:%s, tag:%s, ndir:%s, interval:%s}" % \
+               (self.runner, self.__tag, self.__ndir, self.__interval)

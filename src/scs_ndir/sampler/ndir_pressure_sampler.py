@@ -4,6 +4,8 @@ Created on 31 Jul 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
+import time
+
 from scs_core.data.localized_datetime import LocalizedDatetime
 from scs_core.sampler.sampler import Sampler
 
@@ -27,12 +29,18 @@ class NDIRPressureSampler(Sampler):
 
         self.__ndir = ndir
 
+        self.__interval = self.__ndir.sample_interval()
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def sample(self):
         rec = LocalizedDatetime.now()
-        p_a = self.__ndir.pressure()
+
+        self.__ndir.sample_perform()
+        time.sleep(self.__interval)
+
+        p_a = self.__ndir.get_sample_pressure()
 
         return NDIRPressureDatum(rec, p_a)
 
@@ -40,4 +48,4 @@ class NDIRPressureSampler(Sampler):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRPressureSampler:{runner:%s, ndir:%s}" % (self.runner, self.__ndir)
+        return "NDIRPressureSampler:{runner:%s, ndir:%s, interval:%s}" % (self.runner, self.__ndir, self.__interval)

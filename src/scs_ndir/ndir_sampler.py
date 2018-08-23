@@ -98,7 +98,7 @@ if __name__ == '__main__':
         ndir.power_on()
 
         if cmd.offsets is not None:
-            datum = NDIROffsetDatum.construct_from_sample(ndir.cmd_sample_offsets())
+            datum = NDIROffsetDatum.construct_from_sample(ndir.get_sample_offsets())
 
             print(JSONify.dumps(datum))
             sys.stdout.flush()
@@ -106,6 +106,10 @@ if __name__ == '__main__':
         else:
             runner = TimedRunner(cmd.interval, cmd.samples)
             sampler = NDIRVoltageSampler(runner, tag, ndir) if cmd.raw else NDIRSampler(runner, tag, ndir)
+
+            if cmd.verbose:
+                print("ndir_sampler: %s" % sampler, file=sys.stderr)
+                sys.stderr.flush()
 
             for sample in sampler.samples():
                 print(JSONify.dumps(sample))

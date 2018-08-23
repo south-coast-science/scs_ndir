@@ -11,8 +11,8 @@ Warning: ndir_calib_test.py must be run first!
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
-from scs_ndir.gas.spi_ndir_v1.ndir_calib import NDIRCalib
+from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
+from scs_ndir.gas.spi_ndir_x1.ndir_calib import NDIRCalib
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ from scs_ndir.gas.spi_ndir_v1.ndir_calib import NDIRCalib
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = SPINDIRv1(Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir)
     print("-")
 

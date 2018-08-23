@@ -72,6 +72,10 @@ if __name__ == '__main__':
         runner = TimedRunner(cmd.interval, cmd.samples)
         sampler = NDIRPressureSampler(runner, ndir)
 
+        if cmd.verbose:
+            print("ndir_pressure: %s" % sampler, file=sys.stderr)
+            sys.stderr.flush()
+
         for sample in sampler.samples():
             print(JSONify.dumps(sample))
             sys.stdout.flush()

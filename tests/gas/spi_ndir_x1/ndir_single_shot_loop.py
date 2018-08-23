@@ -19,7 +19,7 @@ from scs_core.sync.interval_timer import IntervalTimer
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
+from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = SPINDIRv1(Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir, file=sys.stderr)
     print("-", file=sys.stderr)
 
@@ -37,7 +37,7 @@ try:
     timer = IntervalTimer(3.0)
 
     for _ in timer.range(4000):
-        ndir.cmd_sample_mode(True)
+        ndir.get_sample_mode(True)
         rec = LocalizedDatetime.now()
         co2_datum = ndir.sample()
 

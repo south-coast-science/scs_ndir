@@ -1,58 +1,60 @@
 #!/usr/bin/env python3
 
 """
-Created on 2 Jan 2018
+Created on 11 Dec 2017
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
-
-import json
-
-from collections import OrderedDict
 
 from scs_core.data.json import JSONify
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.spi_ndir_v1.spi_ndir_v1 import SPINDIRv1
-from scs_ndir.gas.spi_ndir_v1.ndir_status import NDIRStatus
+from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
+eeprom_addr = 1
+
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = SPINDIRv1(Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir)
     print("-")
 
     ndir.power_on()
 
+    version = ndir.version()
+    jstr = JSONify.dumps(version)
+
+    print("version: %s" % jstr)
+    print("-")
+
     status = ndir.status()
-    print("status: %s" % status)
-    print("-")
-
     jstr = JSONify.dumps(status)
-    print(jstr)
+
+    print("status: %s" % jstr)
     print("-")
 
-    jdict = json.loads(jstr, object_pairs_hook=OrderedDict)
+    v_in_value = ndir.input_raw()
 
-    status = NDIRStatus.construct_from_jdict(jdict)
-    print("status: %s" % status)
+    print("v_in_value: %d" % v_in_value)
+
+    v_in_voltage = ndir.input_voltage()
+
+    print("v_in_voltage: %0.3f" % v_in_voltage)
     print("-")
 
-    jstr = JSONify.dumps(status)
-    print(jstr)
-    print("-")
+    # ndir.power_off()
 
 except ValueError as ex:
     print("ValueError: %s" % ex)
 
 except KeyboardInterrupt:
-    print("")
+    pass
 
 finally:
     I2C.close()
