@@ -16,8 +16,6 @@ from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
 
 # --------------------------------------------------------------------------------------------------------------------
 
-eeprom_addr = 1
-
 try:
     I2C.open(Host.I2C_SENSORS)
 

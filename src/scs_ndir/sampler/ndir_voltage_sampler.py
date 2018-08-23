@@ -32,7 +32,7 @@ class NDIRVoltageSampler(Sampler):
         self.__tag = tag
         self.__ndir = ndir
 
-        self.__interval = self.__ndir.sample_interval() * 2 + 0.5
+        self.__interval = self.__ndir.get_sample_interval()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -41,7 +41,11 @@ class NDIRVoltageSampler(Sampler):
         rec = LocalizedDatetime.now()
 
         self.__ndir.sample()
-        time.sleep(self.__interval)
+
+        try:
+            time.sleep(self.__interval)
+        except KeyboardInterrupt:
+            pass
 
         sample = self.__ndir.get_sample_voltage()
         voltage_datum = NDIRSampleVoltageDatum.construct_from_sample(sample)

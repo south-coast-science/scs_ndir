@@ -30,7 +30,7 @@ class NDIRSampler(Sampler):
         self.__tag = tag
         self.__ndir = ndir
 
-        self.__interval = self.__ndir.sample_interval()
+        self.__interval = self.__ndir.get_sample_interval()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -38,8 +38,12 @@ class NDIRSampler(Sampler):
     def sample(self):
         rec = LocalizedDatetime.now()
 
-        self.__ndir.sample_perform()
-        time.sleep(self.__interval)
+        self.__ndir.sample()
+
+        try:
+            time.sleep(self.__interval)
+        except KeyboardInterrupt:
+            pass
 
         co2_datum = self.__ndir.get_sample_gas()
 
