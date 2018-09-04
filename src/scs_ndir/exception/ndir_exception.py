@@ -16,6 +16,19 @@ class NDIRException(RuntimeError, JSONable):
     classdocs
     """
 
+    @classmethod
+    def construct(cls, problem, status, cmd, param_group_1, param_group_2):
+        params = []
+
+        if param_group_1:
+            params.append(param_group_1)
+
+        if param_group_2:
+            params.append(param_group_2)
+
+        return NDIRException(problem, status, cmd, params)
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, problem, status, cmd, params):

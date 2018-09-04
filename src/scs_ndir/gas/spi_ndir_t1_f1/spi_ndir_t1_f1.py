@@ -654,10 +654,10 @@ class SPINDIRt1f1(NDIR):
             response = self.__spi.read_bytes(1)
 
             if response[0] in self.__RESPONSE_NONE:
-                raise NDIRException('None received', response[0], cmd, (param_group_1, param_group_2))
+                raise NDIRException.construct('None received', response[0], cmd, param_group_1, param_group_2)
 
             if response[0] == self.__RESPONSE_NACK:
-                raise NDIRException('NACK received', response[0], cmd, (param_group_1, param_group_2))
+                raise NDIRException.construct('NACK received', response[0], cmd, param_group_1, param_group_2)
 
             # return values...
             if cmd.return_count < 1:

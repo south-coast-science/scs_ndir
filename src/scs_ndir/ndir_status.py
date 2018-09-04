@@ -65,16 +65,15 @@ if __name__ == '__main__':
         ndir.power_on()
 
         status = ndir.status()
-        jstr = JSONify.dumps(status)
-        print(jstr)
+        print(JSONify.dumps(status))
 
 
     # ----------------------------------------------------------------------------------------------------------------
     # end...
 
     except NDIRException as ex:
-        jstr = JSONify.dumps(ex)
-        print(jstr, file=sys.stderr)
+        print(JSONify.dumps(ex), file=sys.stderr)
+        exit(1)
 
     except KeyboardInterrupt:
         print("")
