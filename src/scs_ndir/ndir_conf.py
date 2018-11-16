@@ -41,6 +41,8 @@ from scs_ndir.cmd.cmd_ndir_conf import CmdNDIRConf
 from scs_ndir.gas.ndir_conf import NDIRConf
 
 
+# TODO: handle missing conf elegantly - do this throughout the system.
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
