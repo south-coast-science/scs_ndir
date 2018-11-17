@@ -74,12 +74,20 @@ if __name__ == '__main__':
 
         I2C.open(Host.I2C_SENSORS)
 
+        # NDIRConf...
         conf =  NDIRConf.load(Host)
+
+        if conf is None:
+            print("ndir_recorder: NDIRConf not available.", file=sys.stderr)
+            exit(1)
+
+        # NDIR...
         ndir = conf.ndir(Host)
 
         if cmd.verbose:
             print("ndir_recorder: %s" % ndir, file=sys.stderr)
             sys.stderr.flush()
+
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
