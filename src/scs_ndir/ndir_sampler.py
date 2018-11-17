@@ -82,15 +82,22 @@ if __name__ == '__main__':
 
         tag = None if system_id is None else system_id.message_tag()
 
-        # NDIR...
         I2C.open(Host.I2C_SENSORS)
 
+        # NDIRConf...
         conf =  NDIRConf.load(Host)
+
+        if conf is None:
+            print("ndir_sampler: NDIRConf not available.", file=sys.stderr)
+            exit(1)
+
+        # NDIR...
         ndir = conf.ndir(Host)
 
         if cmd.verbose:
             print("ndir_sampler: %s" % ndir, file=sys.stderr)
             sys.stderr.flush()
+
 
         # ------------------------------------------------------------------------------------------------------------
         # run...
