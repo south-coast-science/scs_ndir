@@ -14,6 +14,8 @@ from scs_core.data.datum import Datum
 from scs_core.data.json import JSONable
 from scs_core.data.localized_datetime import LocalizedDatetime
 
+from scs_core.sample.sample import Sample
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -51,7 +53,7 @@ class NDIRPressureDatum(JSONable):
     def as_json(self):
         jdict = OrderedDict()
 
-        jdict['rec'] = self.rec.as_json()
+        jdict['rec'] = self.rec.as_iso8601(Sample.INCLUDE_MILLIS)
         jdict['pA'] = self.p_a
 
         return jdict
