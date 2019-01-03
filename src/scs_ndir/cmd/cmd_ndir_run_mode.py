@@ -61,11 +61,6 @@ class CmdNDIRRunMode(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -73,5 +68,4 @@ class CmdNDIRRunMode(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRRunMode:{single:%s, continuous:%s, verbose:%s, args:%s}" % \
-               (self.single, self.continuous, self.verbose, self.args)
+        return "CmdNDIRRunMode:{single:%s, continuous:%s, verbose:%s}" % (self.single, self.continuous, self.verbose)

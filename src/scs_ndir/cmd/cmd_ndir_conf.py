@@ -77,11 +77,6 @@ class CmdNDIRConf(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -89,5 +84,5 @@ class CmdNDIRConf(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRConf:{model:%s, tally:%s, delete:%s, verbose:%s, args:%s}" % \
-                    (self.model, self.tally, self.delete, self.verbose, self.args)
+        return "CmdNDIRConf:{model:%s, tally:%s, delete:%s, verbose:%s}" % \
+                    (self.model, self.tally, self.delete, self.verbose)

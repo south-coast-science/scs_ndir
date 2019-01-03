@@ -86,11 +86,6 @@ class CmdNDIRSampler(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -98,5 +93,5 @@ class CmdNDIRSampler(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRSampler:{interval:%s, samples:%s, raw:%s, offsets:%s, verbose:%s, args:%s}" % \
-               (self.interval, self.samples, self.offsets, self.raw, self.verbose, self.args)
+        return "CmdNDIRSampler:{interval:%s, samples:%s, raw:%s, offsets:%s, verbose:%s}" % \
+               (self.interval, self.samples, self.offsets, self.raw, self.verbose)

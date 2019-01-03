@@ -90,5 +90,4 @@ class NDIRRecorderDatum(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRRecorderDatum:{rec:%s, pile_ref:%s, pile_act:%s}" % \
-               (self.rec, self.pile_ref, self.pile_act)
+        return "NDIRRecorderDatum:{rec:%s, pile_ref:%s, pile_act:%s}" % (self.rec, self.pile_ref, self.pile_act)
