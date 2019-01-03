@@ -61,11 +61,6 @@ class CmdNDIRMeasure(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -73,5 +68,4 @@ class CmdNDIRMeasure(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRMeasure:{interval:%s, samples:%s, verbose:%s, args:%s}" % \
-               (self.interval, self.samples, self.verbose, self.args)
+        return "CmdNDIRMeasure:{interval:%s, samples:%s, verbose:%s}" % (self.interval, self.samples, self.verbose)

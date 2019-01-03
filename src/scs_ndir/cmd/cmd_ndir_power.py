@@ -54,11 +54,6 @@ class CmdNDIRPower(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -66,4 +61,4 @@ class CmdNDIRPower(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRPower:{power:%d, verbose:%s, args:%s}" % (self.power, self.verbose, self.args)
+        return "CmdNDIRPower:{power:%d, verbose:%s}" % (self.power, self.verbose)

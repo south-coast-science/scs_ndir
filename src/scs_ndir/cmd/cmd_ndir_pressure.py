@@ -58,11 +58,6 @@ class CmdNDIRPressure(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -70,5 +65,4 @@ class CmdNDIRPressure(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRPressure:{interval:%s, samples:%s, verbose:%s, args:%s}" % \
-               (self.interval, self.samples, self.verbose, self.args)
+        return "CmdNDIRPressure:{interval:%s, samples:%s, verbose:%s}" % (self.interval, self.samples, self.verbose)

@@ -91,11 +91,6 @@ class CmdNDIRCalib(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -103,5 +98,5 @@ class CmdNDIRCalib(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRCalib:{default:%s, set:%s, restart:%s, verbose:%s, args:%s}" % \
-               (self.default, self.__opts.set, self.restart, self.verbose, self.args)
+        return "CmdNDIRCalib:{default:%s, set:%s, restart:%s, verbose:%s}" % \
+               (self.default, self.__opts.set, self.restart, self.verbose)

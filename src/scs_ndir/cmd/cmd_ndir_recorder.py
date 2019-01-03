@@ -76,11 +76,6 @@ class CmdNDIRRecorder(object):
         return self.__opts.verbose
 
 
-    @property
-    def args(self):
-        return self.__args
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def print_help(self, file):
@@ -88,5 +83,5 @@ class CmdNDIRRecorder(object):
 
 
     def __str__(self, *args, **kwargs):
-        return "CmdNDIRRecorder:{interval:%s, samples:%s, deferral:%s, verbose:%s, args:%s}" % \
-               (self.interval, self.samples, self.deferral, self.verbose, self.args)
+        return "CmdNDIRRecorder:{interval:%s, samples:%s, deferral:%s, verbose:%s}" % \
+               (self.interval, self.samples, self.deferral, self.verbose)

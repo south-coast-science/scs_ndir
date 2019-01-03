@@ -106,5 +106,4 @@ class NDIRMonitor(SynchronisedProcess):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRMonitor:{value:%s, averaging:%s, ndir:%s}" % \
-               (self._value, self.__averaging, self.__ndir)
+        return "NDIRMonitor:{value:%s, averaging:%s, ndir:%s}" % (self._value, self.__averaging, self.__ndir)
