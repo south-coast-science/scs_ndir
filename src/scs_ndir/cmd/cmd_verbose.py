@@ -35,4 +35,4 @@ class CmdVerbose(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "CmdVerbose:{verbose:%s}" % (self.verbose)
+        return "CmdVerbose:{verbose:%s}" % self.verbose

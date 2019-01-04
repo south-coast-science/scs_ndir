@@ -7,7 +7,7 @@ Created on 11 Dec 2017
 # import sys
 import time
 
-from scs_core.data.datum import Datum
+from scs_core.data.datum import Decode, Encode
 
 from scs_core.gas.ndir import NDIR
 from scs_core.gas.ndir_datum import NDIRDatum
@@ -106,9 +106,9 @@ class SPINDIRx1(NDIR):
             cmd = SPINDIRx1Cmd.find('sg')
             response = self._transact(cmd)
 
-            cnc = Datum.decode_float(response[0:4])
-            cnc_igl = Datum.decode_float(response[4:8])
-            temp = Datum.decode_float(response[8:12])
+            cnc = Decode.float(response[0:4])
+            cnc_igl = Decode.float(response[4:8])
+            temp = Decode.float(response[8:12])
 
             return NDIRDatum(temp, cnc, cnc_igl)
 
@@ -148,7 +148,7 @@ class SPINDIRx1(NDIR):
             cmd = SPINDIRx1Cmd.find('sp')
             response = self._transact(cmd)
 
-            p_a = Datum.decode_float(response[0:4])
+            p_a = Decode.float(response[0:4])
 
             return round(p_a, 1)
 
@@ -171,12 +171,12 @@ class SPINDIRx1(NDIR):
             # input voltage...
             cmd = SPINDIRx1Cmd.find('iv')
             response = self._transact(cmd)
-            pwr_in = Datum.decode_float(response)
+            pwr_in = Decode.float(response)
 
             # uptime...
             cmd = SPINDIRx1Cmd.find('up')
             response = self._transact(cmd)
-            seconds = Datum.decode_unsigned_long(response)
+            seconds = Decode.unsigned_long(response)
 
             status = NDIRStatus(watchdog_reset, pwr_in, NDIRUptime(seconds))
 
@@ -329,7 +329,7 @@ class SPINDIRx1(NDIR):
         try:
             self.obtain_lock()
 
-            voltage_bytes = Datum.encode_float(voltage)
+            voltage_bytes = Encode.float(voltage)
 
             cmd = SPINDIRx1Cmd.find('ll')
             self._transact(cmd, voltage_bytes)
@@ -364,9 +364,9 @@ class SPINDIRx1(NDIR):
             cmd = SPINDIRx1Cmd.find('sr')
             response = self._transact(cmd)
 
-            pile_ref_amplitude = Datum.decode_unsigned_int(response[0:2])
-            pile_act_amplitude = Datum.decode_unsigned_int(response[2:4])
-            thermistor_average = Datum.decode_unsigned_int(response[4:6])
+            pile_ref_amplitude = Decode.unsigned_int(response[0:2])
+            pile_act_amplitude = Decode.unsigned_int(response[2:4])
+            thermistor_average = Decode.unsigned_int(response[4:6])
 
             return pile_ref_amplitude, pile_act_amplitude, thermistor_average
 
@@ -382,9 +382,9 @@ class SPINDIRx1(NDIR):
             cmd = SPINDIRx1Cmd.find('sv')
             response = self._transact(cmd)
 
-            pile_ref_amplitude = Datum.decode_float(response[0:4])
-            pile_act_amplitude = Datum.decode_float(response[4:8])
-            thermistor_average = Datum.decode_float(response[8:12])
+            pile_ref_amplitude = Decode.float(response[0:4])
+            pile_act_amplitude = Decode.float(response[4:8])
+            thermistor_average = Decode.float(response[8:12])
 
             # print("pile_ref_amplitude: %s pile_act_amplitude: %s thermistor_average: %s" % \
             #       (pile_ref_amplitude, pile_act_amplitude, thermistor_average))
@@ -403,10 +403,10 @@ class SPINDIRx1(NDIR):
             cmd = SPINDIRx1Cmd.find('so')
             response = self._transact(cmd)
 
-            min_ref_offset = Datum.decode_unsigned_int(response[0:2])
-            min_act_offset = Datum.decode_unsigned_int(response[2:4])
-            max_ref_offset = Datum.decode_unsigned_int(response[4:6])
-            max_act_offset = Datum.decode_unsigned_int(response[6:8])
+            min_ref_offset = Decode.unsigned_int(response[0:2])
+            min_act_offset = Decode.unsigned_int(response[2:4])
+            max_ref_offset = Decode.unsigned_int(response[4:6])
+            max_act_offset = Decode.unsigned_int(response[6:8])
 
             return min_ref_offset, min_act_offset, max_ref_offset, max_act_offset
 
@@ -436,9 +436,9 @@ class SPINDIRx1(NDIR):
             cmd = SPINDIRx1Cmd.find('mr')
             response = self._transact(cmd)
 
-            pile_ref_value = Datum.decode_unsigned_int(response[0:2])
-            pile_act_value = Datum.decode_unsigned_int(response[2:4])
-            thermistor_value = Datum.decode_unsigned_int(response[4:6])
+            pile_ref_value = Decode.unsigned_int(response[0:2])
+            pile_act_value = Decode.unsigned_int(response[2:4])
+            thermistor_value = Decode.unsigned_int(response[4:6])
 
             return pile_ref_value, pile_act_value, thermistor_value
 
@@ -453,9 +453,9 @@ class SPINDIRx1(NDIR):
             cmd = SPINDIRx1Cmd.find('mv')
             response = self._transact(cmd)
 
-            pile_ref_voltage = Datum.decode_float(response[0:4])
-            pile_act_voltage = Datum.decode_float(response[4:8])
-            thermistor_voltage = Datum.decode_float(response[8:12])
+            pile_ref_voltage = Decode.float(response[0:4])
+            pile_act_voltage = Decode.float(response[4:8])
+            thermistor_voltage = Decode.float(response[8:12])
 
             return pile_ref_voltage, pile_act_voltage, thermistor_voltage
 
@@ -470,9 +470,9 @@ class SPINDIRx1(NDIR):
             self.obtain_lock()
 
             # start recording...
-            deferral_bytes = Datum.encode_unsigned_int(deferral)
-            interval_bytes = Datum.encode_unsigned_int(interval)
-            count_bytes = Datum.encode_unsigned_int(count)
+            deferral_bytes = Encode.unsigned_int(deferral)
+            interval_bytes = Encode.unsigned_int(interval)
+            count_bytes = Encode.unsigned_int(count)
 
             param_bytes = []
             param_bytes.extend(deferral_bytes)
@@ -497,9 +497,9 @@ class SPINDIRx1(NDIR):
             values = []
 
             for i in range(0, cmd.return_count, 10):
-                timestamp = Datum.decode_unsigned_int(response[i:i + 2])
-                pile_ref = Datum.decode_long(response[i + 2:i + 6])
-                pile_act = Datum.decode_long(response[i + 6:i + 10])
+                timestamp = Decode.unsigned_int(response[i:i + 2])
+                pile_ref = Decode.long(response[i + 2:i + 6])
+                pile_act = Decode.long(response[i + 6:i + 10])
 
                 values.append((timestamp, pile_ref, pile_act))
 
@@ -517,7 +517,7 @@ class SPINDIRx1(NDIR):
 
             cmd = SPINDIRx1Cmd.find('ir')
             response = self._transact(cmd)
-            v_in_value = Datum.decode_unsigned_int(response)
+            v_in_value = Decode.unsigned_int(response)
 
             return v_in_value
 
@@ -531,7 +531,7 @@ class SPINDIRx1(NDIR):
 
             cmd = SPINDIRx1Cmd.find('iv')
             response = self._transact(cmd)
-            v_in_voltage = Datum.decode_float(response)
+            v_in_voltage = Decode.float(response)
 
             return v_in_voltage
 
@@ -594,7 +594,7 @@ class SPINDIRx1(NDIR):
         cmd.return_count = 2
 
         response = self._transact(cmd, (block, index))
-        value = Datum.decode_unsigned_int(response)
+        value = Decode.unsigned_int(response)
 
         return value
 
@@ -602,7 +602,7 @@ class SPINDIRx1(NDIR):
     def _calib_w_unsigned_int(self, block, index, value):
         cmd = SPINDIRx1Cmd.find('cw')
 
-        value_bytes = Datum.encode_unsigned_int(value)
+        value_bytes = Encode.unsigned_int(value)
         self._transact(cmd, (block, index), value_bytes)
 
         time.sleep(cmd.execution_time)
@@ -613,7 +613,7 @@ class SPINDIRx1(NDIR):
         cmd.return_count = 4
 
         response = self._transact(cmd, (block, index))
-        value = Datum.decode_unsigned_long(response)
+        value = Decode.unsigned_long(response)
 
         return value
 
@@ -621,7 +621,7 @@ class SPINDIRx1(NDIR):
     def _calib_w_unsigned_long(self, block, index, value):
         cmd = SPINDIRx1Cmd.find('cw')
 
-        value_bytes = Datum.encode_unsigned_long(value)
+        value_bytes = Encode.unsigned_long(value)
         self._transact(cmd, (block, index), value_bytes)
 
         time.sleep(cmd.execution_time)
@@ -632,7 +632,7 @@ class SPINDIRx1(NDIR):
         cmd.return_count = 4
 
         response = self._transact(cmd, (block, index))
-        value = Datum.decode_float(response)
+        value = Decode.float(response)
 
         return value
 
@@ -640,7 +640,7 @@ class SPINDIRx1(NDIR):
     def _calib_w_float(self, block, index, value):
         cmd = SPINDIRx1Cmd.find('cw')
 
-        value_bytes = Datum.encode_float(value)
+        value_bytes = Encode.float(value)
         self._transact(cmd, (block, index), value_bytes)
 
         time.sleep(cmd.execution_time)
