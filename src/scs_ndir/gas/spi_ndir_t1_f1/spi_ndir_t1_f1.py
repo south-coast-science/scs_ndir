@@ -43,6 +43,8 @@ class SPINDIRt1f1(NDIR):
     __BOOT_DELAY =                      3.500           # seconds to first sample available
     __PARAM_DELAY =                     0.001           # seconds between SPI sessions
 
+    __POST_SAMPLE_DELAY =               100             # milliseconds
+
     __RESPONSE_ACK =                    0x01
     __RESPONSE_NACK =                   0x02
     __RESPONSE_NONE =                   (0x00, 0xff)
@@ -221,7 +223,7 @@ class SPINDIRt1f1(NDIR):
             lamp_period = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_LAMP_PERIOD)
             sample_end = self._calib_r_unsigned_int(0, NDIRCalib.INDEX_SAMPLE_END)
 
-            return (lamp_period + sample_end + 10) / 1000       # seconds
+            return (lamp_period + sample_end + self.__POST_SAMPLE_DELAY) / 1000       # seconds
 
         finally:
             self.release_lock()
