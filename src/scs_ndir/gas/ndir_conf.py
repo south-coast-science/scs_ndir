@@ -7,8 +7,6 @@ example JSON:
 {"model": "SPINDIRx1", "tally": 10}
 """
 
-import os
-
 from scs_core.gas.ndir_conf import NDIRConf as AbstractNDIRConf
 
 from scs_ndir.gas.ndir_monitor import NDIRMonitor
@@ -25,8 +23,8 @@ class NDIRConf(AbstractNDIRConf):
     """
 
     @classmethod
-    def filename(cls, host):
-        return os.path.join(host.conf_dir(), cls._FILENAME)
+    def persistence_location(cls, host):
+        return host.conf_dir(), cls._FILENAME
 
 
     # ----------------------------------------------------------------------------------------------------------------

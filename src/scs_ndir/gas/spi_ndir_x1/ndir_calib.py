@@ -17,7 +17,6 @@ example JSON:
 """
 
 import json
-import os
 
 from collections import OrderedDict
 
@@ -63,8 +62,8 @@ class NDIRCalib(PersistentJSONable):
     __FILENAME = "ndir_calib.json"
 
     @classmethod
-    def filename(cls, host):
-        return os.path.join(host.conf_dir(), cls.__FILENAME)
+    def persistence_location(cls, host):
+        return host.conf_dir(), cls.__FILENAME
 
 
     # ----------------------------------------------------------------------------------------------------------------
