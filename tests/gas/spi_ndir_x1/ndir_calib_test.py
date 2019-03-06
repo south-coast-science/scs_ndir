@@ -8,8 +8,6 @@ Created on 8 Feb 2018
 
 import json
 
-from collections import OrderedDict
-
 from scs_core.data.json import JSONify
 
 from scs_host.sys.host import Host
@@ -130,7 +128,7 @@ jstr = JSONify.dumps(calib)
 print(jstr)
 print("-")
 
-jdict = json.loads(jstr, object_pairs_hook=OrderedDict)
+jdict = json.loads(jstr)
 
 print("store...")
 calib = NDIRCalib.construct_from_jdict(jdict)

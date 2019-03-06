@@ -8,8 +8,6 @@ Created on 2 Jan 2018
 
 import json
 
-from collections import OrderedDict
-
 from scs_core.data.json import JSONify
 
 from scs_host.bus.i2c import I2C
@@ -38,7 +36,7 @@ try:
     print(jstr)
     print("-")
 
-    jdict = json.loads(jstr, object_pairs_hook=OrderedDict)
+    jdict = json.loads(jstr)
 
     status = NDIRStatus.construct_from_jdict(jdict)
     print("status: %s" % status)
