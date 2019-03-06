@@ -70,7 +70,7 @@ class NDIRCalib(PersistentJSONable):
 
     @classmethod
     def default(cls):
-        jdict = json.loads(cls.CALIB_IAQ, object_pairs_hook=OrderedDict)
+        jdict = json.loads(cls.CALIB_IAQ)
 
         return NDIRCalib.construct_from_jdict(jdict)
 
