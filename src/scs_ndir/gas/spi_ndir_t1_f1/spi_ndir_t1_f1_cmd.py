@@ -134,5 +134,5 @@ class SPINDIRt1f1Cmd(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRCmd:{name:%s, response_time:%0.3f, execution_time:%0.3f, return_count:%s}" % \
+        return "NDIRCmd:{name:%s, response_time:%s, execution_time:%s, return_count:%s}" % \
                (self.name, self.response_time, self.execution_time, self.return_count)
