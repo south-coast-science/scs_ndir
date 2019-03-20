@@ -37,7 +37,7 @@ class SPINDIRt1f1Cmd(JSONable):
             'wr': SPINDIRt1f1Cmd('wr', 0.001, 2.500, 0),            # watchdog reset
 
             'cr': SPINDIRt1f1Cmd('cr', 0.002, 0.000, None),         # calib read
-            'cw': SPINDIRt1f1Cmd('cw', 0.004, 0.010, 0),            # calib write
+            'cw': SPINDIRt1f1Cmd('cw', 0.004, 0.100, 0),            # calib write
             'cl': SPINDIRt1f1Cmd('cl', 0.010, 2.200, 0),            # calib load
 
             'lr': SPINDIRt1f1Cmd('lr', 0.001, 0.000, 0),            # lamp run
