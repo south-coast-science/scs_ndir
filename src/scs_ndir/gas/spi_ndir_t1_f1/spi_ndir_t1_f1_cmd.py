@@ -37,7 +37,7 @@ class SPINDIRt1f1Cmd(JSONable):
             'wr': SPINDIRt1f1Cmd('wr', 0.001, 2.500, 0),            # watchdog reset
 
             'cr': SPINDIRt1f1Cmd('cr', 0.002, 0.000, None),         # calib read
-            'cw': SPINDIRt1f1Cmd('cw', 0.004, 0.010, 0),            # calib write
+            'cw': SPINDIRt1f1Cmd('cw', 0.004, 0.100, 0),            # calib write
             'cl': SPINDIRt1f1Cmd('cl', 0.010, 2.200, 0),            # calib load
 
             'lr': SPINDIRt1f1Cmd('lr', 0.001, 0.000, 0),            # lamp run
@@ -134,5 +134,5 @@ class SPINDIRt1f1Cmd(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRCmd:{name:%s, response_time:%0.3f, execution_time:%0.3f, return_count:%s}" % \
+        return "NDIRCmd:{name:%s, response_time:%s, execution_time:%s, return_count:%s}" % \
                (self.name, self.response_time, self.execution_time, self.return_count)
