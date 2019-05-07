@@ -7,7 +7,7 @@ This package is compatible with the following microcontroller firmware:
 https://github.com/south-coast-science/scs_spi_ndir_t1_mcu_f1
 """
 
-import sys
+# import sys
 import time
 
 from scs_core.data.datum import Decode, Encode
@@ -636,8 +636,8 @@ class SPINDIRt1f1(NDIR):
     # SPI interactions...
 
     def _transact(self, cmd, param_group_1=None, param_group_2=None):
-        print("cmd: %s param_group_1:%s param_group_2:%s" %
-              (cmd, str(param_group_1), str(param_group_2)), file=sys.stderr)
+        # print("cmd: %s param_group_1:%s param_group_2:%s" %
+        #       (cmd, str(param_group_1), str(param_group_2)), file=sys.stderr)
 
         try:
             self.__spi.open()
@@ -659,7 +659,7 @@ class SPINDIRt1f1(NDIR):
             # ACK / NACK...
             response = self.__spi.read_bytes(1)
 
-            print("response: %s" % str(response), file=sys.stderr)
+            # print("response: %s" % str(response), file=sys.stderr)
 
             if response[0] in self.__RESPONSE_NONE:
                 raise NDIRException.construct('None received', response[0], cmd, param_group_1, param_group_2)
