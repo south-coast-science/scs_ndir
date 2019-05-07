@@ -21,7 +21,7 @@ class CmdNDIRConf(object):
 
         # optional...
         self.__parser.add_option("--model", "-m", type="string", nargs=1, action="store", dest="model",
-                                 help="set the NDIR MODEL")
+                                 help="set the NDIR MODEL (t1f1)")
 
         self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
                                  help="set the averaging tally")
