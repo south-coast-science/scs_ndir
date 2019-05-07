@@ -33,7 +33,7 @@ from scs_host.sys.host import Host
 from scs_ndir.cmd.cmd_ndir_power import CmdNDIRPower
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.ndir_conf import NDIRConf
+from scs_ndir.gas.ndir_conf import NDIRConf
 
 
 # --------------------------------------------------------------------------------------------------------------------

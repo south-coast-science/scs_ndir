@@ -51,7 +51,7 @@ from scs_ndir.cmd.cmd_ndir_sampler import CmdNDIRSampler
 from scs_ndir.datum.ndir_offset_datum import NDIROffsetDatum
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.ndir_conf import NDIRConf
+from scs_ndir.gas.ndir_conf import NDIRConf
 
 from scs_ndir.sampler.ndir_sampler import NDIRSampler
 from scs_ndir.sampler.ndir_voltage_sampler import NDIRVoltageSampler

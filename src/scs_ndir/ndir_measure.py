@@ -44,7 +44,7 @@ from scs_host.sys.host import Host
 from scs_ndir.cmd.cmd_ndir_measure import CmdNDIRMeasure
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.ndir_conf import NDIRConf
+from scs_ndir.gas.ndir_conf import NDIRConf
 from scs_ndir.sampler.ndir_voltage_measure import NDIRVoltageMeasure
 
 

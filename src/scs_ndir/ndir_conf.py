@@ -38,6 +38,7 @@ from scs_core.data.json import JSONify
 from scs_host.sys.host import Host
 
 from scs_ndir.cmd.cmd_ndir_conf import CmdNDIRConf
+
 from scs_ndir.gas.ndir_conf import NDIRConf
 
 
