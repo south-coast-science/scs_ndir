@@ -73,11 +73,11 @@ class SPINDIRx1(NDIR):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, spi_bus, spi_device):
+    def __init__(self, load_switch_active_high, spi_bus, spi_device):
         """
         Constructor
         """
-        self.__io = IO()
+        self.__io = IO(load_switch_active_high)
         self.__spi = SPI(spi_bus, spi_device, SPINDIRx1.__SPI_MODE, SPINDIRx1.__SPI_CLOCK)
 
 
@@ -85,18 +85,18 @@ class SPINDIRx1(NDIR):
     # NDIR implementation...
 
     def power_on(self):
-        if not self.__io.ndir_power:           # active low
+        if self.__io.ndir_power:
             return
 
-        self.__io.ndir_power = IO.LOW
+        self.__io.ndir_power = True
         time.sleep(self.__BOOT_DELAY)
 
 
     def power_off(self):
-        if self.__io.ndir_power:                # active low
+        if not self.__io.ndir_power:
             return
 
-        self.__io.ndir_power = IO.HIGH
+        self.__io.ndir_power = False
 
 
     def sample(self):

@@ -44,6 +44,8 @@ from scs_core.data.json import JSONify
 from scs_core.sync.timed_runner import TimedRunner
 from scs_core.sys.system_id import SystemID
 
+from scs_dfe.board.dfe_conf import DFEConf
+
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
@@ -84,15 +86,25 @@ if __name__ == '__main__':
 
         I2C.open(Host.I2C_SENSORS)
 
-        # NDIRConf...
-        conf =  NDIRConf.load(Host)
+        # DFEConf...
+        dfe_conf = DFEConf.load(Host)
 
-        if conf is None:
+        if dfe_conf is None:
+            print("ndir_sampler: DFEConf not available.", file=sys.stderr)
+            exit(1)
+
+        if cmd.verbose and dfe_conf:
+            print("ndir_sampler: %s" % dfe_conf, file=sys.stderr)
+
+        # NDIRConf...
+        ndir_conf =  NDIRConf.load(Host)
+
+        if ndir_conf is None:
             print("ndir_sampler: NDIRConf not available.", file=sys.stderr)
             exit(1)
 
         # NDIR...
-        ndir = conf.ndir(Host)
+        ndir = ndir_conf.ndir(Host, dfe_conf.load_switch_active_high)
 
         if cmd.verbose:
             print("ndir_sampler: %s" % ndir, file=sys.stderr)
