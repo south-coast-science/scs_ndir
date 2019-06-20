@@ -48,7 +48,7 @@ import sys
 from scs_core.data.json import JSONify
 from scs_core.data.path_dict import PathDict
 
-from scs_dfe.board.dfe_conf import DFEConf
+from scs_dfe.interface.interface_conf import InterfaceConf
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
@@ -77,15 +77,21 @@ if __name__ == '__main__':
 
         I2C.open(Host.I2C_SENSORS)
 
-        # DFEConf...
-        dfe_conf = DFEConf.load(Host)
+        # Interface...
+        interface_conf = InterfaceConf.load(Host)
 
-        if dfe_conf is None:
-            print("ndir_calib: DFEConf not available.", file=sys.stderr)
+        if interface_conf is None:
+            print("ndir_calib: InterfaceConf not available.", file=sys.stderr)
             exit(1)
 
-        if cmd.verbose and dfe_conf:
-            print("ndir_calib: %s" % dfe_conf, file=sys.stderr)
+        interface = interface_conf.interface()
+
+        if interface is None:
+            print("ndir_calib: Interface not available.", file=sys.stderr)
+            exit(1)
+
+        if cmd.verbose and interface:
+            print("ndir_calib: %s" % interface, file=sys.stderr)
 
         # NDIRConf...
         ndir_conf =  NDIRConf.load(Host)
@@ -98,7 +104,7 @@ if __name__ == '__main__':
         calib_class = ndir_conf.calib_class()
 
         # NDIR...
-        ndir = ndir_conf.ndir(Host, dfe_conf.load_switch_active_high)
+        ndir = ndir_conf.ndir(Host, interface.load_switch_active_high)
 
         if cmd.verbose:
             print("ndir_calib: %s" % ndir, file=sys.stderr)

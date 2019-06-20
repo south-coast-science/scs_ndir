@@ -16,7 +16,7 @@ from scs_core.gas.ndir import NDIR
 from scs_core.gas.ndir_datum import NDIRDatum
 from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
 
-from scs_dfe.board.io import IO
+from scs_dfe.interface.components.io import IO
 
 from scs_host.bus.spi import SPI
 from scs_host.lock.lock import Lock
