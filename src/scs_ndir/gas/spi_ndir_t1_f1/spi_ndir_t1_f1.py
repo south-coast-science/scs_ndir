@@ -16,7 +16,7 @@ from scs_core.gas.ndir import NDIR
 from scs_core.gas.ndir_datum import NDIRDatum
 from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
 
-from scs_dfe.board.io import IO
+from scs_dfe.interface.components.io import IO
 
 from scs_host.bus.spi import SPI
 from scs_host.lock.lock import Lock
@@ -68,11 +68,11 @@ class SPINDIRt1f1(NDIR):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, spi_bus, spi_device):
+    def __init__(self, load_switch_active_high, spi_bus, spi_device):
         """
         Constructor
         """
-        self.__io = IO()
+        self.__io = IO(load_switch_active_high)
         self.__spi = SPI(spi_bus, spi_device, SPINDIRt1f1.__SPI_MODE, SPINDIRt1f1.__SPI_CLOCK)
 
 
@@ -80,18 +80,18 @@ class SPINDIRt1f1(NDIR):
     # NDIR implementation...
 
     def power_on(self):
-        if not self.__io.ndir_power:           # active low
+        if self.__io.ndir_power:
             return
 
-        self.__io.ndir_power = IO.LOW
+        self.__io.ndir_power = True
         time.sleep(self.__BOOT_DELAY)
 
 
     def power_off(self):
-        if self.__io.ndir_power:                # active low
+        if not self.__io.ndir_power:
             return
 
-        self.__io.ndir_power = IO.HIGH
+        self.__io.ndir_power = False
 
 
     def version(self):

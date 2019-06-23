@@ -25,6 +25,8 @@ import sys
 
 from scs_core.data.json import JSONify
 
+from scs_dfe.interface.interface_conf import InterfaceConf
+
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
@@ -52,15 +54,31 @@ if __name__ == '__main__':
 
         I2C.open(Host.I2C_SENSORS)
 
-        # NDIRConf...
-        conf =  NDIRConf.load(Host)
+        # Interface...
+        interface_conf = InterfaceConf.load(Host)
 
-        if conf is None:
+        if interface_conf is None:
+            print("ndir_version: InterfaceConf not available.", file=sys.stderr)
+            exit(1)
+
+        interface = interface_conf.interface()
+
+        if interface is None:
+            print("ndir_version: Interface not available.", file=sys.stderr)
+            exit(1)
+
+        if cmd.verbose and interface:
+            print("ndir_version: %s" % interface, file=sys.stderr)
+
+        # NDIRConf...
+        ndir_conf =  NDIRConf.load(Host)
+
+        if ndir_conf is None:
             print("ndir_version: NDIRConf not available.", file=sys.stderr)
             exit(1)
 
         # NDIR...
-        ndir = conf.ndir(Host)
+        ndir = ndir_conf.ndir(Host, interface.load_switch_active_high)
 
         if cmd.verbose:
             print("ndir_version: %s" % ndir, file=sys.stderr)

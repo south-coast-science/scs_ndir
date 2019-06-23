@@ -17,7 +17,7 @@ from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = SPINDIRx1(Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir)
     print("-")
 

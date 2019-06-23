@@ -26,7 +26,7 @@ sample_count = 200              # 10 mS * 1000 = 10 S
 try:
     I2C.open(Host.I2C_SENSORS)
 
-    ndir = SPINDIRx1(Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir, file=sys.stderr)
     print("-", file=sys.stderr)
 
