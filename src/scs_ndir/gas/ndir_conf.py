@@ -52,17 +52,17 @@ class NDIRConf(AbstractNDIRConf):
     # ----------------------------------------------------------------------------------------------------------------
     # AbstractNDIRConf implementation...
 
-    def ndir_monitor(self, host, load_switch_active_high):
-        return NDIRMonitor(self.ndir(host, load_switch_active_high), self)
+    def ndir_monitor(self, interface, host):
+        return NDIRMonitor(self.ndir(interface, host), self)
 
 
-    def ndir(self, host, load_switch_active_high):
+    def ndir(self, interface, host):
         if self.model is None:
             raise ValueError('unknown model: %s' % self.model)
 
         # TODO: check against a list of supported devices
 
-        return SPINDIRt1f1(load_switch_active_high, host.ndir_spi_bus(), host.ndir_spi_device())
+        return SPINDIRt1f1(interface, host.ndir_spi_bus(), host.ndir_spi_device())
 
 
     # ----------------------------------------------------------------------------------------------------------------
