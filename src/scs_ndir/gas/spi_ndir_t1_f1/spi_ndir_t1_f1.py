@@ -7,7 +7,6 @@ This package is compatible with the following microcontroller firmware:
 https://github.com/south-coast-science/scs_spi_ndir_t1_mcu_f1
 """
 
-# import sys
 import time
 
 from scs_core.data.datum import Decode, Encode
@@ -15,8 +14,6 @@ from scs_core.data.datum import Decode, Encode
 from scs_core.gas.ndir import NDIR
 from scs_core.gas.ndir_datum import NDIRDatum
 from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
-
-from scs_dfe.interface.component.io import IO
 
 from scs_host.bus.spi import SPI
 from scs_host.lock.lock import Lock
@@ -68,31 +65,23 @@ class SPINDIRt1f1(NDIR):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, load_switch_active_high, spi_bus, spi_device):
+    @classmethod
+    def boot_time(cls):
+        return cls.__BOOT_DELAY
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __init__(self, interface, spi_bus, spi_device):
         """
         Constructor
         """
-        self.__io = IO(load_switch_active_high)
+        super().__init__(interface)
+
         self.__spi = SPI(spi_bus, spi_device, SPINDIRt1f1.__SPI_MODE, SPINDIRt1f1.__SPI_CLOCK)
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # NDIR implementation...
-
-    def power_on(self):
-        if self.__io.ndir_power:
-            return
-
-        self.__io.ndir_power = True
-        time.sleep(self.__BOOT_DELAY)
-
-
-    def power_off(self):
-        if not self.__io.ndir_power:
-            return
-
-        self.__io.ndir_power = False
-
 
     def version(self):
         try:
@@ -689,4 +678,4 @@ class SPINDIRt1f1(NDIR):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "SPINDIRt1f1:{io:%s, spi:%s}" % (self.__io, self.__spi)
+        return "SPINDIRt1f1:{interface:%s, spi:%s}" % (self.interface, self.__spi)
