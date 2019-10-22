@@ -34,7 +34,6 @@ try:
         exit(1)
 
     interface = interface_conf.interface()
-
     print(interface)
 
     # NDIR...
