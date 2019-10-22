@@ -11,7 +11,7 @@ from multiprocessing import Manager
 
 from scs_core.data.average import Average
 
-from scs_core.gas.ndir_datum import NDIRDatum
+from scs_core.gas.ndir.ndir_datum import NDIRDatum
 
 from scs_core.sync.interval_timer import IntervalTimer
 from scs_core.sync.synchronised_process import SynchronisedProcess

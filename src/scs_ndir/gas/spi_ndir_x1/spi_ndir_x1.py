@@ -8,9 +8,9 @@ import time
 
 from scs_core.data.datum import Decode, Encode
 
-from scs_core.gas.ndir import NDIR
-from scs_core.gas.ndir_datum import NDIRDatum
-from scs_core.gas.ndir_version import NDIRVersion, NDIRTag
+from scs_core.gas.ndir.ndir import NDIR
+from scs_core.gas.ndir.ndir_datum import NDIRDatum
+from scs_core.gas.ndir.ndir_version import NDIRVersion, NDIRTag
 
 from scs_host.bus.spi import SPI
 from scs_host.lock.lock import Lock

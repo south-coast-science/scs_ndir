@@ -10,7 +10,7 @@ import json
 
 from scs_core.data.json import JSONify
 
-from scs_core.gas.ndir_version import NDIRVersion
+from scs_core.gas.ndir.ndir_version import NDIRVersion
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host

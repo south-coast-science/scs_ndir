@@ -7,7 +7,7 @@ example JSON:
 {"model": "SPINDIRx1", "tally": 10}
 """
 
-from scs_core.gas.ndir_conf import NDIRConf as AbstractNDIRConf
+from scs_core.gas.ndir.ndir_conf import NDIRConf as AbstractNDIRConf
 
 from scs_ndir.gas.ndir_monitor import NDIRMonitor
 
