@@ -104,7 +104,7 @@ if __name__ == '__main__':
         calib_class = ndir_conf.calib_class()
 
         # NDIR...
-        ndir = ndir_conf.ndir(Host, interface.load_switch_active_high)
+        ndir = ndir_conf.ndir(interface, Host)
 
         if cmd.verbose:
             print("ndir_calib: %s" % ndir, file=sys.stderr)

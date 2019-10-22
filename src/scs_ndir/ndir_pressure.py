@@ -88,7 +88,7 @@ if __name__ == '__main__':
             exit(1)
 
         # NDIR...
-        ndir = ndir_conf.ndir(Host, interface.load_switch_active_high)
+        ndir = ndir_conf.ndir(interface, Host)
 
         if cmd.verbose:
             print("ndir_pressure: %s" % ndir, file=sys.stderr)
