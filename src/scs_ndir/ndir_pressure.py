@@ -39,7 +39,7 @@ from scs_ndir.cmd.cmd_ndir_pressure import CmdNDIRPressure
 from scs_ndir.exception.ndir_exception import NDIRException
 from scs_ndir.sampler.ndir_pressure_sampler import NDIRPressureSampler
 
-from scs_ndir.gas.ndir_conf import NDIRConf
+from scs_ndir.gas.ndir.ndir_conf import NDIRConf
 
 
 # --------------------------------------------------------------------------------------------------------------------

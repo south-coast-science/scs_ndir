@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 
 """
-Created on 6 Jan 2018
+Created on 29 Jan 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
-"""
 
-from scs_core.data.json import JSONify
+Warning: ndir_calib_test.py must be run first!
+"""
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
+from scs_ndir.gas.ndir.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
+from scs_ndir.gas.ndir.spi_ndir_x1.ndir_calib import NDIRCalib
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -27,26 +28,21 @@ try:
 
     status = ndir.status()
     print("status: %s" % status)
+    print("=")
+
+    print("current...")
+    calib = ndir.retrieve_calib()
+    print("calib: %s" % calib)
+
+    calib = NDIRCalib.load(Host)
+
+    ndir.store_calib(calib)
     print("-")
 
-    jstr = JSONify.dumps(status)
-    print(jstr)
-    print("-")
+    print("new...")
+    calib = ndir.retrieve_calib()
+    print("calib: %s" % calib)
 
-    ndir.reset()
-    print("NDIR RESET")
-    print("-")
-
-    status = ndir.status()
-    print("status: %s" % status)
-    print("-")
-
-    jstr = JSONify.dumps(status)
-    print(jstr)
-    print("-")
-
-except ValueError as ex:
-    print("ValueError: %s" % ex)
 
 except KeyboardInterrupt:
     print("")

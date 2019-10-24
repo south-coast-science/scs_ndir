@@ -17,10 +17,11 @@ from scs_host.lock.lock import Lock
 
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.gas.spi_ndir_x1.ndir_calib import NDIRCalib, NDIRRangeCalib
-from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1_cmd import SPINDIRx1Cmd
-from scs_ndir.gas.spi_ndir_x1.ndir_status import NDIRStatus
-from scs_ndir.gas.spi_ndir_x1.ndir_uptime import NDIRUptime
+from scs_ndir.gas.ndir.spi_ndir_x1.ndir_calib import NDIRCalib, NDIRRangeCalib
+from scs_ndir.gas.ndir.spi_ndir_x1.ndir_status import NDIRStatus
+from scs_ndir.gas.ndir.spi_ndir_x1.ndir_uptime import NDIRUptime
+
+from scs_ndir.gas.ndir.spi_ndir_x1.spi_ndir_x1_cmd import SPINDIRx1Cmd
 
 
 # --------------------------------------------------------------------------------------------------------------------

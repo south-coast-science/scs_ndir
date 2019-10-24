@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
 
 """
-Created on 2 Jan 2018
+Created on 6 Jan 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
-import json
-
 from scs_core.data.json import JSONify
-
-from scs_core.gas.ndir.ndir_version import NDIRVersion
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
+from scs_ndir.gas.ndir.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -29,21 +25,23 @@ try:
 
     ndir.power_on()
 
-    version = ndir.version()
-    print("version: %s" % version)
+    status = ndir.status()
+    print("status: %s" % status)
     print("-")
 
-    jstr = JSONify.dumps(version)
+    jstr = JSONify.dumps(status)
     print(jstr)
     print("-")
 
-    jdict = json.loads(jstr)
-
-    version = NDIRVersion.construct_from_jdict(jdict)
-    print("version: %s" % version)
+    ndir.reset()
+    print("NDIR RESET")
     print("-")
 
-    jstr = JSONify.dumps(version)
+    status = ndir.status()
+    print("status: %s" % status)
+    print("-")
+
+    jstr = JSONify.dumps(status)
     print(jstr)
     print("-")
 
