@@ -4,7 +4,7 @@ Created on 28 Feb 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
 example JSON:
-{"model": "SPINDIRx1", "tally": 10}
+{"model": "t1f1", "tally": 10, "raw": false}
 """
 
 from scs_core.gas.ndir.ndir_conf import NDIRConf as AbstractNDIRConf

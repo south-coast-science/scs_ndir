@@ -76,10 +76,7 @@ class NDIRMonitor(SynchronisedProcess):
                 self.__ndir.sample()
                 time.sleep(sleep_time)
 
-                if self.__raw:
-                    datum = NDIRVoltages(*self.__ndir.get_sample_voltage())
-                else:
-                    datum = self.__ndir.get_sample_gas()
+                datum = NDIRVoltages(*self.__ndir.get_sample_voltage()) if self.__raw else self.__ndir.get_sample_gas()
 
                 self.__averaging.append(datum)
                 average = self.__averaging.compute()
