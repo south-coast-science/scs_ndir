@@ -9,10 +9,10 @@ example JSON:
 
 from scs_core.gas.ndir.ndir_conf import NDIRConf as AbstractNDIRConf
 
-from scs_ndir.gas.ndir_monitor import NDIRMonitor
+from scs_ndir.gas.ndir.ndir_monitor import NDIRMonitor
 
-from scs_ndir.gas.spi_ndir_t1_f1.ndir_calib import NDIRCalib as SPINDIRv1Calib
-from scs_ndir.gas.spi_ndir_t1_f1.spi_ndir_t1_f1 import SPINDIRt1f1
+from scs_ndir.gas.ndir.spi_ndir_t1_f1.ndir_calib import NDIRCalib as SPINDIRv1Calib
+from scs_ndir.gas.ndir.spi_ndir_t1_f1.spi_ndir_t1_f1 import SPINDIRt1f1
 
 
 # --------------------------------------------------------------------------------------------------------------------
