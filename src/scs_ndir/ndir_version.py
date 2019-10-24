@@ -67,9 +67,6 @@ if __name__ == '__main__':
             print("ndir_version: Interface not available.", file=sys.stderr)
             exit(1)
 
-        if cmd.verbose and interface:
-            print("ndir_version: %s" % interface, file=sys.stderr)
-
         # NDIRConf...
         ndir_conf =  NDIRConf.load(Host)
 
