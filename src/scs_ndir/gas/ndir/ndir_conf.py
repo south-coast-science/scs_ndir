@@ -36,17 +36,18 @@ class NDIRConf(AbstractNDIRConf):
 
         model = jdict.get('model')
         tally = jdict.get('tally')
+        raw = jdict.get('raw', False)
 
-        return NDIRConf(model, tally)
+        return NDIRConf(model, tally, raw)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, model, tally):
+    def __init__(self, model, tally, raw=False):
         """
         Constructor
         """
-        super().__init__(model, tally)
+        super().__init__(model, tally, raw)
 
 
     # ----------------------------------------------------------------------------------------------------------------

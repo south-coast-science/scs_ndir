@@ -12,6 +12,7 @@ from multiprocessing import Manager
 from scs_core.data.average import Average
 
 from scs_core.gas.ndir.ndir_datum import NDIRDatum
+from scs_core.gas.ndir.ndir_voltages import NDIRVoltages
 
 from scs_core.sync.interval_timer import IntervalTimer
 from scs_core.sync.synchronised_process import SynchronisedProcess
@@ -37,7 +38,9 @@ class NDIRMonitor(SynchronisedProcess):
         SynchronisedProcess.__init__(self, manager.list())
 
         self.__ndir = ndir
+
         self.__averaging = Average(conf.tally)
+        self.__raw = conf.raw
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -73,7 +76,10 @@ class NDIRMonitor(SynchronisedProcess):
                 self.__ndir.sample()
                 time.sleep(sleep_time)
 
-                datum = self.__ndir.get_sample_gas()
+                if self.__raw:
+                    datum = NDIRVoltages(*self.__ndir.get_sample_voltage())
+                else:
+                    datum = self.__ndir.get_sample_gas()
 
                 self.__averaging.append(datum)
                 average = self.__averaging.compute()
@@ -101,10 +107,13 @@ class NDIRMonitor(SynchronisedProcess):
         with self._lock:
             value = self._value
 
-        return NDIRDatum.construct_from_jdict(OrderedDict(value))
+        jdict = OrderedDict(value)
+
+        return NDIRVoltages.construct_from_jdict(jdict) if self.__raw else NDIRDatum.construct_from_jdict(jdict)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "NDIRMonitor:{value:%s, averaging:%s, ndir:%s}" % (self._value, self.__averaging, self.__ndir)
+        return "NDIRMonitor:{value:%s, averaging:%s, ndir:%s, raw:%s}" % \
+               (self._value, self.__averaging, self.__ndir, self.__raw)
