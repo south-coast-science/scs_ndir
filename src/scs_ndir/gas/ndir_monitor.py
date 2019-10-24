@@ -89,6 +89,10 @@ class NDIRMonitor(SynchronisedProcess):
     # ----------------------------------------------------------------------------------------------------------------
     # data retrieval for client process...
 
+    def boot_time(self):
+        return self.__ndir.boot_time()
+
+
     def firmware(self):
         return self.__ndir.version()
 
