@@ -53,7 +53,7 @@ from scs_ndir.cmd.cmd_ndir_sampler import CmdNDIRSampler
 from scs_ndir.datum.ndir_offset_datum import NDIROffsetDatum
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.gas.ndir_conf import NDIRConf
+from scs_ndir.gas.ndir.ndir_conf import NDIRConf
 
 from scs_ndir.sampler.ndir_sampler import NDIRSampler
 from scs_ndir.sampler.ndir_voltage_sampler import NDIRVoltageSampler
@@ -99,9 +99,6 @@ if __name__ == '__main__':
             print("ndir_sampler: Interface not available.", file=sys.stderr)
             exit(1)
 
-        if cmd.verbose and interface:
-            print("ndir_sampler: %s" % interface, file=sys.stderr)
-
         # NDIRConf...
         ndir_conf =  NDIRConf.load(Host)
 
@@ -110,7 +107,7 @@ if __name__ == '__main__':
             exit(1)
 
         # NDIR...
-        ndir = ndir_conf.ndir(Host, interface.load_switch_active_high)
+        ndir = ndir_conf.ndir(interface, Host)
 
         if cmd.verbose:
             print("ndir_sampler: %s" % ndir, file=sys.stderr)

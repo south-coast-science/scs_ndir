@@ -9,12 +9,17 @@ Created on 11 Feb 2018
 import sys
 import time
 
+from scs_core.data.json import JSONify
+from scs_core.data.localized_datetime import LocalizedDatetime
+
+from scs_core.sample.gases_sample import GasesSample
+
 from scs_core.sync.interval_timer import IntervalTimer
 
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
+from scs_ndir.gas.ndir.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -29,17 +34,16 @@ try:
     ndir.power_on()
 
     start_time = time.time()
-    timer = IntervalTimer(1.0)
+    timer = IntervalTimer(3.0)
 
-    print("rec, pile_ref_amplitude, pile_act_amplitude, pile_diff, thermistor_avg")
+    for _ in timer.range(4000):
+        ndir.get_sample_mode(True)
+        rec = LocalizedDatetime.now()
+        co2_datum = ndir.sample()
 
-    while timer.true():
-        elapsed_time = time.time() - start_time
-        pile_ref_amplitude, pile_act_amplitude, thermistor_avg = ndir.get_sample_voltage()
-        diff = pile_ref_amplitude - pile_act_amplitude
+        sample = GasesSample('', rec, co2_datum, None, None)
 
-        print("%7.3f, %0.4f, %0.4f, %0.4f, %0.4f" %
-              (elapsed_time, pile_ref_amplitude, pile_act_amplitude, diff, thermistor_avg))
+        print(JSONify.dumps(sample))
         sys.stdout.flush()
 
 except KeyboardInterrupt:

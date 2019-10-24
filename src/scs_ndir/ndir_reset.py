@@ -34,7 +34,7 @@ from scs_host.sys.host import Host
 from scs_ndir.cmd.cmd_verbose import CmdVerbose
 from scs_ndir.exception.ndir_exception import NDIRException
 
-from scs_ndir.gas.ndir_conf import NDIRConf
+from scs_ndir.gas.ndir.ndir_conf import NDIRConf
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -68,9 +68,6 @@ if __name__ == '__main__':
             print("ndir_reset: Interface not available.", file=sys.stderr)
             exit(1)
 
-        if cmd.verbose and interface:
-            print("ndir_reset: %s" % interface, file=sys.stderr)
-
         # NDIRConf...
         ndir_conf =  NDIRConf.load(Host)
 
@@ -79,7 +76,7 @@ if __name__ == '__main__':
             exit(1)
 
         # NDIR...
-        ndir = ndir_conf.ndir(Host, interface.load_switch_active_high)
+        ndir = ndir_conf.ndir(interface, Host)
 
         if cmd.verbose:
             print("ndir_reset: %s" % ndir, file=sys.stderr)

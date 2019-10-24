@@ -15,7 +15,7 @@ from scs_core.sync.interval_timer import IntervalTimer
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
-from scs_ndir.gas.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
+from scs_ndir.gas.ndir.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
 
 
 # --------------------------------------------------------------------------------------------------------------------
