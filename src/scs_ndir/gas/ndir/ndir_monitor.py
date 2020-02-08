@@ -63,7 +63,7 @@ class NDIRMonitor(SynchronisedProcess):
 
             self.__ndir.power_off()
 
-        except (BrokenPipeError, KeyboardInterrupt, LockTimeout):
+        except (ConnectionError, KeyboardInterrupt, LockTimeout):
             pass
 
 
@@ -85,7 +85,7 @@ class NDIRMonitor(SynchronisedProcess):
                 with self._lock:
                     average.as_list(self._value)
 
-        except (BrokenPipeError, KeyboardInterrupt, LockTimeout):
+        except (ConnectionError, KeyboardInterrupt, LockTimeout):
             pass
 
 
