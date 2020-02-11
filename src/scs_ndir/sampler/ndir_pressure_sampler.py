@@ -6,7 +6,7 @@ Created on 31 Jul 2018
 
 import time
 
-from scs_core.data.localized_datetime import LocalizedDatetime
+from scs_core.data.datetime import LocalizedDatetime
 from scs_core.sampler.sampler import Sampler
 
 from scs_ndir.datum.ndir_pressure_datum import NDIRPressureDatum
