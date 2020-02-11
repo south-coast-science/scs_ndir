@@ -6,7 +6,7 @@ Created on 21 Feb 2018
 
 import time
 
-from scs_core.data.localized_datetime import LocalizedDatetime
+from scs_core.data.datetime import LocalizedDatetime
 
 from scs_core.sample.gases_sample import GasesSample
 from scs_core.sampler.sampler import Sampler
