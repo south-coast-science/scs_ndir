@@ -36,7 +36,7 @@ class NDIRSampler(Sampler):
     # ----------------------------------------------------------------------------------------------------------------
 
     def sample(self):
-        rec = LocalizedDatetime.now()
+        rec = LocalizedDatetime.now().utc()
 
         self.__ndir.sample()
 
