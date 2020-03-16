@@ -38,7 +38,7 @@ try:
 
     for _ in timer.range(4000):
         ndir.get_sample_mode(True)
-        rec = LocalizedDatetime.now()
+        rec = LocalizedDatetime.now().utc()
         co2_datum = ndir.sample()
 
         sample = GasesSample('', rec, co2_datum, None, None)
