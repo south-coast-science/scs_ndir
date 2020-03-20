@@ -114,8 +114,6 @@ class NDIRCalib(PersistentJSONable):
         """
         Constructor
         """
-        super().__init__()
-
         # identity...
         self.__ndir_serial = ndir_serial                            # unsigned long
         self.__board_serial = board_serial                          # unsigned long
@@ -301,8 +299,6 @@ class NDIRRangeCalib(JSONable):
         """
         Constructor
         """
-        super().__init__()
-
         # range fields...
         self.__zero = Datum.float(zero, 6)
         self.__span = Datum.float(span, 6)
