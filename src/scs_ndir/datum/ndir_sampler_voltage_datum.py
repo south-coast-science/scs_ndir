@@ -56,19 +56,20 @@ class NDIRSampleVoltageDatum(JSONable):
 
 
     def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
+        try:
+            if self.pile_ref_ampl != other.pile_ref_ampl:
+                return False
 
-        if self.pile_ref_ampl != other.pile_ref_ampl:
-            return False
+            if self.pile_act_ampl != other.pile_act_ampl:
+                return False
 
-        if self.pile_act_ampl != other.pile_act_ampl:
-            return False
+            if self.thermistor_avg != other.thermistor_avg:
+                return False
 
-        if self.thermistor_avg != other.thermistor_avg:
-            return False
+            return True
 
-        return True
+        except AttributeError:
+            return False
 
 
     # ----------------------------------------------------------------------------------------------------------------
