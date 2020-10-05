@@ -74,7 +74,7 @@ if __name__ == '__main__':
         if conf is None and not cmd.is_complete():
             print("ndir_conf: No configuration is stored. You must therefore set all fields.", file=sys.stderr)
             cmd.print_help(sys.stderr)
-            exit(1)
+            exit(2)
 
         model = cmd.model if cmd.model else conf.model
         tally = cmd.tally if cmd.tally else conf.tally
