@@ -23,8 +23,8 @@ class NDIRConf(AbstractNDIRConf):
     """
 
     @classmethod
-    def persistence_location(cls, host):
-        return host.conf_dir(), cls._FILENAME
+    def persistence_location(cls):
+        return cls.conf_dir(), cls._FILENAME
 
 
     # ----------------------------------------------------------------------------------------------------------------
