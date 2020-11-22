@@ -24,7 +24,6 @@ class NDIRConf(AbstractNDIRConf):
 
     @classmethod
     def persistence_location(cls):
-        print("*** ndir / persistence_location")
         return cls.conf_dir(), cls._FILENAME
 
 
