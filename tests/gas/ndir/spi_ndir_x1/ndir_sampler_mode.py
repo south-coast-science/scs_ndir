@@ -8,7 +8,7 @@ Created on 11 Feb 2018
 
 import sys
 
-from scs_host.bus.i2c import I2C
+from scs_host.bus.i2c import SensorI2C
 from scs_host.sys.host import Host
 
 from scs_ndir.gas.ndir.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
@@ -20,7 +20,7 @@ scan_single_shot = True
 
 
 try:
-    I2C.open(Host.I2C_SENSORS)
+    SensorI2C.open()
 
     ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir, file=sys.stderr)
@@ -35,4 +35,4 @@ except KeyboardInterrupt:
     print("")
 
 finally:
-    I2C.close()
+    SensorI2C.close()

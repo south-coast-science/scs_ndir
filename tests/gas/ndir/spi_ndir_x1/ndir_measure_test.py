@@ -12,7 +12,7 @@ import time
 from scs_core.data.json import JSONify
 from scs_core.sync.interval_timer import IntervalTimer
 
-from scs_host.bus.i2c import I2C
+from scs_host.bus.i2c import SensorI2C
 from scs_host.sys.host import Host
 
 from scs_ndir.gas.ndir.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
@@ -24,7 +24,7 @@ interval = 0.01                 # 10 mS is fastest possible
 sample_count = 200              # 10 mS * 1000 = 10 S
 
 try:
-    I2C.open(Host.I2C_SENSORS)
+    SensorI2C.open()
 
     ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir, file=sys.stderr)
@@ -65,4 +65,4 @@ except KeyboardInterrupt:
     pass
 
 finally:
-    I2C.close()
+    SensorI2C.close()

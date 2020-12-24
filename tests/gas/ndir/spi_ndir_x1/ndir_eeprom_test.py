@@ -8,7 +8,7 @@ Created on 29 Jan 2018
 Warning: ndir_calib_test.py must be run first!
 """
 
-from scs_host.bus.i2c import I2C
+from scs_host.bus.i2c import SensorI2C
 from scs_host.sys.host import Host
 
 from scs_ndir.gas.ndir.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
@@ -18,7 +18,7 @@ from scs_ndir.gas.ndir.spi_ndir_x1.ndir_calib import NDIRCalib
 # --------------------------------------------------------------------------------------------------------------------
 
 try:
-    I2C.open(Host.I2C_SENSORS)
+    SensorI2C.open()
 
     ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir)
@@ -48,4 +48,4 @@ except KeyboardInterrupt:
     print("")
 
 finally:
-    I2C.close()
+    SensorI2C.close()

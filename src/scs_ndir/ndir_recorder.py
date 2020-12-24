@@ -44,7 +44,7 @@ from scs_core.data.json import JSONify
 
 from scs_dfe.interface.interface_conf import InterfaceConf
 
-from scs_host.bus.i2c import I2C
+from scs_host.bus.i2c import SensorI2C
 from scs_host.sys.host import Host
 
 from scs_ndir.cmd.cmd_ndir_recorder import CmdNDIRRecorder
@@ -74,7 +74,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        I2C.open(Host.I2C_SENSORS)
+        SensorI2C.open()
 
         # Interface...
         interface_conf = InterfaceConf.load(Host)
@@ -127,4 +127,4 @@ if __name__ == '__main__':
         print("")
 
     finally:
-        I2C.close()
+        SensorI2C.close()
