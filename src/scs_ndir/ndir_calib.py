@@ -50,7 +50,7 @@ from scs_core.data.path_dict import PathDict
 
 from scs_dfe.interface.interface_conf import InterfaceConf
 
-from scs_host.bus.i2c import SensorI2C
+from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
 from scs_ndir.cmd.cmd_ndir_calib import CmdNDIRCalib
@@ -75,7 +75,7 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # resources...
 
-        SensorI2C.open()
+        I2C.Sensors.open()
 
         # Interface...
         interface_conf = InterfaceConf.load(Host)
@@ -164,4 +164,4 @@ if __name__ == '__main__':
         print("")
 
     finally:
-        SensorI2C.close()
+        I2C.Sensors.close()

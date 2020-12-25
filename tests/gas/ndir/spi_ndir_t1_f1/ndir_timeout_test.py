@@ -12,7 +12,7 @@ from scs_core.sync.interval_timer import IntervalTimer
 
 from scs_dfe.interface.interface_conf import InterfaceConf
 
-from scs_host.bus.i2c import SensorI2C
+from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
 from scs_ndir.exception.ndir_exception import NDIRException
@@ -24,7 +24,7 @@ from scs_ndir.gas.ndir.spi_ndir_t1_f1.spi_ndir_t1_f1 import SPINDIRt1f1
 # --------------------------------------------------------------------------------------------------------------------
 
 try:
-    SensorI2C.open()
+    I2C.Sensors.open()
 
     # ------------------------------------------------------------------------------------------------------------
     # resources...
@@ -88,4 +88,4 @@ except KeyboardInterrupt:
     pass
 
 finally:
-    SensorI2C.close()
+    I2C.Sensors.close()
