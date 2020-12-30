@@ -24,7 +24,7 @@ interval = 0.01                 # 10 mS is fastest possible
 sample_count = 200              # 10 mS * 1000 = 10 S
 
 try:
-    I2C.open(Host.I2C_SENSORS)
+    I2C.Sensors.open()
 
     ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir, file=sys.stderr)
@@ -65,4 +65,4 @@ except KeyboardInterrupt:
     pass
 
 finally:
-    I2C.close()
+    I2C.Sensors.close()

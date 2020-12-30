@@ -18,7 +18,7 @@ from scs_ndir.gas.ndir.spi_ndir_x1.ndir_calib import NDIRCalib
 # --------------------------------------------------------------------------------------------------------------------
 
 try:
-    I2C.open(Host.I2C_SENSORS)
+    I2C.Sensors.open()
 
     ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir)
@@ -48,4 +48,4 @@ except KeyboardInterrupt:
     print("")
 
 finally:
-    I2C.close()
+    I2C.Sensors.close()

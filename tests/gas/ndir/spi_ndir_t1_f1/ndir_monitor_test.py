@@ -21,7 +21,7 @@ from scs_ndir.gas.ndir.spi_ndir_t1_f1.spi_ndir_t1_f1 import SPINDIRt1f1
 # --------------------------------------------------------------------------------------------------------------------
 
 try:
-    I2C.open(Host.I2C_SENSORS)
+    I2C.Sensors.open()
 
     # ------------------------------------------------------------------------------------------------------------
     # resources...
@@ -67,4 +67,4 @@ except KeyboardInterrupt:
     pass
 
 finally:
-    I2C.close()
+    I2C.Sensors.close()
