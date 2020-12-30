@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
         tag = None if system_id is None else system_id.message_tag()
 
-        I2C.open(Host.I2C_SENSORS)
+        I2C.Sensors.open()
 
         # Interface...
         interface_conf = InterfaceConf.load(Host)
@@ -149,4 +149,4 @@ if __name__ == '__main__':
         print("")
 
     finally:
-        I2C.close()
+        I2C.Sensors.close()

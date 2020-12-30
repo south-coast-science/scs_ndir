@@ -20,7 +20,7 @@ scan_single_shot = True
 
 
 try:
-    I2C.open(Host.I2C_SENSORS)
+    I2C.Sensors.open()
 
     ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
     print(ndir, file=sys.stderr)
@@ -35,4 +35,4 @@ except KeyboardInterrupt:
     print("")
 
 finally:
-    I2C.close()
+    I2C.Sensors.close()
