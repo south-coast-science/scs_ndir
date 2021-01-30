@@ -8,7 +8,6 @@ example JSON:
 """
 
 from scs_core.gas.ndir.ndir_conf import NDIRConf as AbstractNDIRConf
-
 from scs_ndir.gas.ndir.ndir_monitor import NDIRMonitor
 
 from scs_ndir.gas.ndir.spi_ndir_t1_f1.ndir_calib import NDIRCalib as SPINDIRv1Calib
@@ -22,24 +21,6 @@ class NDIRConf(AbstractNDIRConf):
     classdocs
     """
 
-    @classmethod
-    def persistence_location(cls):
-        return cls.conf_dir(), cls._FILENAME
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @classmethod
-    def construct_from_jdict(cls, jdict):
-        if not jdict:
-            return None
-
-        model = jdict.get('model')
-        tally = jdict.get('tally')
-        raw = jdict.get('raw', False)
-
-        return NDIRConf(model, tally, raw)
-
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -51,7 +32,6 @@ class NDIRConf(AbstractNDIRConf):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # AbstractNDIRConf implementation...
 
     def ndir_monitor(self, interface, host):
         return NDIRMonitor(self.ndir(interface, host), self)
@@ -73,3 +53,9 @@ class NDIRConf(AbstractNDIRConf):
             raise ValueError('unknown model: %s' % self.model)
 
         return SPINDIRv1Calib
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return "NDIRConf(ndir):{model:%s, tally:%s, raw:%s}" %  (self.model, self.tally, self.raw)
