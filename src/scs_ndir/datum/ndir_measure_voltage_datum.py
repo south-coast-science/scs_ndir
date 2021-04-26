@@ -68,7 +68,7 @@ class NDIRMeasureVoltageDatum(JSONable):
     def as_json(self):
         jdict = OrderedDict()
 
-        jdict['rec'] = self.rec.as_iso8601(Sample.INCLUDE_MILLIS)
+        jdict['rec'] = self.rec.as_iso8601(include_millis=Sample.INCLUDE_MILLIS)
 
         jdict['pile-ref'] = self.pile_ref
         jdict['pile-act'] = self.pile_act

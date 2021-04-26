@@ -53,7 +53,7 @@ class NDIRPressureDatum(JSONable):
     def as_json(self):
         jdict = OrderedDict()
 
-        jdict['rec'] = self.rec.as_iso8601(Sample.INCLUDE_MILLIS)
+        jdict['rec'] = self.rec.as_iso8601(include_millis=Sample.INCLUDE_MILLIS)
         jdict['pA'] = self.p_a
 
         return jdict
