@@ -1,12 +1,44 @@
+"""
+Created on 4 Sep 2020
+Updated 23 Mar 2021
+
+@author: Jade Page (jade.page@southcoastscience.com)
+
+https://packaging.python.org/tutorials/packaging-projects/
+https://packaging.python.org/guides/single-sourcing-package-version/
+"""
+
+import codecs
+import os
+
 from setuptools import setup, find_packages
 
+
+# --------------------------------------------------------------------------------------------------------------------
+
+def read(rel_path):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with codecs.open(os.path.join(here, rel_path), 'r') as fp:
+        return fp.read()
+
+
+def get_version(rel_path):
+    for line in read(rel_path).splitlines():
+        if line.startswith('__version__'):
+            return line.split("'")[1]
+    else:
+        raise RuntimeError("Unable to find version string.")
+
+
+# --------------------------------------------------------------------------------------------------------------------
 
 with open('requirements.txt') as req_txt:
     required = [line for line in req_txt.read().splitlines() if line]
 
+
 setup(
     name='scs_ndir',
-    version='0.1.0',
+    version=get_version("scs_ndir/__init__.py"),
     description='Environmental sampling abstractions for the South Coast Science NDIR SPI board.',
     author='South Coast Science',
     author_email='contact@southcoastscience.com',
