@@ -69,10 +69,10 @@ if __name__ == '__main__':
         # ------------------------------------------------------------------------------------------------------------
         # run...
 
-        sender.connect(True)
+        sender.connect()
 
         for line in sys.stdin:
-            sender.write(line, True)
+            sender.write(line)
 
             if cmd.echo:
                 print(line.strip())
