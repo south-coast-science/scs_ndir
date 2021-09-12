@@ -113,6 +113,8 @@ class NDIRCalib(PersistentJSONable):
         """
         Constructor
         """
+        super().__init__()
+
         # identity...
         self.__ndir_serial = ndir_serial                            # unsigned long
         self.__board_serial = board_serial                          # unsigned long
