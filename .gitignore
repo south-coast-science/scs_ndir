@@ -104,7 +104,7 @@ ENV/
 .idea/
 
 # South Coast Science
-**/*.csv
+**/.DS_Store
 **/*.log
 **/*.numbers
 **/*.xls
