@@ -58,11 +58,11 @@ try:
 
     # ndir.power_off()
 
-except ValueError as ex:
-    print("ValueError: %s" % ex)
-
 except KeyboardInterrupt:
-    pass
+    print(file=sys.stderr)
+
+except ValueError as ex:
+    print(repr(ex), file=sys.stderr)
 
 finally:
     I2C.Sensors.close()
