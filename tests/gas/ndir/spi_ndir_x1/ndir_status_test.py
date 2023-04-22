@@ -7,6 +7,7 @@ Created on 2 Jan 2018
 """
 
 import json
+import sys
 
 from scs_core.data.json import JSONify
 
@@ -46,11 +47,12 @@ try:
     print(jstr)
     print("-")
 
-except ValueError as ex:
-    print("ValueError: %s" % ex)
 
 except KeyboardInterrupt:
-    print("")
+    print(file=sys.stderr)
+
+except ValueError as ex:
+    print(repr(ex), file=sys.stderr)
 
 finally:
     I2C.Sensors.close()

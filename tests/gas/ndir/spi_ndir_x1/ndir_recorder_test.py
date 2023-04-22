@@ -6,6 +6,8 @@ Created on 30 Jan 2018
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
+import sys
+
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
@@ -35,11 +37,11 @@ try:
         print("%d, %d, %d" % datum)
 
 
-except ValueError as ex:
-    print("ValueError: %s" % ex)
-
 except KeyboardInterrupt:
-    print("")
+    print(file=sys.stderr)
+
+except ValueError as ex:
+    print(repr(ex), file=sys.stderr)
 
 finally:
     I2C.Sensors.close()
