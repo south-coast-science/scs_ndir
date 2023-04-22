@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # end...
 
     except KeyboardInterrupt:
-        print("csv_writer: KeyboardInterrupt", file=sys.stderr)
+        print(file=sys.stderr)
 
     finally:
         if writer is not None:
