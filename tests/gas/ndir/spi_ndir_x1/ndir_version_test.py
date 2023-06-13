@@ -13,6 +13,8 @@ from scs_core.data.json import JSONify
 
 from scs_core.gas.ndir.ndir_version import NDIRVersion
 
+from scs_dfe.interface.dfe.dfe import DFE
+
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
@@ -24,7 +26,7 @@ from scs_ndir.gas.ndir.spi_ndir_x1.spi_ndir_x1 import SPINDIRx1
 try:
     I2C.Sensors.open()
 
-    ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(DFE(), Host.ndir_spi_dev_path())
     print(ndir)
     print("-")
 

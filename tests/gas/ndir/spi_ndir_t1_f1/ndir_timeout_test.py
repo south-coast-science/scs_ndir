@@ -43,7 +43,7 @@ try:
     conf = NDIRConf("t1f1", 5)
     print("conf: %s" % conf)
 
-    ndir = SPINDIRt1f1(interface, Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRt1f1(interface, Host.ndir_spi_dev_path())
     print("ndir: %s" % ndir)
     print("-")
 

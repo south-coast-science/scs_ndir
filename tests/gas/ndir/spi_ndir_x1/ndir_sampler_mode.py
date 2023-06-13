@@ -8,6 +8,8 @@ Created on 11 Feb 2018
 
 import sys
 
+from scs_dfe.interface.dfe.dfe import DFE
+
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
@@ -22,7 +24,7 @@ scan_single_shot = True
 try:
     I2C.Sensors.open()
 
-    ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(DFE(), Host.ndir_spi_dev_path())
     print(ndir, file=sys.stderr)
     print("-", file=sys.stderr)
 
