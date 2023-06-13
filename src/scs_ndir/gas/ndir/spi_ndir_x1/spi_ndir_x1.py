@@ -78,13 +78,13 @@ class SPINDIRx1(NDIR):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, interface, spi_bus, spi_device):
+    def __init__(self, interface, dev_path):
         """
         Constructor
         """
         super().__init__(interface)
 
-        self.__spi = SPI(spi_bus, spi_device, SPINDIRx1.__SPI_MODE, SPINDIRx1.__SPI_CLOCK)
+        self.__spi = SPI(dev_path, SPINDIRx1.__SPI_MODE, SPINDIRx1.__SPI_CLOCK)
 
 
     # ----------------------------------------------------------------------------------------------------------------

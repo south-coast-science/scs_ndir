@@ -12,6 +12,8 @@ import time
 from scs_core.data.json import JSONify
 from scs_core.sync.interval_timer import IntervalTimer
 
+from scs_dfe.interface.dfe.dfe import DFE
+
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
@@ -26,7 +28,7 @@ sample_count = 200              # 10 mS * 1000 = 10 S
 try:
     I2C.Sensors.open()
 
-    ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(DFE(), Host.ndir_spi_dev_path())
     print(ndir, file=sys.stderr)
     print("-", file=sys.stderr)
 

@@ -43,7 +43,7 @@ class NDIRConf(AbstractNDIRConf):
 
         # TODO: check against a list of supported devices
 
-        return SPINDIRt1f1(interface, host.ndir_spi_bus(), host.ndir_spi_device())
+        return SPINDIRt1f1(interface, host.ndir_spi_dev_path())
 
 
     # ----------------------------------------------------------------------------------------------------------------
