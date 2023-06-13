@@ -8,6 +8,8 @@ Created on 29 Jan 2018
 Warning: ndir_calib_test.py must be run first!
 """
 
+from scs_dfe.interface.dfe.dfe import DFE
+
 from scs_host.bus.i2c import I2C
 from scs_host.sys.host import Host
 
@@ -20,7 +22,7 @@ from scs_ndir.gas.ndir.spi_ndir_x1.ndir_calib import NDIRCalib
 try:
     I2C.Sensors.open()
 
-    ndir = SPINDIRx1(False, Host.ndir_spi_bus(), Host.ndir_spi_device())
+    ndir = SPINDIRx1(DFE(), Host.ndir_spi_dev_path())
     print(ndir)
     print("-")
 
