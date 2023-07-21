@@ -7,3 +7,7 @@ https://packaging.python.org/guides/single-sourcing-package-version/
 """
 
 __version__ = '2.8.0'
+
+
+def version():
+    return 'SCS NDIR ' + __version__

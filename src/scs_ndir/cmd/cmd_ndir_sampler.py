@@ -6,6 +6,8 @@ Created on 17 Feb 2018
 
 import optparse
 
+from scs_ndir import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -17,13 +19,13 @@ class CmdNDIRSampler(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog { [-i INTERVAL [-n SAMPLES] [-r]] | -o } [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # compulsory...
-        self.__parser.add_option("--interval", "-i", type="float", nargs=1, action="store", dest="interval",
+        self.__parser.add_option("--interval", "-i", type="float", action="store", dest="interval",
                                  help="sampling interval in seconds")
 
-        self.__parser.add_option("--samples", "-n", type="int", nargs=1, action="store", dest="samples",
+        self.__parser.add_option("--samples", "-n", type="int", action="store", dest="samples",
                                  help="number of samples (1 if interval not specified)")
 
         self.__parser.add_option("--raw", "-r", action="store_true", dest="raw", default=False,
@@ -32,10 +34,11 @@ class CmdNDIRSampler(object):
         self.__parser.add_option("--offsets", "-o", action="store_true", dest="offsets",
                                  help="get the latest min / max offsets")
 
-        # optional...
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
+        # build...
         self.__opts, self.__args = self.__parser.parse_args()
 
 

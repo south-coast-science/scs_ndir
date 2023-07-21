@@ -6,6 +6,8 @@ Created on 21 Jun 2017
 
 import optparse
 
+from scs_ndir import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -17,21 +19,23 @@ class CmdNDIRConf(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog [{ [-m MODEL] [-t AVERAGING_TALLY] | -d }] [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # optional...
-        self.__parser.add_option("--model", "-m", type="string", nargs=1, action="store", dest="model",
+        self.__parser.add_option("--model", "-m", type="string", action="store", dest="model",
                                  help="set the NDIR MODEL (t1f1)")
 
-        self.__parser.add_option("--tally", "-t", type="int", nargs=1, action="store", dest="tally",
+        self.__parser.add_option("--tally", "-t", type="int", action="store", dest="tally",
                                  help="set the averaging tally")
 
         self.__parser.add_option("--delete", "-d", action="store_true", dest="delete",
                                  help="delete the NDIR configuration")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
+        # build...
         self.__opts, self.__args = self.__parser.parse_args()
 
 

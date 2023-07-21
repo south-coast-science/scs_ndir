@@ -6,6 +6,8 @@ Created on 1 Aug 2018
 
 import optparse
 
+from scs_ndir import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -16,7 +18,7 @@ class CmdNDIRRunMode(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -s | -c } [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -s | -c } [-v]", version=version())
 
         # compulsory...
         self.__parser.add_option("--single", "-s", action="store_true", dest="single", default=False,
@@ -25,10 +27,11 @@ class CmdNDIRRunMode(object):
         self.__parser.add_option("--continuous", "-c", action="store_true", dest="continuous", default=False,
                                  help="continuous mode")
 
-        # optional...
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
+        # build...
         self.__opts, self.__args = self.__parser.parse_args()
 
 
