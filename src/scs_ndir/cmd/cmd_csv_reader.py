@@ -6,6 +6,8 @@ Created on 2 Aug 2016
 
 import optparse
 
+from scs_ndir import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -16,9 +18,9 @@ class CmdCSVReader(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-a] [-v] [FILENAME]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-a] [-v] [FILENAME]", version=version())
 
-        # optional...
+        # output...
         self.__parser.add_option("--array", "-a", action="store_true", dest="array", default=False,
                                  help="output JSON documents as array instead of a sequence")
 

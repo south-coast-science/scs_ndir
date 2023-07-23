@@ -6,6 +6,8 @@ Created on 17 Feb 2018
 
 import optparse
 
+from scs_ndir import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -17,19 +19,20 @@ class CmdNDIRRecorder(object):
         Constructor
         """
         self.__parser = optparse.OptionParser(usage="%prog -i INTERVAL -n SAMPLES [-d DEFERRAL] [-v]",
-                                              version="%prog 1.0")
+                                              version=version())
 
         # compulsory...
-        self.__parser.add_option("--interval", "-i", type="int", nargs=1, action="store", dest="interval",
+        self.__parser.add_option("--interval", "-i", type="int", action="store", dest="interval",
                                  help="sampling interval in milliseconds")
 
-        self.__parser.add_option("--samples", "-n", type="int", nargs=1, action="store", dest="samples",
+        self.__parser.add_option("--samples", "-n", type="int", action="store", dest="samples",
                                  help="number of samples")
 
         # optional...
-        self.__parser.add_option("--deferral", "-d", type="int", nargs=1, action="store", dest="deferral", default=0,
+        self.__parser.add_option("--deferral", "-d", type="int", action="store", dest="deferral", default=0,
                                  help="deferral from PWM edge in milliseconds (default 0, max 999)")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

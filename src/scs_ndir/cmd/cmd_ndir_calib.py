@@ -6,6 +6,8 @@ Created on 17 Feb 2018
 
 import optparse
 
+from scs_ndir import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -16,7 +18,7 @@ class CmdNDIRCalib(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [{ -d | -s PATH VALUE | -r }] [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [{ -d | -s PATH VALUE | -r }] [-v]", version=version())
 
         # optional...
         self.__parser.add_option("--default", "-d", action="store_true", dest="default",
@@ -28,6 +30,7 @@ class CmdNDIRCalib(object):
         self.__parser.add_option("--restart", "-r", action="store_true", dest="restart",
                                  help="restart sampling with updated values")
 
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

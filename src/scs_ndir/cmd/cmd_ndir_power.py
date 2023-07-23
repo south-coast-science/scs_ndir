@@ -6,6 +6,8 @@ Created on 17 Feb 2018
 
 import optparse
 
+from scs_ndir import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -16,9 +18,9 @@ class CmdNDIRPower(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { 1 | 0 } [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { 0 | 1 } [-v]", version=version())
 
-        # optional...
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 
