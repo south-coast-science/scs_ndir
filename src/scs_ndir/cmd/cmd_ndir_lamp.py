@@ -6,6 +6,8 @@ Created on 17 Feb 2018
 
 import optparse
 
+from scs_ndir import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -16,16 +18,16 @@ class CmdNDIRLamp(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { -r ON | -l VOLTAGE } [-v]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog { -r ON | -l VOLTAGE } [-v]", version=version())
 
         # compulsory...
-        self.__parser.add_option("--run", "-r", type="int", nargs=1, action="store", dest="run",
+        self.__parser.add_option("--run", "-r", type="int", action="store", dest="run",
                                  help="run (1) or stop (0) the lamp")
 
-        self.__parser.add_option("--level", "-l", type="float", nargs=1, action="store", dest="level",
+        self.__parser.add_option("--level", "-l", type="float", action="store", dest="level",
                                  help="temporarily set lamp voltage")
 
-        # optional...
+        # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
                                  help="report narrative to stderr")
 

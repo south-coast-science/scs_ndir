@@ -6,6 +6,8 @@ Created on 2 Aug 2016
 
 import optparse
 
+from scs_ndir import version
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -16,7 +18,7 @@ class CmdCSVWriter(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog [-c] [-a] [-e] [-v] [FILENAME]", version="%prog 1.0")
+        self.__parser = optparse.OptionParser(usage="%prog [-c] [-a] [-e] [-v] [FILENAME]", version=version())
 
         # optional...
         self.__parser.add_option("--cache", "-c", action="store_true", dest="cache", default=False,
@@ -25,6 +27,7 @@ class CmdCSVWriter(object):
         self.__parser.add_option("--append", "-a", action="store_true", dest="append", default=False,
                                  help="append rows to existing file")
 
+        # output...
         self.__parser.add_option("--echo", "-e", action="store_true", dest="echo", default=False,
                                  help="echo stdin to stdout")
 
