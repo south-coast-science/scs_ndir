@@ -14,7 +14,7 @@ powered) and leave power applied on termination.
 The ndir_power utility has no effect when used with Raspberry Pi DFE boards.
 
 SYNOPSIS
-ndir_power.py { 1 | 0 } [-v]
+ndir_power.py { 0 | 1 } [-v]
 
 EXAMPLES
 ./ndir_power.py -v 0

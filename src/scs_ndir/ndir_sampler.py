@@ -20,7 +20,7 @@ Returned values are voltages when the -r (raw) flag is set, otherwise the values
 When in single-shot mode, the -o (offset) mode can be used to find the time offset of REF and ACT maxima and minima.
 
 SYNOPSIS
-ndir_sampler.py { -m { 1 | 0 } | [-i INTERVAL [-n SAMPLES] [-r]] | -o } [-v]
+ndir_sampler.py { -m { 0 | 1 } | [-i INTERVAL [-n SAMPLES] [-r]] | -o } [-v]
 
 EXAMPLES
 ./ndir_sampler.py -v -i 1.0

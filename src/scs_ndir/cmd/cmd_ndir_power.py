@@ -18,7 +18,7 @@ class CmdNDIRPower(object):
         """
         Constructor
         """
-        self.__parser = optparse.OptionParser(usage="%prog { 1 | 0 } [-v]", version=version())
+        self.__parser = optparse.OptionParser(usage="%prog { 0 | 1 } [-v]", version=version())
 
         # output...
         self.__parser.add_option("--verbose", "-v", action="store_true", dest="verbose", default=False,
