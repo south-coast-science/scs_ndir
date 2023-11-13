@@ -17,6 +17,8 @@ from scs_core.gas.ndir.ndir_voltages import NDIRVoltages
 from scs_core.sync.interval_timer import IntervalTimer
 from scs_core.sync.synchronised_process import SynchronisedProcess
 
+from scs_core.sys.logging import Logging
+
 from scs_host.lock.lock_timeout import LockTimeout
 
 
@@ -33,6 +35,9 @@ class NDIRMonitor(SynchronisedProcess):
         """
         Constructor
         """
+        self.__logger = Logging.getLogger()
+        self.__logging_specification = Logging.specification()
+
         manager = Manager()
 
         SynchronisedProcess.__init__(self, manager.list())
@@ -68,6 +73,8 @@ class NDIRMonitor(SynchronisedProcess):
 
 
     def run(self):
+        Logging.replicate(self.__logging_specification)
+
         sleep_time = self.__ndir.get_sample_interval()
         timer = IntervalTimer(sleep_time + 0.2)
 
