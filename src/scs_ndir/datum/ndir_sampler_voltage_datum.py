@@ -68,7 +68,7 @@ class NDIRSampleVoltageDatum(JSONable):
 
             return True
 
-        except AttributeError:
+        except (TypeError, AttributeError):
             return False
 
 
