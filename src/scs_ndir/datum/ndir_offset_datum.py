@@ -60,7 +60,7 @@ class NDIROffsetDatum(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def as_json(self):
+    def as_json(self, **kwargs):
         jdict = OrderedDict()
 
         jdict['min-ref-offset'] = self.min_ref_offset

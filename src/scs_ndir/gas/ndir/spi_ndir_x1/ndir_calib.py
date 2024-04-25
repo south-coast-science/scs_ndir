@@ -207,7 +207,7 @@ class NDIRCalib(PersistentJSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def as_json(self):
+    def as_json(self, **kwargs):
         jdict = OrderedDict()
 
         # identity...
@@ -366,7 +366,7 @@ class NDIRRangeCalib(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def as_json(self):
+    def as_json(self, **kwargs):
         jdict = OrderedDict()
 
         # range fields...
