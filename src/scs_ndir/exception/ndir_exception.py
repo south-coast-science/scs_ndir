@@ -44,7 +44,7 @@ class NDIRException(RuntimeError, JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def as_json(self):
+    def as_json(self, **kwargs):
         jdict = OrderedDict()
 
         jdict['problem'] = self.problem

@@ -59,7 +59,7 @@ class NDIRRecorderDatum(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def as_json(self):
+    def as_json(self, **kwargs):
         jdict = OrderedDict()
 
         jdict['rec'] = self.rec
